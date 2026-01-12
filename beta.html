@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Skill Sprouts Private Beta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F7F7; 
+        }
+        .brand-green { color: #10B981; }
+        .bg-brand-green { background-color: #10B981; }
+        .brand-blue { color: #3B82F6; }
+        .btn-shadow { box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <!-- Simple Nav -->
+    <nav class="p-6 max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center text-white">
+                <i class="ph-bold ph-leaf text-xl"></i>
+            </div>
+            <span class="font-bold text-xl tracking-tight">Skill Sprouts</span>
+        </div>
+        <div class="hidden md:block">
+            <span class="text-sm font-medium px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full">Private Beta: Application Only</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="max-w-7xl mx-auto px-6 pt-12 pb-24 md:pt-20 flex flex-col md:flex-row items-center gap-12">
+        
+        <!-- Copy Side -->
+        <div class="md:w-1/2 text-center md:text-left">
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                Be a <span class="brand-green">Founding Parent.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-8 max-w-xl mx-auto md:mx-0">
+                We're building a new way for busy parents to teach essential life skills. Sign up to apply for our private beta and help shape the future of Skill Sprouts.
+            </p>
+            
+            <!-- Simple Progress Indicator -->
+            <div class="flex items-center justify-center md:justify-start space-x-4 mb-8">
+                <div class="flex -space-x-2">
+                    <img class="w-8 h-8 rounded-full border-2 border-white bg-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Priya" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-white bg-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Leo" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-white bg-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="User">
+                </div>
+                <p class="text-sm font-medium text-slate-500">Limited spots available for beta testing</p>
+            </div>
+
+            <!-- Core Benefits -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                <div class="flex items-center space-x-3 md:justify-start justify-center">
+                    <i class="ph-bold ph-headphones brand-blue text-2xl"></i>
+                    <span class="text-sm font-semibold">Audio Guides</span>
+                </div>
+                <div class="flex items-center space-x-3 md:justify-start justify-center">
+                    <i class="ph-bold ph-check-circle brand-green text-2xl"></i>
+                    <span class="text-sm font-semibold">Clear Steps</span>
+                </div>
+                <div class="flex items-center space-x-3 md:justify-start justify-center">
+                    <i class="ph-bold ph-calendar-star text-orange-400 text-2xl"></i>
+                    <span class="text-sm font-semibold">Daily Wins</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Side -->
+        <div class="md:w-1/2 w-full max-w-md">
+            <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                <h3 class="text-2xl font-bold mb-2">Request Beta Access</h3>
+                <p class="text-slate-500 text-sm mb-6">Join our waitlist for the next cohort of testers. Founding members get lifetime benefits and early feature access.</p>
+                
+                <form id="beta-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Your Name</label>
+                        <input type="text" required placeholder="Name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Email</label>
+                        <input type="email" required placeholder="email@address.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">How old is your child?</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 appearance-none">
+                            <option>Infant (0-18 months)</option>
+                            <option selected>Toddler (1.5 - 3 years)</option>
+                            <option>Preschool (3 - 5 years)</option>
+                            <option>Elementary (5+ years)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-green text-white font-bold py-4 rounded-xl btn-shadow hover:opacity-90 transition-all text-lg mt-4">
+                        Request Invite
+                    </button>
+                </form>
+
+                <div id="success-msg" class="hidden text-center py-8">
+                    <i class="ph-fill ph-check-circle text-6xl text-brand-green mb-4"></i>
+                    <h4 class="text-xl font-bold">Application Received!</h4>
+                    <p class="text-slate-500 mt-2">Thank you for your interest. We'll reach out to your email as soon as a new beta cohort begins.</p>
+                </div>
+
+                <p class="text-[10px] text-slate-400 mt-6 text-center italic">
+                    By requesting access, you agree to receive beta-related updates. Unsubscribe anytime.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Simple Features Grid -->
+    <section class="bg-slate-900 text-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">A practical toolkit for parents</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">We're designing Skill Sprouts to fit into your busy life, giving you the tools to handle daily challenges with confidence.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center mb-6">
+                        <i class="ph-bold ph-lightning-bolt text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Quick Wins</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">No long videos. Every guide is designed to be finished in minutes so you can take action right away.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center mb-6">
+                        <i class="ph-bold ph-user-focus text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Personalized</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">The app suggests guides based on your child's developmental stage, so the help is always relevant.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center mb-6">
+                        <i class="ph-bold ph-headphones-rumble text-2xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3">Listen Anywhere</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">Multitask with hands-free audio versions of every guide. Learn while you drive, cook, or play.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center text-slate-400 text-sm">
+        <p>&copy; 2025 Skill Sprouts. Raising capable kids, together.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('beta-form');
+        const success = document.getElementById('success-msg');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            form.classList.add('hidden');
+            success.classList.remove('hidden');
+            console.log('Beta signup received.');
+        });
+    </script>
+</body>
+</html>
