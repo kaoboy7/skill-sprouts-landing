@@ -79,22 +79,20 @@
                 <h3 class="text-2xl font-bold mb-2">Request Beta Access</h3>
                 <p class="text-slate-500 text-sm mb-6">Join our waitlist for the next cohort of testers. Founding members get lifetime benefits and early feature access.</p>
                 
-                <form id="beta-form" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Your Name</label>
-                        <input type="text" required placeholder="Name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
-                    </div>
+                <!-- INTEGRATED MAILERLITE FORM -->
+                <form id="beta-form" action="https://assets.mailerlite.com/jsonp/2007283/forms/176357515007625043/subscribe" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Email</label>
-                        <input type="email" required placeholder="email@address.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                        <input type="email" name="fields[email]" required placeholder="email@address.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50" autocomplete="email">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">How old is your child?</label>
-                        <select class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 appearance-none">
-                            <option>Infant (0-18 months)</option>
-                            <option selected>Toddler (1.5 - 3 years)</option>
-                            <option>Preschool (3 - 5 years)</option>
-                            <option>Elementary (5+ years)</option>
+                        <!-- Note: name="fields[child_age]" should match the custom field name in your MailerLite dashboard -->
+                        <select id="child-age-select" name="fields[child_age]" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 appearance-none">
+                            <option value="infant">Infant (0-18 months)</option>
+                            <option value="toddler" selected>Toddler (1.5 - 3 years)</option>
+                            <option value="preschool">Preschool (3 - 5 years)</option>
+                            <option value="elementary">Elementary (5+ years)</option>
                         </select>
                     </div>
                     <button type="submit" class="w-full bg-brand-green text-white font-bold py-4 rounded-xl btn-shadow hover:opacity-90 transition-all text-lg mt-4">
@@ -106,6 +104,19 @@
                     <i class="ph-fill ph-check-circle text-6xl text-brand-green mb-4"></i>
                     <h4 class="text-xl font-bold">Application Received!</h4>
                     <p class="text-slate-500 mt-2">Thank you for your interest. We'll reach out to your email as soon as a new beta cohort begins.</p>
+                </div>
+                
+                <div id="age-restriction-msg" class="hidden text-center py-8">
+                    <i class="ph-fill ph-info text-6xl text-blue-500 mb-4"></i>
+                    <h4 class="text-xl font-bold">Check back soon!</h4>
+                    <p class="text-slate-500 mt-2">Our private beta is currently focused exclusively on toddlers and preschoolers (ages 1.5–5). We'll announce expansion to other age groups shortly!</p>
+                    <button onclick="window.location.reload()" class="mt-6 text-sm text-emerald-600 font-bold hover:underline">Try with another age group</button>
+                </div>
+
+                <div id="error-msg" class="hidden text-center py-8">
+                    <i class="ph-fill ph-warning-circle text-6xl text-red-500 mb-4"></i>
+                    <h4 class="text-xl font-bold">Something went wrong</h4>
+                    <p class="text-slate-500 mt-2">We couldn't process your request. Please refresh and try again.</p>
                 </div>
 
                 <p class="text-[10px] text-slate-400 mt-6 text-center italic">
@@ -160,12 +171,48 @@
     <script>
         const form = document.getElementById('beta-form');
         const success = document.getElementById('success-msg');
+        const error = document.getElementById('error-msg');
+        const ageRestriction = document.getElementById('age-restriction-msg');
 
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            form.classList.add('hidden');
-            success.classList.remove('hidden');
-            console.log('Beta signup received.');
+            
+            // --- AGE VALIDATION ---
+            const ageSelect = document.getElementById('child-age-select');
+            const selectedAge = ageSelect.value;
+            
+            if (selectedAge !== 'toddler' && selectedAge !== 'preschool') {
+                form.classList.add('hidden');
+                ageRestriction.classList.remove('hidden');
+                console.log('User ineligible due to age group focus.');
+                return;
+            }
+
+            // Show loading state on button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing...";
+
+            try {
+                const formData = new FormData(form);
+                
+                // Submit to MailerLite using fetch
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                // If fetch works or fails gracefully:
+                form.classList.add('hidden');
+                success.classList.remove('hidden');
+                console.log('Beta signup successfully submitted to MailerLite.');
+
+            } catch (err) {
+                console.error('Submission error:', err);
+                form.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
         });
     </script>
 </body>
