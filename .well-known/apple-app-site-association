@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "65632DB978.com.skillsprouts.myapp",
+        "paths": ["/courseDetails/*", "/courseDetails"]
+      }
+    ]
+  }
+}

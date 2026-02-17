@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.skillsprouts.myapp",
+      "sha256_cert_fingerprints": [
+        "7C:7F:22:CB:D3:30:58:81:DF:C3:D5:A3:9E:A4:C9:24:DE:08:C1:30:95:88:A5:B3:B7:C2:0B:E7:7C:16:C7:15"
+      ]
+    }
+  }
+]
