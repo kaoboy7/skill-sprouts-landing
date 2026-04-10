@@ -10,6 +10,16 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        /* Surface #F9FAFB; accent Colors.indigo #3F51B5 */
+        .cta-button {
+            transition: background-color 0.3s ease;
+        }
+        .btn-indigo {
+            background-color: #3f51b5;
+        }
+        .btn-indigo:hover {
+            background-color: #303f9f;
+        }
         /* Style for markdown-like content */
         .content h1 {
             font-size: 2.25rem; /* text-3xl */
@@ -21,7 +31,7 @@
             font-weight: 600; /* font-semibold */
             margin-top: 2rem;
             margin-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+            border-bottom: 1px solid #e0e7ff; /* indigo-100 */
             padding-bottom: 0.25rem;
         }
         .content h3 {
@@ -47,24 +57,24 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-700 leading-normal">
+<body class="bg-[#f9fafb] text-gray-700 leading-normal">
 
     <!-- Header / Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-[#f9fafb] shadow-sm sticky top-0 z-50 border-b border-gray-200/80">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-2">
                     <img src="skill_sprouts_logo.png" alt="Skill Sprouts Logo" class="h-12 w-auto"> <!-- Adjust 'h-8' (height) as needed -->
                 <span class="text-xl font-bold text-gray-800">Skill Sprouts</span>
             </a>
             <div>
-                <a href="index.html#download" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Get the App</a>
+                <a href="index.html#download" class="px-4 py-2 btn-indigo text-white rounded-lg cta-button">Get the App</a>
             </div>
         </nav>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-12 md:py-16">
-        <article class="content max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-sm">
+        <article class="content max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg border border-gray-200/80 shadow-sm">
             <h1>Terms of Service for Skill Sprouts</h1>
             <p><strong>Last Updated:</strong> 11/14/2025</p>
 
