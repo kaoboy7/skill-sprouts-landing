@@ -9,7 +9,8 @@
 
   var PLAY_STORE =
     'https://play.google.com/store/apps/details?id=com.skillsprouts.myapp';
-  var APP_STORE = 'https://apps.apple.com/app/id123456789';
+  var APP_STORE =
+    'https://apps.apple.com/us/app/skill-sprouts/id6754038900';
   var PACKAGE = 'com.skillsprouts.myapp';
   var HOME = '/';
 
