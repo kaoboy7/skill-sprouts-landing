@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3f51b5">
+    <title>Skill Sprouts — Get the app</title>
+    <script>
+(function () {
+    var PLAY =
+        'https://play.google.com/store/apps/details?id=com.skillsprouts.myapp';
+    var IOS =
+        'https://apps.apple.com/us/app/skill-sprouts/id6754038900';
+    var ua = navigator.userAgent || navigator.vendor || '';
+    if (/android/i.test(ua)) {
+        window.location.replace(PLAY);
+        return;
+    }
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+        window.location.replace(IOS);
+        return;
+    }
+})();
+    </script>
+    <style>
+        *,*::before,*::after{box-sizing:border-box}
+        body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(120deg,#eef2ff 0%,#f9fafb 100%);color:#1f2937;display:flex;align-items:center;justify-content:center;padding:1.25rem}
+        .card{background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(15,23,42,.08);max-width:28rem;width:100%;padding:1.75rem 1.5rem;text-align:center}
+        .logo{font-weight:700;font-size:1.125rem;color:#111827;margin-bottom:1rem}
+        h1{font-size:1.375rem;margin:0 0 .5rem;font-weight:700}
+        p{font-size:.9375rem;line-height:1.5;color:#4b5563;margin:0 0 1rem}
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.25rem;border-radius:8px;font-weight:600;font-size:.9375rem;text-decoration:none;margin:.25rem}
+        .btn-primary{background:#3f51b5;color:#fff}
+        .btn-primary:hover{background:#303f9f}
+        .btn-outline{border:1px solid #e5e7eb;color:#374151;background:#f9fafb}
+        .stores{display:flex;flex-direction:column;gap:.75rem;align-items:center;margin-top:1rem}
+        @media(min-width:480px){.stores{flex-direction:row;justify-content:center;flex-wrap:wrap}}
+        .back{margin-top:1.25rem}
+        .back a{color:#3f51b5;font-weight:500;text-decoration:none}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">Skill Sprouts</div>
+        <h1>Get the app</h1>
+        <p>On a phone or tablet, this page sends you to the right store. On desktop, pick a store below.</p>
+        <div class="stores">
+            <a class="btn btn-primary" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">App Store</a>
+            <a class="btn btn-outline" href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" target="_blank" rel="noopener noreferrer">Google Play</a>
+        </div>
+        <p class="back"><a href="/">← Back to website</a></p>
+    </div>
+</body>
+</html>
