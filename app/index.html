@@ -69,10 +69,12 @@
     </section>
     <script>
     document.getElementById('btn-appstore').addEventListener('click', function() {
-        fbq('trackCustom', 'ClickedDownload', {platform: 'ios'});
+        fbq('track', 'Lead', {content_name: 'AppStore'});
+        fbq('track', 'Purchase', {content_name: 'AppStore'});
     });
     document.getElementById('btn-googleplay').addEventListener('click', function() {
-        fbq('trackCustom', 'ClickedDownload', {platform: 'android'});
+        fbq('track', 'Lead', {content_name: 'GooglePlay'});
+        fbq('track', 'Purchase', {content_name: 'GooglePlay'});
     });
     </script>
 </body>
