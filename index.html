@@ -173,9 +173,11 @@
     <script>
     document.getElementById('btn-appstore').addEventListener('click', function() {
         fbq('track', 'Lead', {content_name: 'AppStore'});
+        fbq('track', 'Purchase', {content_name: 'AppStore'});
     });
     document.getElementById('btn-googleplay').addEventListener('click', function() {
-        fbq('track', 'Lead', {content_name: 'GooglePlay'});
+        fbq('track', 'Lead', {content_name: 'AppStore'});
+        fbq('track', 'Purchase', {content_name: 'AppStore'});
     });
     </script>
 </body>
