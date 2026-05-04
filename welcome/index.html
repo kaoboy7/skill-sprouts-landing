@@ -62,6 +62,11 @@
       background-color: #3f51b5;
       transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    .stat-card {
+      background: white;
+      border-left: 3px solid #3f51b5;
+    }
   </style>
 </head>
 <body class="bg-[#f9fafb] min-h-screen">
@@ -74,6 +79,16 @@
     <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
       <img src="../skill_sprouts_logo.png" alt="Skill Sprouts" class="h-7" onerror="this.style.display='none'" />
       <span id="stepLabel" class="text-xs text-gray-400 font-medium"></span>
+    </div>
+  </div>
+
+  <!-- Generating overlay -->
+  <div id="loading-overlay" class="hidden fixed inset-0 bg-[#f9fafb] z-40 flex flex-col items-center justify-center px-8 text-center">
+    <div class="text-5xl mb-7">🌱</div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Building your personalized plan…</h2>
+    <p id="loading-msg" class="text-gray-400 text-sm mb-8 h-5 transition-opacity duration-300"></p>
+    <div class="w-56 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      <div id="loading-bar" class="h-1.5 bg-[#3f51b5] rounded-full w-0" style="transition: width 0.6s ease-in-out;"></div>
     </div>
   </div>
 
@@ -194,14 +209,69 @@
       </div>
 
       <!-- ════════════════════════════════════════
-           Screen 5 — Learning Preference
+           Screen 5 — Empathy
            ════════════════════════════════════════ -->
       <div id="screen-5" class="screen">
         <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(4)">
           ← Back
         </button>
+
+        <div class="text-center mb-8">
+          <div class="text-5xl mb-5">💙</div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-3">What you're feeling is completely normal.</h2>
+          <p class="text-gray-500 text-sm leading-relaxed">
+            Every parent here has had moments of doubt, exhaustion, or not knowing what to say. You're not alone—and you're not failing.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3 mb-8">
+          <div class="stat-card rounded-2xl p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-xl leading-none mt-0.5">👪</span>
+              <div>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Most parents feel unprepared</p>
+                <p class="text-gray-500 text-sm leading-relaxed">8 in 10 parents say there are moments they didn't know how to handle—and most felt too ashamed to ask for help.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card rounded-2xl p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-xl leading-none mt-0.5">🔥</span>
+              <div>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Burnout is more common than you think</p>
+                <p class="text-gray-500 text-sm leading-relaxed">Research estimates that up to 1 in 3 parents experiences burnout. It's a sign you care deeply—not that you're doing it wrong.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card rounded-2xl p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-xl leading-none mt-0.5">🌱</span>
+              <div>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Small shifts make a real difference</p>
+                <p class="text-gray-500 text-sm leading-relaxed">Parents who learn just a few practical techniques report feeling noticeably calmer and more confident within weeks—not years.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-center text-gray-500 text-sm italic mb-6">You took the first step by being here. That's what good parenting looks like.</p>
+
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(6)">
+          Let's find what works for you →
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 6 — Learning Preference
+           ════════════════════════════════════════ -->
+      <div id="screen-6" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(5)">
+          ← Back
+        </button>
         <h2 class="text-2xl font-bold text-gray-900 mb-1">How do you prefer to learn?</h2>
-        <p class="text-gray-400 text-sm mb-6">Choose up to 3</p>
+        <p class="text-gray-400 text-sm mb-6">Select all that apply</p>
 
         <div class="flex flex-col gap-3 mb-8" id="learning-options">
           <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('guides', this)">
@@ -236,10 +306,10 @@
       </div>
 
       <!-- ════════════════════════════════════════
-           Screen 6 — Scripts (conditional)
+           Screen 7 — Scripts (conditional)
            ════════════════════════════════════════ -->
-      <div id="screen-6" class="screen">
-        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(5)">
+      <div id="screen-7" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(6)">
           ← Back
         </button>
         <div class="text-center mb-7">
@@ -283,16 +353,16 @@
           </div>
         </div>
 
-        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(7)">
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="showGenerating()">
           Continue
         </button>
       </div>
 
       <!-- ════════════════════════════════════════
-           Screen 7 — Plan Intro
+           Screen 8 — Plan Intro
            ════════════════════════════════════════ -->
-      <div id="screen-7" class="screen">
-        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(state.learningPrefs.indexOf('scripts') !== -1 ? 6 : 5)">
+      <div id="screen-8" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(state.learningPrefs.indexOf('scripts') !== -1 ? 7 : 6)">
           ← Back
         </button>
         <div class="text-center pt-2 mb-8">
@@ -339,15 +409,15 @@
           </div>
         </div>
 
-        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(8)">
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(9)">
           I'm in →
         </button>
       </div>
 
       <!-- ════════════════════════════════════════
-           Screen 8 — Download
+           Screen 9 — Download
            ════════════════════════════════════════ -->
-      <div id="screen-8" class="screen">
+      <div id="screen-9" class="screen">
         <div class="text-center pt-10">
           <div class="text-6xl mb-5">🎉</div>
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Download the app to get started</h2>
@@ -446,8 +516,8 @@
       'Something else'
     ];
 
-    var PROGRESS   = { 1: 0, 2: 13, 3: 25, 4: 38, 5: 50, 6: 63, 7: 75, 8: 100 };
-    var STEP_LABEL = { 1: '', 2: '1 of 6', 3: '2 of 6', 4: '3 of 6', 5: '4 of 6', 6: '5 of 6', 7: '6 of 6', 8: '' };
+    var PROGRESS   = { 1: 0, 2: 11, 3: 22, 4: 33, 5: 44, 6: 56, 7: 67, 8: 78, 9: 100 };
+    var STEP_LABEL = { 1: '', 2: '1 of 7', 3: '2 of 7', 4: '3 of 7', 5: '4 of 7', 6: '5 of 7', 7: '6 of 7', 8: '7 of 7', 9: '' };
 
     function goTo(n) {
       document.getElementById('screen-' + state.currentScreen).classList.remove('active');
@@ -594,23 +664,16 @@
       btn.classList.toggle('cursor-not-allowed', !ok);
     }
 
-    // Screen 5
+    // Screen 6
     function selectLearning(pref, el) {
       var idx = state.learningPrefs.indexOf(pref);
       if (idx !== -1) {
         state.learningPrefs.splice(idx, 1);
         el.classList.remove('selected');
       } else {
-        if (state.learningPrefs.length >= 3) return;
         state.learningPrefs.push(pref);
         el.classList.add('selected');
       }
-      var atMax = state.learningPrefs.length >= 3;
-      document.querySelectorAll('#learning-options .option-card').forEach(function(c) {
-        var isSelected = c.classList.contains('selected');
-        c.classList.toggle('opacity-40', atMax && !isSelected);
-        c.classList.toggle('pointer-events-none', atMax && !isSelected);
-      });
       var btn = document.getElementById('btn-learning-next');
       var ok = state.learningPrefs.length > 0;
       btn.disabled = !ok;
@@ -620,10 +683,39 @@
 
     function continueFromLearning() {
       if (state.learningPrefs.length === 0) return;
-      goTo(state.learningPrefs.indexOf('scripts') !== -1 ? 6 : 7);
+      if (state.learningPrefs.indexOf('scripts') !== -1) {
+        goTo(7);
+      } else {
+        showGenerating();
+      }
     }
 
-    // Screen 8 tracking
+    function showGenerating() {
+      var overlay = document.getElementById('loading-overlay');
+      var bar     = document.getElementById('loading-bar');
+      var msgEl   = document.getElementById('loading-msg');
+      var messages = [
+        'Analyzing your answers…',
+        'Matching guidance to your child\'s age…',
+        'Personalizing your experience…'
+      ];
+      overlay.classList.remove('hidden');
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      msgEl.style.opacity = '1';
+      msgEl.textContent = messages[0];
+      setTimeout(function() { bar.style.transition = 'width 0.7s ease-in-out'; bar.style.width = '35%'; }, 60);
+      setTimeout(function() { msgEl.style.opacity = '0'; }, 800);
+      setTimeout(function() { msgEl.textContent = messages[1]; msgEl.style.opacity = '1'; bar.style.width = '68%'; }, 1000);
+      setTimeout(function() { msgEl.style.opacity = '0'; }, 1800);
+      setTimeout(function() { msgEl.textContent = messages[2]; msgEl.style.opacity = '1'; bar.style.width = '100%'; }, 2000);
+      setTimeout(function() {
+        overlay.classList.add('hidden');
+        goTo(8);
+      }, 2900);
+    }
+
+    // Screen 9 tracking
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('btn-appstore').addEventListener('click', function() {
         if (typeof fbq !== 'undefined') {
