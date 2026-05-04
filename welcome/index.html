@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3f51b5" />
+  <title>Welcome — Skill Sprouts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Facebook Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '295777756288447');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=295777756288447&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Facebook Pixel Code -->
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    .screen { display: none; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-enter { animation: fadeUp 0.22s ease-out forwards; }
+
+    .btn-primary {
+      background-color: #3f51b5;
+      color: white;
+      transition: background-color 0.15s, transform 0.1s;
+    }
+    .btn-primary:not(:disabled):hover  { background-color: #3949ab; }
+    .btn-primary:not(:disabled):active { transform: scale(0.98); }
+
+    .option-card {
+      border: 2px solid #e5e7eb;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .option-card:hover   { border-color: #a5b4fc; }
+    .option-card.selected {
+      border-color: #3f51b5;
+      background-color: #eef2ff;
+    }
+
+    .progress-fill {
+      background-color: #3f51b5;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-[#f9fafb] min-h-screen">
+
+  <!-- Fixed top bar -->
+  <div class="fixed top-0 left-0 right-0 z-50 bg-[#f9fafb]">
+    <div class="h-1 bg-gray-200">
+      <div id="progressBar" class="progress-fill h-1 w-0"></div>
+    </div>
+    <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+      <img src="../skill_sprouts_logo.png" alt="Skill Sprouts" class="h-7" onerror="this.style.display='none'" />
+      <span id="stepLabel" class="text-xs text-gray-400 font-medium"></span>
+    </div>
+  </div>
+
+  <!-- Scrollable content area -->
+  <div class="pt-20 pb-12 px-5 flex justify-center">
+    <div class="w-full max-w-md">
+
+      <!-- ════════════════════════════════════════
+           Screen 1 — Introduction
+           ════════════════════════════════════════ -->
+      <div id="screen-1" class="screen active">
+        <div class="pt-10 text-center">
+          <div class="text-6xl mb-7">🌱</div>
+          <h1 class="text-3xl font-extrabold text-gray-900 leading-tight mb-4">
+            Parenting is hard.<br/>You don't have to figure it out alone.
+          </h1>
+          <p class="text-gray-500 text-base leading-relaxed mb-10">
+            Tell us what's going on at home—we'll personalize simple, practical guidance for you.
+          </p>
+        </div>
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(2)">
+          Let's get started
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 2 — Age Selection
+           ════════════════════════════════════════ -->
+      <div id="screen-2" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(1)">
+          ← Back
+        </button>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">How old are your kids?</h2>
+        <p class="text-gray-400 text-sm mb-6">Select all that apply</p>
+
+        <div class="flex flex-col gap-3 mb-8">
+          <div class="option-card rounded-2xl p-4 flex items-center gap-4" onclick="toggleAge('infant', this)">
+            <span class="text-3xl leading-none">👶</span>
+            <div>
+              <div class="font-semibold text-gray-800">Infant</div>
+              <div class="text-gray-400 text-sm">0–12 months</div>
+            </div>
+            <div class="ml-auto w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 age-check">
+              <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="option-card rounded-2xl p-4 flex items-center gap-4" onclick="toggleAge('toddler', this)">
+            <span class="text-3xl leading-none">🚼</span>
+            <div>
+              <div class="font-semibold text-gray-800">Toddler</div>
+              <div class="text-gray-400 text-sm">1–3 years</div>
+            </div>
+            <div class="ml-auto w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 age-check">
+              <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="option-card rounded-2xl p-4 flex items-center gap-4" onclick="toggleAge('preschool', this)">
+            <span class="text-3xl leading-none">🧒</span>
+            <div>
+              <div class="font-semibold text-gray-800">Preschool</div>
+              <div class="text-gray-400 text-sm">4–5 years</div>
+            </div>
+            <div class="ml-auto w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 age-check">
+              <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-age-next" class="btn-primary w-full py-4 rounded-2xl text-base font-semibold opacity-40 cursor-not-allowed" disabled onclick="goTo(3)">
+          Continue
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 3 — Child Challenges
+           ════════════════════════════════════════ -->
+      <div id="screen-3" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(2)">
+          ← Back
+        </button>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">What's been hardest with your child lately?</h2>
+        <p class="text-gray-400 text-sm mb-6">Select all that apply</p>
+
+        <div id="challenges-list" class="flex flex-col gap-2 mb-8">
+          <!-- Populated by buildChallenges() -->
+        </div>
+
+        <button id="btn-challenge-next" class="btn-primary w-full py-4 rounded-2xl text-base font-semibold opacity-40 cursor-not-allowed" disabled onclick="goTo(4)">
+          Continue
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 4 — Parent Feelings
+           ════════════════════════════════════════ -->
+      <div id="screen-4" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(3)">
+          ← Back
+        </button>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">What feels hardest for you in these moments?</h2>
+        <p class="text-gray-400 text-sm mb-6">We'll tailor how we guide you—not just what we recommend.</p>
+
+        <div id="parent-feelings-list" class="flex flex-col gap-2 mb-8">
+          <!-- Populated by buildParentFeelings() -->
+        </div>
+
+        <button id="btn-feelings-next" class="btn-primary w-full py-4 rounded-2xl text-base font-semibold opacity-40 cursor-not-allowed" disabled onclick="goTo(5)">
+          Continue
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 5 — Learning Preference
+           ════════════════════════════════════════ -->
+      <div id="screen-5" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(4)">
+          ← Back
+        </button>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">How do you prefer to learn?</h2>
+        <p class="text-gray-400 text-sm mb-6">Choose up to 3</p>
+
+        <div class="flex flex-col gap-3 mb-8" id="learning-options">
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('guides', this)">
+            <span class="text-xl leading-none">⚡</span>
+            <span class="font-medium text-gray-800 text-sm">Quick, bite-sized guides I can use right away</span>
+          </div>
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('scripts', this)">
+            <span class="text-xl leading-none">💬</span>
+            <span class="font-medium text-gray-800 text-sm">Simple scripts I can use in the moment (what to say &amp; do)</span>
+          </div>
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('audio', this)">
+            <span class="text-xl leading-none">🎧</span>
+            <span class="font-medium text-gray-800 text-sm">Audio I can listen to on the go</span>
+          </div>
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('daily', this)">
+            <span class="text-xl leading-none">📅</span>
+            <span class="font-medium text-gray-800 text-sm">Daily action steps to build habits</span>
+          </div>
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('plans', this)">
+            <span class="text-xl leading-none">📋</span>
+            <span class="font-medium text-gray-800 text-sm">Structured plans that guide me from start to finish</span>
+          </div>
+          <div class="option-card rounded-2xl p-4 flex items-center gap-3" onclick="selectLearning('mix', this)">
+            <span class="text-xl leading-none">✨</span>
+            <span class="font-medium text-gray-800 text-sm">A mix of everything</span>
+          </div>
+        </div>
+
+        <button id="btn-learning-next" class="btn-primary w-full py-4 rounded-2xl text-base font-semibold opacity-40 cursor-not-allowed" disabled onclick="continueFromLearning()">
+          Continue
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 6 — Scripts (conditional)
+           ════════════════════════════════════════ -->
+      <div id="screen-6" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(5)">
+          ← Back
+        </button>
+        <div class="text-center mb-7">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Here's something you can try right now</h2>
+          <p class="text-gray-500 text-sm">Based on what you shared, here are simple scripts for real moments.</p>
+        </div>
+
+        <!-- Card: Tantrums -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Tantrums</div>
+          <p class="text-gray-400 text-sm mb-3">When your child is melting down…</p>
+          <div class="bg-red-50 border border-red-100 rounded-xl p-3 mb-2">
+            <div class="text-xs font-semibold text-red-400 mb-1">Don't say</div>
+            <p class="text-gray-700 text-sm italic">"Stop crying right now."</p>
+          </div>
+          <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-2">
+            <div class="text-xs font-semibold text-green-600 mb-1">Say this instead</div>
+            <p class="text-gray-700 text-sm italic">"I see you're upset. It's okay to have big feelings. I'm right here with you."</p>
+          </div>
+          <div class="bg-[#eef2ff] border border-indigo-100 rounded-xl p-3">
+            <div class="text-xs font-semibold text-[#3f51b5] mb-1">Why it works</div>
+            <p class="text-gray-600 text-sm">It calms the moment instead of escalating it.</p>
+          </div>
+        </div>
+
+        <!-- Card: Not Listening -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-8">
+          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Not Listening</div>
+          <p class="text-gray-400 text-sm mb-3">When your child ignores you…</p>
+          <div class="bg-red-50 border border-red-100 rounded-xl p-3 mb-2">
+            <div class="text-xs font-semibold text-red-400 mb-1">Don't say</div>
+            <p class="text-gray-700 text-sm italic">"How many times do I have to tell you?!"</p>
+          </div>
+          <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-2">
+            <div class="text-xs font-semibold text-green-600 mb-1">Say this instead</div>
+            <p class="text-gray-700 text-sm italic">"Shoes on, please. Do you want to walk or hop to the door?"</p>
+          </div>
+          <div class="bg-[#eef2ff] border border-indigo-100 rounded-xl p-3">
+            <div class="text-xs font-semibold text-[#3f51b5] mb-1">Why it works</div>
+            <p class="text-gray-600 text-sm">It gives a simple direction and a small choice—so your child feels in control while still doing what you asked.</p>
+          </div>
+        </div>
+
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(7)">
+          Continue
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 7 — Plan Intro
+           ════════════════════════════════════════ -->
+      <div id="screen-7" class="screen">
+        <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(state.learningPrefs.indexOf('scripts') !== -1 ? 6 : 5)">
+          ← Back
+        </button>
+        <div class="text-center pt-2 mb-8">
+          <div class="text-6xl mb-5">🎯</div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Your plan to make things easier at home</h2>
+          <p class="text-gray-500 text-sm">Here's what Skill Sprouts gives you:</p>
+        </div>
+
+        <div class="flex flex-col gap-3 mb-8">
+          <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
+            <span class="text-2xl leading-none mt-0.5">⚡</span>
+            <div>
+              <div class="font-semibold text-gray-800">Bite-sized lessons</div>
+              <div class="text-gray-400 text-sm">5-minute guides built for real parenting moments</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
+            <span class="text-2xl leading-none mt-0.5">💬</span>
+            <div>
+              <div class="font-semibold text-gray-800">Ready-to-use scripts</div>
+              <div class="text-gray-400 text-sm">Know exactly what to say when things get hard</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
+            <span class="text-2xl leading-none mt-0.5">🎯</span>
+            <div>
+              <div class="font-semibold text-gray-800">Personalized to your family</div>
+              <div class="text-gray-400 text-sm">Guidance matched to your child's age and challenges</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
+            <span class="text-2xl leading-none mt-0.5">📈</span>
+            <div>
+              <div class="font-semibold text-gray-800">Progress you can see</div>
+              <div class="text-gray-400 text-sm">Track growth week by week with your child</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
+            <span class="text-2xl leading-none mt-0.5">✅</span>
+            <div>
+              <div class="font-semibold text-gray-800">Daily parenting goals</div>
+              <div class="text-gray-400 text-sm">Small daily wins that build lasting habits over time</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(8)">
+          I'm in →
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           Screen 8 — Download
+           ════════════════════════════════════════ -->
+      <div id="screen-8" class="screen">
+        <div class="text-center pt-10">
+          <div class="text-6xl mb-5">🎉</div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Download the app to get started</h2>
+          <p class="text-gray-500 text-sm mb-10">Join thousands of parents building better habits at home.</p>
+
+          <div class="flex flex-col items-center gap-4">
+            <a id="btn-appstore"
+               href="https://apps.apple.com/us/app/skill-sprouts/id6754038900"
+               target="_blank" rel="noopener noreferrer"
+               class="inline-block">
+              <img src="../badge_apple_store.svg" alt="Download on the App Store" class="h-14 w-auto" />
+            </a>
+            <a id="btn-googleplay"
+               href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp"
+               target="_blank" rel="noopener noreferrer"
+               class="inline-block">
+              <img src="../badge_google_play.svg" alt="Get it on Google Play" class="h-14 w-auto" />
+            </a>
+          </div>
+
+          <p class="mt-10">
+            <a href="/" class="text-[#3f51b5] font-medium hover:underline text-sm">← Back to website</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    var state = {
+      selectedAges: [],
+      selectedChallenges: [],
+      selectedFeelings: [],
+      learningPrefs: [],
+      currentScreen: 1
+    };
+
+    var CHALLENGES = {
+      infant: {
+        emoji: '👶',
+        label: 'Infant (0–12 months)',
+        items: [
+          'Feeding (breastfeeding, bottle, or combo)',
+          'Sleep (waking often, short naps)',
+          'Crying & soothing',
+          'Gas, reflux, or fussiness',
+          'Knowing if baby is eating enough',
+          'Pumping & milk supply',
+          'Getting on a routine',
+          'Leaving the house / feeding on the go',
+          'Something else'
+        ]
+      },
+      toddler: {
+        emoji: '🚼',
+        label: 'Toddler (1–3 years)',
+        items: [
+          'Tantrums & big emotions',
+          'Not listening / ignoring instructions',
+          'Picky eating',
+          'Bedtime battles & sleep struggles',
+          'Hitting, biting, or aggressive behavior',
+          'Potty training',
+          'Separation anxiety / clinginess',
+          'Screen time struggles',
+          'Something else'
+        ]
+      },
+      preschool: {
+        emoji: '🧒',
+        label: 'Preschool (4–5 years)',
+        items: [
+          'Not listening / backtalk',
+          'Big emotions & meltdowns',
+          'Building independence & responsibility',
+          'Learning to focus / sit still',
+          'Social skills (shyness, not responding, making friends)',
+          'Picky eating',
+          'Bedtime & routines',
+          'Early learning (reading, math, school readiness)',
+          'Something else'
+        ]
+      }
+    };
+
+    var PARENT_FEELINGS = [
+      'Staying calm when things escalate',
+      'Knowing what to say in the moment',
+      'Being consistent (I give in or change my approach)',
+      'Feeling overwhelmed or exhausted',
+      'Getting my child to actually listen',
+      'Knowing if I\'m doing the right thing',
+      'My partner and I not being on the same page',
+      'Finding the time or energy to deal with it',
+      'Something else'
+    ];
+
+    var PROGRESS   = { 1: 0, 2: 13, 3: 25, 4: 38, 5: 50, 6: 63, 7: 75, 8: 100 };
+    var STEP_LABEL = { 1: '', 2: '1 of 6', 3: '2 of 6', 4: '3 of 6', 5: '4 of 6', 6: '5 of 6', 7: '6 of 6', 8: '' };
+
+    function goTo(n) {
+      document.getElementById('screen-' + state.currentScreen).classList.remove('active');
+      var el = document.getElementById('screen-' + n);
+      el.classList.add('active');
+      el.classList.remove('fade-enter');
+      void el.offsetWidth;
+      el.classList.add('fade-enter');
+      state.currentScreen = n;
+      document.getElementById('progressBar').style.width = (PROGRESS[n] || 0) + '%';
+      document.getElementById('stepLabel').textContent = STEP_LABEL[n] || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (n === 3) buildChallenges();
+      if (n === 4) buildParentFeelings();
+    }
+
+    // Screen 2
+    function toggleAge(age, el) {
+      var idx = state.selectedAges.indexOf(age);
+      var check = el.querySelector('.age-check');
+      var icon  = el.querySelector('svg');
+      if (idx === -1) {
+        state.selectedAges.push(age);
+        el.classList.add('selected');
+        check.style.backgroundColor = '#3f51b5';
+        check.style.borderColor = '#3f51b5';
+        icon.classList.remove('hidden');
+      } else {
+        state.selectedAges.splice(idx, 1);
+        el.classList.remove('selected');
+        check.style.backgroundColor = '';
+        check.style.borderColor = '';
+        icon.classList.add('hidden');
+      }
+      var btn = document.getElementById('btn-age-next');
+      var ok = state.selectedAges.length > 0;
+      btn.disabled = !ok;
+      btn.classList.toggle('opacity-40', !ok);
+      btn.classList.toggle('cursor-not-allowed', !ok);
+    }
+
+    // Screen 3
+    function buildChallenges() {
+      state.selectedChallenges = [];
+      var list = document.getElementById('challenges-list');
+      list.innerHTML = '';
+      state.selectedAges.forEach(function(age) {
+        var data = CHALLENGES[age];
+        var header = document.createElement('div');
+        header.className = 'flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wide mt-4 mb-1';
+        header.innerHTML = '<span>' + data.emoji + '</span><span>' + data.label + '</span>';
+        list.appendChild(header);
+        data.items.forEach(function(item) {
+          var card = document.createElement('div');
+          card.className = 'option-card rounded-xl p-3 flex items-center gap-3';
+          card.innerHTML =
+            '<div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center flex-shrink-0 ch-check">' +
+              '<svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">' +
+                '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>' +
+              '</svg>' +
+            '</div>' +
+            '<span class="text-gray-700 text-sm">' + item + '</span>';
+          card.addEventListener('click', function() { toggleChallenge(item, card); });
+          list.appendChild(card);
+        });
+      });
+      syncChallengeBtn();
+    }
+
+    function toggleChallenge(item, el) {
+      var idx = state.selectedChallenges.indexOf(item);
+      var box  = el.querySelector('.ch-check');
+      var icon = el.querySelector('svg');
+      if (idx === -1) {
+        state.selectedChallenges.push(item);
+        el.classList.add('selected');
+        box.style.backgroundColor = '#3f51b5';
+        box.style.borderColor = '#3f51b5';
+        icon.classList.remove('hidden');
+      } else {
+        state.selectedChallenges.splice(idx, 1);
+        el.classList.remove('selected');
+        box.style.backgroundColor = '';
+        box.style.borderColor = '';
+        icon.classList.add('hidden');
+      }
+      syncChallengeBtn();
+    }
+
+    function syncChallengeBtn() {
+      var btn = document.getElementById('btn-challenge-next');
+      var ok = state.selectedChallenges.length > 0;
+      btn.disabled = !ok;
+      btn.classList.toggle('opacity-40', !ok);
+      btn.classList.toggle('cursor-not-allowed', !ok);
+    }
+
+    // Screen 4
+    function buildParentFeelings() {
+      state.selectedFeelings = [];
+      var list = document.getElementById('parent-feelings-list');
+      list.innerHTML = '';
+      PARENT_FEELINGS.forEach(function(item) {
+        var card = document.createElement('div');
+        card.className = 'option-card rounded-xl p-3 flex items-center gap-3';
+        card.innerHTML =
+          '<div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center flex-shrink-0 pf-check">' +
+            '<svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>' +
+            '</svg>' +
+          '</div>' +
+          '<span class="text-gray-700 text-sm">' + item + '</span>';
+        card.addEventListener('click', function() { toggleFeeling(item, card); });
+        list.appendChild(card);
+      });
+      syncFeelingsBtn();
+    }
+
+    function toggleFeeling(item, el) {
+      var idx = state.selectedFeelings.indexOf(item);
+      var box  = el.querySelector('.pf-check');
+      var icon = el.querySelector('svg');
+      if (idx === -1) {
+        state.selectedFeelings.push(item);
+        el.classList.add('selected');
+        box.style.backgroundColor = '#3f51b5';
+        box.style.borderColor = '#3f51b5';
+        icon.classList.remove('hidden');
+      } else {
+        state.selectedFeelings.splice(idx, 1);
+        el.classList.remove('selected');
+        box.style.backgroundColor = '';
+        box.style.borderColor = '';
+        icon.classList.add('hidden');
+      }
+      syncFeelingsBtn();
+    }
+
+    function syncFeelingsBtn() {
+      var btn = document.getElementById('btn-feelings-next');
+      var ok = state.selectedFeelings.length > 0;
+      btn.disabled = !ok;
+      btn.classList.toggle('opacity-40', !ok);
+      btn.classList.toggle('cursor-not-allowed', !ok);
+    }
+
+    // Screen 5
+    function selectLearning(pref, el) {
+      var idx = state.learningPrefs.indexOf(pref);
+      if (idx !== -1) {
+        state.learningPrefs.splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        if (state.learningPrefs.length >= 3) return;
+        state.learningPrefs.push(pref);
+        el.classList.add('selected');
+      }
+      var atMax = state.learningPrefs.length >= 3;
+      document.querySelectorAll('#learning-options .option-card').forEach(function(c) {
+        var isSelected = c.classList.contains('selected');
+        c.classList.toggle('opacity-40', atMax && !isSelected);
+        c.classList.toggle('pointer-events-none', atMax && !isSelected);
+      });
+      var btn = document.getElementById('btn-learning-next');
+      var ok = state.learningPrefs.length > 0;
+      btn.disabled = !ok;
+      btn.classList.toggle('opacity-40', !ok);
+      btn.classList.toggle('cursor-not-allowed', !ok);
+    }
+
+    function continueFromLearning() {
+      if (state.learningPrefs.length === 0) return;
+      goTo(state.learningPrefs.indexOf('scripts') !== -1 ? 6 : 7);
+    }
+
+    // Screen 8 tracking
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('btn-appstore').addEventListener('click', function() {
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Lead', { content_name: 'AppStore' });
+          fbq('track', 'Purchase', { content_name: 'AppStore' });
+        }
+      });
+      document.getElementById('btn-googleplay').addEventListener('click', function() {
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Lead', { content_name: 'GooglePlay' });
+          fbq('track', 'Purchase', { content_name: 'GooglePlay' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
