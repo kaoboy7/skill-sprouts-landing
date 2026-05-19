@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#3f51b5" />
-  <title>Fix Picky Eating — Skill Sprouts</title>
+  <title>Welcome — Skill Sprouts</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,8 +84,8 @@
 
   <!-- Generating overlay -->
   <div id="loading-overlay" class="hidden fixed inset-0 bg-[#f9fafb] z-40 flex flex-col items-center justify-center px-8 text-center">
-    <div class="text-5xl mb-7">🥦</div>
-    <h2 class="text-xl font-bold text-gray-900 mb-2">Building your picky eating plan…</h2>
+    <div class="text-5xl mb-7">🌱</div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Building your personalized plan…</h2>
     <p id="loading-msg" class="text-gray-400 text-sm mb-8 h-5 transition-opacity duration-300"></p>
     <div class="w-56 h-1.5 bg-gray-200 rounded-full overflow-hidden">
       <div id="loading-bar" class="h-1.5 bg-[#3f51b5] rounded-full w-0" style="transition: width 0.6s ease-in-out;"></div>
@@ -101,16 +101,16 @@
            ════════════════════════════════════════ -->
       <div id="screen-1" class="screen active">
         <div class="pt-10 text-center">
-          <div class="text-6xl mb-7">🍽️</div>
+          <div class="text-6xl mb-7">🌱</div>
           <h1 class="text-3xl font-extrabold text-gray-900 leading-tight mb-4">
-            Is every mealtime a battle with your toddler?
+            Parenting is hard.<br/>You don't have to figure it out alone.
           </h1>
           <p class="text-gray-500 text-base leading-relaxed mb-10">
-            You've tried everything—cutting food up, making it fun, bribing with dessert. Tell us what's happening and we'll build a plan that actually works.
+            Tell us what's going on at home—we'll personalize simple, practical guidance for you.
           </p>
         </div>
         <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(2)">
-          Yes, help me fix this
+          Let's get started
         </button>
       </div>
 
@@ -121,7 +121,7 @@
         <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(1)">
           ← Back
         </button>
-        <h2 class="text-2xl font-bold text-gray-900 mb-1">How old is your picky eater?</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">How old are your kids?</h2>
         <p class="text-gray-400 text-sm mb-6">Select all that apply</p>
 
         <div class="flex flex-col gap-3 mb-8">
@@ -171,13 +171,13 @@
       </div>
 
       <!-- ════════════════════════════════════════
-           Screen 3 — Mealtime Challenges
+           Screen 3 — Child Challenges
            ════════════════════════════════════════ -->
       <div id="screen-3" class="screen">
         <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(2)">
           ← Back
         </button>
-        <h2 class="text-2xl font-bold text-gray-900 mb-1">What does mealtime look like at your house?</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">What's been hardest with your child lately?</h2>
         <p class="text-gray-400 text-sm mb-6">Select all that apply</p>
 
         <div id="challenges-list" class="flex flex-col gap-2 mb-8">
@@ -196,8 +196,8 @@
         <button class="flex items-center gap-1 text-gray-400 text-sm mb-7 hover:text-gray-600 w-fit" onclick="goTo(3)">
           ← Back
         </button>
-        <h2 class="text-2xl font-bold text-gray-900 mb-1">What's hardest for you about this?</h2>
-        <p class="text-gray-400 text-sm mb-6">We'll personalize how we guide you—not just what we recommend.</p>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">What feels hardest for you in these moments?</h2>
+        <p class="text-gray-400 text-sm mb-6">We'll tailor how we guide you—not just what we recommend.</p>
 
         <div id="parent-feelings-list" class="flex flex-col gap-2 mb-8">
           <!-- Populated by buildParentFeelings() -->
@@ -218,29 +218,29 @@
 
         <div class="text-center mb-8">
           <div class="text-5xl mb-5">💙</div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-3">You're not doing anything wrong.</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-3">What you're feeling is completely normal.</h2>
           <p class="text-gray-500 text-sm leading-relaxed">
-            Picky eating is one of the most stressful and misunderstood parts of toddler parenting. You're not alone—and there is a way through it.
+            Every parent here has had moments of doubt, exhaustion, or not knowing what to say. You're not alone—and you're not failing.
           </p>
         </div>
 
         <div class="flex flex-col gap-3 mb-8">
           <div class="stat-card rounded-2xl p-4 shadow-sm">
             <div class="flex items-start gap-3">
-              <span class="text-xl leading-none mt-0.5">🍽️</span>
+              <span class="text-xl leading-none mt-0.5">👪</span>
               <div>
-                <p class="text-gray-800 text-sm font-semibold mb-1">Picky eating is extremely common</p>
-                <p class="text-gray-500 text-sm leading-relaxed">Up to 50% of toddlers are described as picky eaters by their parents. You're not failing—you're in the majority.</p>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Most parents feel unprepared</p>
+                <p class="text-gray-500 text-sm leading-relaxed">8 in 10 parents say there are moments they didn't know how to handle—and most felt too ashamed to ask for help.</p>
               </div>
             </div>
           </div>
 
           <div class="stat-card rounded-2xl p-4 shadow-sm">
             <div class="flex items-start gap-3">
-              <span class="text-xl leading-none mt-0.5">🧠</span>
+              <span class="text-xl leading-none mt-0.5">🔥</span>
               <div>
-                <p class="text-gray-800 text-sm font-semibold mb-1">It's a developmental phase—not a habit you caused</p>
-                <p class="text-gray-500 text-sm leading-relaxed">Toddlers are biologically wired to be suspicious of new foods. It's a survival instinct. The right approach works <em>with</em> their brain, not against it.</p>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Burnout is more common than you think</p>
+                <p class="text-gray-500 text-sm leading-relaxed">Research estimates that up to 1 in 3 parents experiences burnout. It's a sign you care deeply—not that you're doing it wrong.</p>
               </div>
             </div>
           </div>
@@ -249,17 +249,17 @@
             <div class="flex items-start gap-3">
               <span class="text-xl leading-none mt-0.5">🌱</span>
               <div>
-                <p class="text-gray-800 text-sm font-semibold mb-1">The right approach makes a real difference</p>
-                <p class="text-gray-500 text-sm leading-relaxed">Parents who learn a few pressure-free techniques see their toddlers trying new foods within weeks—without battles or bribery.</p>
+                <p class="text-gray-800 text-sm font-semibold mb-1">Small shifts make a real difference</p>
+                <p class="text-gray-500 text-sm leading-relaxed">Parents who learn just a few practical techniques report feeling noticeably calmer and more confident within weeks—not years.</p>
               </div>
             </div>
           </div>
         </div>
 
-        <p class="text-center text-gray-500 text-sm italic mb-6">Asking for help is exactly what good parents do.</p>
+        <p class="text-center text-gray-500 text-sm italic mb-6">You took the first step by being here. That's what good parenting looks like.</p>
 
         <button class="btn-primary w-full py-4 rounded-2xl text-base font-semibold" onclick="goTo(6)">
-          Show me what works →
+          Let's find what works for you →
         </button>
       </div>
 
@@ -313,43 +313,43 @@
           ← Back
         </button>
         <div class="text-center mb-7">
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Here's something you can try at dinner tonight</h2>
-          <p class="text-gray-500 text-sm">Simple scripts for real mealtime moments—zero pressure, zero bribery.</p>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Here's something you can try right now</h2>
+          <p class="text-gray-500 text-sm">Based on what you shared, here are simple scripts for real moments.</p>
         </div>
 
-        <!-- Card: Refuses new food -->
+        <!-- Card: Tantrums -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
-          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Refusing new foods</div>
-          <p class="text-gray-400 text-sm mb-3">When your toddler pushes the plate away…</p>
+          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Tantrums</div>
+          <p class="text-gray-400 text-sm mb-3">When your child is melting down…</p>
           <div class="bg-red-50 border border-red-100 rounded-xl p-3 mb-2">
             <div class="text-xs font-semibold text-red-400 mb-1">Don't say</div>
-            <p class="text-gray-700 text-sm italic">"Just try one bite. That's all I'm asking!"</p>
+            <p class="text-gray-700 text-sm italic">"Stop crying right now."</p>
           </div>
           <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-2">
             <div class="text-xs font-semibold text-green-600 mb-1">Say this instead</div>
-            <p class="text-gray-700 text-sm italic">"You don't have to eat it. Can you just smell it? Or poke it with your fork?"</p>
+            <p class="text-gray-700 text-sm italic">"I see you're upset. It's okay to have big feelings. I'm right here with you."</p>
           </div>
           <div class="bg-[#eef2ff] border border-indigo-100 rounded-xl p-3">
             <div class="text-xs font-semibold text-[#3f51b5] mb-1">Why it works</div>
-            <p class="text-gray-600 text-sm">Removing the eating pressure lowers anxiety and builds curiosity. Repeated low-pressure exposure is the proven path to acceptance.</p>
+            <p class="text-gray-600 text-sm">It calms the moment instead of escalating it.</p>
           </div>
         </div>
 
-        <!-- Card: Only safe foods -->
+        <!-- Card: Not Listening -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-8">
-          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Only wants "safe" foods</div>
-          <p class="text-gray-400 text-sm mb-3">When they want the same 3 things again…</p>
+          <div class="text-xs font-bold text-[#3f51b5] uppercase tracking-widest mb-3">Not Listening</div>
+          <p class="text-gray-400 text-sm mb-3">When your child ignores you…</p>
           <div class="bg-red-50 border border-red-100 rounded-xl p-3 mb-2">
             <div class="text-xs font-semibold text-red-400 mb-1">Don't say</div>
-            <p class="text-gray-700 text-sm italic">"You had that yesterday. You need to eat something different."</p>
+            <p class="text-gray-700 text-sm italic">"How many times do I have to tell you?!"</p>
           </div>
           <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-2">
             <div class="text-xs font-semibold text-green-600 mb-1">Say this instead</div>
-            <p class="text-gray-700 text-sm italic">"I put [their safe food] on your plate. And I added something new next to it—you can totally ignore it if you want."</p>
+            <p class="text-gray-700 text-sm italic">"Shoes on, please. Do you want to walk or hop to the door?"</p>
           </div>
           <div class="bg-[#eef2ff] border border-indigo-100 rounded-xl p-3">
             <div class="text-xs font-semibold text-[#3f51b5] mb-1">Why it works</div>
-            <p class="text-gray-600 text-sm">Food chaining keeps the safe food while slowly expanding what's familiar—so the new food stops feeling like a threat.</p>
+            <p class="text-gray-600 text-sm">It gives a simple direction and a small choice—so your child feels in control while still doing what you asked.</p>
           </div>
         </div>
 
@@ -367,44 +367,44 @@
         </button>
         <div class="text-center pt-2 mb-8">
           <div class="text-6xl mb-5">🎯</div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Your personalized picky eating plan is ready</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Your plan to make things easier at home</h2>
           <p class="text-gray-500 text-sm">Here's what Skill Sprouts gives you:</p>
         </div>
 
         <div class="flex flex-col gap-3 mb-8">
           <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
-            <span class="text-2xl leading-none mt-0.5">🥦</span>
+            <span class="text-2xl leading-none mt-0.5">⚡</span>
             <div>
-              <div class="font-semibold text-gray-800">Step-by-step picky eating plan</div>
-              <div class="text-gray-400 text-sm">Built around your toddler's specific food struggles and age</div>
+              <div class="font-semibold text-gray-800">Bite-sized lessons</div>
+              <div class="text-gray-400 text-sm">5-minute guides built for real parenting moments</div>
             </div>
           </div>
           <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
             <span class="text-2xl leading-none mt-0.5">💬</span>
             <div>
-              <div class="font-semibold text-gray-800">What-to-say scripts for mealtimes</div>
-              <div class="text-gray-400 text-sm">Exact words for the moment they push the plate away—no bribery needed</div>
+              <div class="font-semibold text-gray-800">Ready-to-use scripts</div>
+              <div class="text-gray-400 text-sm">Know exactly what to say when things get hard</div>
             </div>
           </div>
           <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
-            <span class="text-2xl leading-none mt-0.5">🌱</span>
+            <span class="text-2xl leading-none mt-0.5">🎯</span>
             <div>
-              <div class="font-semibold text-gray-800">New food introduction guides</div>
-              <div class="text-gray-400 text-sm">Science-backed exposure techniques that expand their palate without pressure</div>
+              <div class="font-semibold text-gray-800">Personalized to your family</div>
+              <div class="text-gray-400 text-sm">Guidance matched to your child's age and challenges</div>
             </div>
           </div>
           <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
             <span class="text-2xl leading-none mt-0.5">📈</span>
             <div>
               <div class="font-semibold text-gray-800">Progress you can see</div>
-              <div class="text-gray-400 text-sm">Track new foods accepted week by week—momentum is motivating</div>
+              <div class="text-gray-400 text-sm">Track growth week by week with your child</div>
             </div>
           </div>
           <div class="bg-white rounded-2xl p-4 flex items-start gap-4 shadow-sm border border-gray-100">
             <span class="text-2xl leading-none mt-0.5">✅</span>
             <div>
-              <div class="font-semibold text-gray-800">Nutrition peace of mind</div>
-              <div class="text-gray-400 text-sm">Know your toddler is getting what they need while you work on expanding</div>
+              <div class="font-semibold text-gray-800">Daily parenting goals</div>
+              <div class="text-gray-400 text-sm">Small daily wins that build lasting habits over time</div>
             </div>
           </div>
         </div>
@@ -421,7 +421,7 @@
         <div class="text-center pt-10">
           <div class="text-6xl mb-5">🎉</div>
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Download the app to get started</h2>
-          <p class="text-gray-500 text-sm mb-10">Join thousands of parents who've turned mealtime battles into wins.</p>
+          <p class="text-gray-500 text-sm mb-10">Join thousands of parents building better habits at home.</p>
 
           <div class="flex flex-col items-center gap-4">
             <a id="btn-appstore"
@@ -461,12 +461,14 @@
         emoji: '👶',
         label: 'Infant (0–12 months)',
         items: [
-          'Starting solids / introducing foods',
-          'Refusing purees or textures',
           'Feeding (breastfeeding, bottle, or combo)',
           'Sleep (waking often, short naps)',
           'Crying & soothing',
+          'Gas, reflux, or fussiness',
+          'Knowing if baby is eating enough',
+          'Pumping & milk supply',
           'Getting on a routine',
+          'Leaving the house / feeding on the go',
           'Something else'
         ]
       },
@@ -474,15 +476,14 @@
         emoji: '🚼',
         label: 'Toddler (1–3 years)',
         items: [
-          'Only eats 5 foods or fewer',
-          'Gags, cries, or melts down at new foods',
-          'Throws food or pushes the plate away',
-          'Foods can\'t touch each other',
-          'Only wants processed or "kid" foods',
-          'Mealtime ends in tears (theirs or mine)',
-          'Worried about their nutrition and growth',
-          'Tantrums & big emotions (outside mealtimes)',
+          'Tantrums & big emotions',
+          'Not listening / ignoring instructions',
+          'Picky eating',
           'Bedtime battles & sleep struggles',
+          'Hitting, biting, or aggressive behavior',
+          'Potty training',
+          'Separation anxiety / clinginess',
+          'Screen time struggles',
           'Something else'
         ]
       },
@@ -490,53 +491,35 @@
         emoji: '🧒',
         label: 'Preschool (4–5 years)',
         items: [
-          'Refuses almost everything except a few "safe" foods',
-          'Extreme texture or smell sensitivity',
-          'Mealtime is a daily power struggle',
-          'Won\'t try anything new, even once',
-          'Eating anxiety at school lunches or parties',
-          'Worried about nutrition and whether they\'re thriving',
-          'Not listening / backtalk (outside mealtimes)',
+          'Not listening / backtalk',
           'Big emotions & meltdowns',
+          'Building independence & responsibility',
+          'Learning to focus / sit still',
+          'Social skills (shyness, not responding, making friends)',
+          'Picky eating',
+          'Bedtime & routines',
+          'Early learning (reading, math, school readiness)',
           'Something else'
         ]
       }
     };
 
     var PARENT_FEELINGS = [
-      'Worrying my child isn\'t getting enough nutrition',
-      'Exhausted by the daily mealtime battles',
-      'Not knowing how to introduce new foods without a meltdown',
-      'Guilt about what I\'m serving (or not serving)',
-      'Afraid I\'m making it worse by reacting the wrong way',
-      'Feeling judged by family or other parents',
-      'My partner and I handle it differently',
-      'Wondering if something is "wrong" with my child',
+      'Staying calm when things escalate',
+      'Knowing what to say in the moment',
+      'Being consistent (I give in or change my approach)',
+      'Feeling overwhelmed or exhausted',
+      'Getting my child to actually listen',
+      'Knowing if I\'m doing the right thing',
+      'My partner and I not being on the same page',
+      'Finding the time or energy to deal with it',
       'Something else'
     ];
 
     var PROGRESS   = { 1: 0, 2: 11, 3: 22, 4: 33, 5: 44, 6: 56, 7: 67, 8: 78, 9: 100 };
     var STEP_LABEL = { 1: '', 2: '1 of 7', 3: '2 of 7', 4: '3 of 7', 5: '4 of 7', 6: '5 of 7', 7: '6 of 7', 8: '7 of 7', 9: '' };
 
-    var STEP_TRACKING = {
-      1: { step_number: 1, question: 'intro' },
-      2: { step_number: 2, question: 'how_old' },
-      3: { step_number: 3, question: 'mealtime_challenges' },
-      4: { step_number: 4, question: 'parent_feelings' },
-      5: { step_number: 5, question: 'empathy' },
-      6: { step_number: 6, question: 'learning_preference' },
-      7: { step_number: 7, question: 'scripts_preview' },
-      8: { step_number: 8, question: 'plan_intro' }
-    };
-
-    function trackStep(fromScreen) {
-      var t = STEP_TRACKING[fromScreen];
-      if (!t || typeof fbq === 'undefined') return;
-      fbq('trackCustom', 'Survey_Progress', { step_number: t.step_number, question: t.question });
-    }
-
     function goTo(n) {
-      if (n > state.currentScreen) trackStep(state.currentScreen);
       document.getElementById('screen-' + state.currentScreen).classList.remove('active');
       var el = document.getElementById('screen-' + n);
       el.classList.add('active');
@@ -712,9 +695,9 @@
       var bar     = document.getElementById('loading-bar');
       var msgEl   = document.getElementById('loading-msg');
       var messages = [
-        'Analyzing your toddler\'s eating patterns…',
-        'Building your picky eating plan…',
-        'Almost ready…'
+        'Analyzing your answers…',
+        'Matching guidance to your child\'s age…',
+        'Personalizing your experience…'
       ];
       overlay.classList.remove('hidden');
       bar.style.transition = 'none';
