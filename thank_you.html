@@ -1,100 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You - Skill Sprouts</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Add subtle gradient */
-        .gradient-bg {
-            background-image: linear-gradient(120deg, #e0f2f7 0%, #ffffff 100%);
-        }
-        .cta-button {
-            transition: background-color 0.3s ease;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You're in — Skill Sprouts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+  <style>
+    .thankyou-section {
+      min-height: 80vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 80px 28px;
+    }
+    .thankyou-inner {
+      max-width: 560px; width: 100%; text-align: center;
+    }
+    .thankyou-inner h1 {
+      font-family: 'Newsreader', serif; font-weight: 400;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.05; letter-spacing: -0.02em;
+      margin: 24px 0 16px;
+    }
+    .thankyou-inner h1 em { color: var(--terracotta); font-style: italic; }
+    .thankyou-inner > p {
+      font-family: 'Newsreader', serif; font-size: 18px;
+      color: var(--ink-soft); line-height: 1.6;
+      margin: 0 0 40px;
+    }
+    .thankyou-card {
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 24px 22px 26px 22px;
+      padding: 32px 28px;
+      text-align: left;
+      margin-bottom: 36px;
+    }
+    .thankyou-card h2 {
+      font-family: 'Newsreader', serif; font-weight: 400;
+      font-size: 22px; margin: 0 0 20px;
+    }
+    .thankyou-card ul {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .thankyou-card li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: var(--ink-soft); line-height: 1.5;
+    }
+    .thankyou-card li .check {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--sage);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .store-btns {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 leading-normal">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <a href="index.html" class="flex items-center space-x-2">
-                    <img src="skill_sprouts_logo.png" alt="Skill Sprouts Logo" class="h-12 w-auto">
-                    <span class="text-xl font-bold text-gray-800">Skill Sprouts</span>
-                </a>
-            </div>
-            <div>
-                <a href="index.html" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cta-button">Back to Home</a>
-            </div>
-        </nav>
-    </header>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <span class="mark">
+        <svg viewBox="0 0 100 100" width="32" height="32">
+          <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2.2"/>
+          <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+          <path d="M50 70 Q48 53 50 36" fill="none" stroke="#3D5A3C" stroke-width="2.6" stroke-linecap="round"/>
+          <ellipse cx="40" cy="56" rx="10" ry="6.5" transform="rotate(-30 40 56)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+          <ellipse cx="60" cy="46" rx="10" ry="6.5" transform="rotate(30 60 46)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+          <ellipse cx="50" cy="32" rx="11" ry="7" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.6"/>
+        </svg>
+      </span>
+      <span class="wordmark">Skill <em>Sprouts</em></span>
+    </a>
+    <a href="/" class="nav-cta">Back to home</a>
+  </div>
+</nav>
 
-    <!-- Thank You Section -->
-    <section class="gradient-bg py-16 md:py-24 min-h-screen flex items-center">
-        <div class="container mx-auto px-6 text-center">
-            <div class="max-w-2xl mx-auto">
-                <!-- Success Icon -->
-                <div class="mb-6 inline-flex items-center justify-center h-20 w-20 rounded-full bg-green-100 text-green-600">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </div>
-                
-                <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4 leading-tight">Thank You for Joining!</h1>
-                <p class="text-lg md:text-xl text-gray-600 mb-8">
-                    You're all set! We've added you to our waitlist and you'll be among the first to know when Skill Sprouts launches.
-                </p>
-                
-                <div class="bg-white rounded-lg shadow-md p-8 mb-8 text-left">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">What's Next?</h2>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Check your email for a confirmation message</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>We'll send you updates about our progress and launch timeline</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>You'll get early access when Skill Sprouts is ready</span>
-                        </li>
-                    </ul>
-                </div>
-                
-                <a href="index.html" class="inline-block px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 cta-button text-lg">
-                    Return to Home
-                </a>
-            </div>
-        </div>
-    </section>
+<section class="thankyou-section">
+  <div class="thankyou-inner">
+    <svg width="80" height="80" viewBox="0 0 100 100" style="margin: 0 auto;">
+      <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2"/>
+      <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+      <path d="M50 70 Q48 50 50 30" fill="none" stroke="#3D5A3C" stroke-width="2.4" stroke-linecap="round"/>
+      <ellipse cx="40" cy="56" rx="10" ry="6.5" transform="rotate(-30 40 56)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+      <ellipse cx="60" cy="46" rx="10" ry="6.5" transform="rotate(30 60 46)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+      <ellipse cx="50" cy="32" rx="11" ry="7" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.6"/>
+      <g transform="translate(50 32)">
+        <circle cx="-4" cy="1" r="1.3" fill="#F7B6A1" opacity="0.8"/>
+        <circle cx="4" cy="1" r="1.3" fill="#F7B6A1" opacity="0.8"/>
+        <path d="M-3 -0.5 Q0 3.5 3 -0.5" fill="none" stroke="#2A1F17" stroke-width="1.3" stroke-linecap="round"/>
+      </g>
+    </svg>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-400 py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 Skill Sprouts. All rights reserved.</p>
-            <div class="mt-4 space-x-4">
-                <a href="privacy_policy.html" class="hover:text-white">Privacy Policy</a>
-                <a href="terms_of_service.html" class="hover:text-white">Terms of Service</a>
-                <a href="mailto:support@skillsprouts.co" class="hover:text-white">Contact Us</a>
-            </div>
-        </div>
-    </footer>
+    <h1>Your sprout is<br><em>ready to grow.</em></h1>
+    <p>You're all set. Download the app and start your first habit — it takes two minutes.</p>
+
+    <div class="thankyou-card">
+      <h2>What's next?</h2>
+      <ul>
+        <li>
+          <span class="check"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M3 8.5 L7 12 L13.5 4.5" fill="none" stroke="#FFFDF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Download the app from the App Store or Google Play
+        </li>
+        <li>
+          <span class="check"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M3 8.5 L7 12 L13.5 4.5" fill="none" stroke="#FFFDF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Add your child's profile — name and age is all you need
+        </li>
+        <li>
+          <span class="check"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M3 8.5 L7 12 L13.5 4.5" fill="none" stroke="#FFFDF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Pick what's hard this week and add your first habit
+        </li>
+        <li>
+          <span class="check"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M3 8.5 L7 12 L13.5 4.5" fill="none" stroke="#FFFDF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Watch your sprout grow every time you show up
+        </li>
+      </ul>
+    </div>
+
+    <div class="store-btns">
+      <a id="btn-appstore" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer" class="btn-primary">
+        <svg width="14" height="18" viewBox="0 0 384 512" fill="currentColor">
+          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+        </svg>
+        App Store
+      </a>
+      <a id="btn-googleplay" href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+        Google Play
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top: 1px solid var(--line); padding-top: 28px;">
+      <div>© 2026 Skill Sprouts · <em>Made for parents, by parents.</em></div>
+      <div>
+        <a href="privacy_policy.html" style="color:var(--muted); margin-right:16px;">Privacy Policy</a>
+        <a href="terms_of_service.html" style="color:var(--muted);">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
-

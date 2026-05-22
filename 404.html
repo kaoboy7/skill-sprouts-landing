@@ -1,18 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Sprouts</title>
-    <script src="/deeplink-fallback.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skill Sprouts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+  <script src="/deeplink-fallback.js" defer></script>
+  <style>
+    .not-found-section {
+      min-height: 80vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 80px 28px;
+    }
+    .not-found-section .num {
+      font-family: 'Newsreader', serif;
+      font-size: clamp(80px, 15vw, 160px);
+      line-height: 1; color: var(--line);
+      letter-spacing: -0.04em;
+      display: block; margin-bottom: 0;
+    }
+    .not-found-section h1 {
+      font-family: 'Newsreader', serif; font-weight: 400;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1; letter-spacing: -0.02em;
+      margin: 0 0 16px;
+    }
+    .not-found-section h1 em { color: var(--terracotta); font-style: italic; }
+    .not-found-section p {
+      font-family: 'Newsreader', serif;
+      font-size: 17px; color: var(--ink-soft);
+      line-height: 1.6; max-width: 400px; margin: 0 auto 36px;
+    }
+    .not-found-section .btns {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+  </style>
 </head>
-<body style="margin:0;min-height:100vh;background:#f9fafb;">
-    <noscript>
-        <p style="font-family:system-ui,sans-serif;padding:1.5rem;text-align:center;">
-            JavaScript is required to open this link. Visit
-            <a href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp">Google Play</a>
-            or the <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900">App Store</a>.
-        </p>
-    </noscript>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <span class="mark">
+        <svg viewBox="0 0 100 100" width="32" height="32">
+          <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2.2"/>
+          <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+          <path d="M50 70 Q48 53 50 36" fill="none" stroke="#3D5A3C" stroke-width="2.6" stroke-linecap="round"/>
+          <ellipse cx="40" cy="56" rx="10" ry="6.5" transform="rotate(-30 40 56)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+          <ellipse cx="60" cy="46" rx="10" ry="6.5" transform="rotate(30 60 46)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.6"/>
+          <ellipse cx="50" cy="32" rx="11" ry="7" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.6"/>
+        </svg>
+      </span>
+      <span class="wordmark">Skill <em>Sprouts</em></span>
+    </a>
+    <a href="/" class="nav-cta">Back home</a>
+  </div>
+</nav>
+
+<div class="not-found-section">
+  <div>
+    <span class="num">404</span>
+    <h1>This page took a<br><em>little nap.</em></h1>
+    <p>The link might be broken, or the page may have moved. No guilt — let's get you back on track.</p>
+    <div class="btns">
+      <a href="/" class="btn-primary">
+        Take me home
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/>
+        </svg>
+      </a>
+      <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer" class="btn-secondary">Get the app</a>
+    </div>
+  </div>
+</div>
+
+<noscript>
+  <p style="font-family:'Manrope',system-ui,sans-serif; padding:1.5rem; text-align:center; color:#5A4A3B;">
+    Visit the <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" style="color:#BC4B51;">App Store</a>
+    or <a href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" style="color:#BC4B51;">Google Play</a>.
+  </p>
+</noscript>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top: 1px solid var(--line); padding-top: 28px;">
+      <div>© 2026 Skill Sprouts · <em>Made for parents, by parents.</em></div>
+      <div>
+        <a href="privacy_policy.html" style="color:var(--muted); margin-right:16px;">Privacy</a>
+        <a href="terms_of_service.html" style="color:var(--muted);">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
