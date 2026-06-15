@@ -723,6 +723,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  if (window.location.hash === '#contact') {
+    window.location.href = 'mailto:support@skillsprouts.co';
+  }
   document.getElementById('btn-appstore').addEventListener('click', function() {
     if (typeof fbq !== 'undefined') {
       fbq('track', 'Lead', { content_name: 'AppStore' });
