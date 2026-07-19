@@ -89,7 +89,7 @@
         <span class="q-tape" style="background:#5B8E7D;">Sprouts setup</span>
         <h1>Let's find your<br><em>starting point.</em></h1>
         <p class="lede">
-          8 quick questions. We'll build you a tiny, daily parenting plan based on what's actually hard right now — no judgment, no pressure.
+          7 quick questions. We'll build you a tiny, daily parenting plan based on what's actually hard right now — no judgment, no overwhelm.
         </p>
         <div class="meta">
           <span>~90 seconds</span>
@@ -110,31 +110,86 @@
       </div>
     </section>
 
-    <!-- Q1: KIDS COUNT -->
-    <section class="quiz-screen" data-step="kids">
-      <span class="q-eyebrow">The basics</span>
-      <h2 class="q-heading">How many <span class="q-squiggle-wrap"><em>little humans</em><svg class="q-squiggle" viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M3 6 C 30 1, 60 9, 95 5 S 160 1, 197 6" fill="none" stroke="#BC4B51" stroke-width="2.4" stroke-linecap="round"/></svg></span> are you parenting?</h2>
-      <p class="q-sub">Each kid gets their own profile, sprout, and plan inside the app.</p>
-      <div class="q-bigchips">
-        <button class="q-bigchip" data-n="1"><span class="n">1</span><span class="lbl">Just one</span></button>
-        <button class="q-bigchip" data-n="2"><span class="n">2</span><span class="lbl">Two</span></button>
-        <button class="q-bigchip" data-n="3"><span class="n">3</span><span class="lbl">Three</span></button>
-        <button class="q-bigchip" data-n="4"><span class="n">4<em>+</em></span><span class="lbl">Four or more</span></button>
-      </div>
-    </section>
-
-    <!-- Q2: AGES -->
+    <!-- Q1: AGES (stage brackets, multi-select) -->
     <section class="quiz-screen" data-step="ages">
       <span class="q-eyebrow">The basics</span>
-      <h2 class="q-heading">How <em>old</em> are they?</h2>
-      <p class="q-sub">Tap the age. We'll match habits to where they are developmentally.</p>
-      <div class="q-ages-list"></div>
+      <h2 class="q-heading">How <span class="q-squiggle-wrap"><em>old</em><svg class="q-squiggle" viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M3 6 C 30 1, 60 9, 95 5 S 160 1, 197 6" fill="none" stroke="#BC4B51" stroke-width="2.4" stroke-linecap="round"/></svg></span> are your kid(s)?</h2>
+      <p class="q-sub">Pick every stage that's in your house right now. We'll match habits to where they are developmentally.</p>
+      <div class="q-choices">
+        <button class="q-choice" data-bracket="onway">
+          <span class="swatch">🤰</span>
+          <span>
+            <span class="label">Baby on the way</span>
+            <span class="label-sub">Expecting — getting a head start on what's next.</span>
+          </span>
+          <span class="check"></span>
+        </button>
+        <button class="q-choice" data-bracket="baby">
+          <span class="swatch">🍼</span>
+          <span>
+            <span class="label">Baby</span>
+            <span class="label-sub">0–1 years — brand new to the world.</span>
+          </span>
+          <span class="check"></span>
+        </button>
+        <button class="q-choice" data-bracket="toddler">
+          <span class="swatch">🧸</span>
+          <span>
+            <span class="label">Toddler</span>
+            <span class="label-sub">2–4 years — big feelings, big opinions.</span>
+          </span>
+          <span class="check"></span>
+        </button>
+        <button class="q-choice" data-bracket="preschool">
+          <span class="swatch">🎒</span>
+          <span>
+            <span class="label">Preschooler</span>
+            <span class="label-sub">5–6 years — questions, curiosity, independence.</span>
+          </span>
+          <span class="check"></span>
+        </button>
+      </div>
       <div class="q-footer">
         <button class="q-continue" disabled>
-          Continue
+          <span class="q-continue-label">Pick at least one</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/>
           </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Q1b: AGE FOCUS (only shown when >1 stage chosen) -->
+    <section class="quiz-screen" data-step="agefocus">
+      <span class="q-eyebrow">One at a time</span>
+      <h2 class="q-heading">Let's <em>focus on one</em><br>stage to start.</h2>
+      <p class="q-sub">More than one stage under one roof — you've got your hands full. Habits stick best when you begin with a single focus. Which stage should we build your first plan around? You can add the others anytime in the app.</p>
+      <div class="q-choices">
+        <!-- Rendered by JS from the stages you picked -->
+      </div>
+    </section>
+
+    <!-- INTERSTITIAL: WHY THIS WORKS -->
+    <section class="quiz-screen" data-step="insight1">
+      <span class="q-eyebrow">Fresh off the launchpad</span>
+      <h2 class="q-heading">Brand new — and<br>built to <em>actually help.</em></h2>
+      <p class="q-sub">You just named the hard part. That's the brave bit. Skill Sprouts is new, but every habit inside is grounded in behavior science — and our first families are loving it.</p>
+      <div class="proof-band">
+        <div class="proof-stat">
+          <span class="pv">5.0<svg width="15" height="15" viewBox="0 0 24 24" fill="#F4A259"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg></span>
+          <span class="pl">From our first 3 reviews</span>
+        </div>
+        <div class="proof-stat"><span class="pv">Just<br>launched</span><span class="pl">get in early</span></div>
+        <div class="proof-stat"><span class="pv">2 min<br>a day</span><span class="pl">all it takes to start</span></div>
+      </div>
+      <blockquote class="proof-quote">
+        <p>“I stopped doom-scrolling parenting advice at midnight. Two minutes a day actually stuck — and bedtime feels calmer already.”</p>
+        <cite>One of our early families · ⭐️⭐️⭐️⭐️⭐️</cite>
+      </blockquote>
+      <div class="q-footer center">
+        <button class="q-continue q-advance" data-next="areas">
+          Keep going
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
         </button>
       </div>
     </section>
@@ -272,6 +327,34 @@
       </div>
     </section>
 
+    <!-- INTERSTITIAL: METHOD / SCIENCE -->
+    <section class="quiz-screen" data-step="method">
+      <span class="q-eyebrow">The Skill Sprouts method</span>
+      <h2 class="q-heading">Calmer parenting is just<br><em>tiny reps,</em> repeated.</h2>
+      <p class="q-sub">The hard parenting moments rarely turn on one big talk — they shift through what you do again and again. Behavior science is clear: small, consistent actions rewire how you respond faster than big resolutions that fizzle by Thursday. And your kids learn the pattern by watching yours.</p>
+      <div class="method-steps">
+        <div class="method-step">
+          <span class="ms-n">1</span>
+          <div><div class="ms-t">Pick one tiny parenting habit</div><div class="ms-d">Two minutes, anchored to a moment you already have — the buckle-up, the bedtime tuck-in, the dinner table.</div></div>
+        </div>
+        <div class="method-step">
+          <span class="ms-n">2</span>
+          <div><div class="ms-t">Do it daily — we nudge, you tap</div><div class="ms-d">A gentle reminder, a one-tap check-in. No streak-guilt, no shame spirals when a hard day happens.</div></div>
+        </div>
+        <div class="method-step">
+          <span class="ms-n">3</span>
+          <div><div class="ms-t">Watch it change the room</div><div class="ms-d">Fewer meltdowns, smoother mornings — and a sprout that grows as your consistency does. Small wins, made visible.</div></div>
+        </div>
+      </div>
+      <p class="method-note">“The reps you'll actually do beat the parenting plan you won't.”</p>
+      <div class="q-footer center">
+        <button class="q-continue q-advance" data-next="time">
+          Let's build mine
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
+        </button>
+      </div>
+    </section>
+
     <!-- Q5: TIME -->
     <section class="quiz-screen" data-step="time">
       <span class="q-eyebrow">Realistically</span>
@@ -398,6 +481,28 @@
       </div>
     </section>
 
+    <!-- ACCOUNT GATE -->
+    <section class="quiz-screen" data-step="gate">
+      <div class="gate">
+        <span class="q-tape" style="background:#5B8E7D;">Almost there</span>
+        <h1>Save your plan<br>before it <em>blooms.</em></h1>
+        <p class="lede">Create your free account so your answers and plan are waiting the moment you open the app — no starting over. No spam, we promise.</p>
+        <button class="gate-google" data-action="gate-google">
+          <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+        <div class="gate-or"><span>or</span></div>
+        <div class="gate-email">
+          <input type="email" placeholder="you@email.com" data-action="gate-email-input" autocomplete="email">
+          <button class="gate-continue" data-action="gate-continue">
+            Save it
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
+          </button>
+        </div>
+        <p class="gate-fine">By continuing you agree to our Terms &amp; Privacy Policy. We use your email only to sync your plan to the app — never to spam you.</p>
+      </div>
+    </section>
+
     <!-- RESULTS -->
     <section class="quiz-screen" data-step="results">
       <div class="results-hero">
@@ -439,6 +544,33 @@
         <div class="starter-habits"></div>
       </div>
 
+      <div class="results-section">
+        <div class="label">Also in the app</div>
+        <h3>More than a<br><em>daily to-do.</em></h3>
+        <div class="feat-list">
+          <div class="feat-row">
+            <span class="feat-ic" style="background:#DCEBE5;">
+              <svg width="21" height="21" viewBox="0 0 32 32" fill="none" stroke="#5B8E7D" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 C9 3 5 8 5 14 c0 5 4 8 4 12 h14 c0 -4 4 -7 4 -12 c0 -6 -4 -11 -11 -11 z"/><path d="M12 27 h8"/><path d="M16 14 v6"/></svg>
+            </span>
+            <div>
+              <div class="feat-t">Situation kits</div>
+              <div class="feat-d">In-the-moment scripts for the hard bits — the meltdown, the grocery run, the bedtime standoff. Pull one up right when you need it.</div>
+              <span class="feat-tag">For the tough moments</span>
+            </div>
+          </div>
+          <div class="feat-row">
+            <span class="feat-ic" style="background:#F1E2D5;">
+              <svg width="21" height="21" viewBox="0 0 32 32" fill="none" stroke="#C98A6B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 l3.2 6.8 7.3.8 -5.5 5 1.6 7.2 -6.6 -3.9 -6.6 3.9 1.6 -7.2 -5.5 -5 7.3 -.8 z"/></svg>
+            </span>
+            <div>
+              <div class="feat-t">Challenges</div>
+              <div class="feat-d">Time-boxed group goals — one tiny action a day, alongside thousands of other parents. Finish one and press a bloom into your keepsake garden.</div>
+              <span class="feat-tag">Better, together</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="results-section memory-block">
         <div class="label">Plus</div>
         <h3>The journal, <em>on.</em></h3>
@@ -453,40 +585,113 @@
         <h3>Plant your<br><em>first sprout.</em></h3>
         <p>Download the app. Your plan and answers are waiting — just tap and start watering.</p>
 
-        <div class="store-btns">
-          <a id="btn-appstore" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer" class="store-btn">
-            <svg width="22" height="26" viewBox="0 0 384 512" fill="currentColor">
-              <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-            </svg>
-            <span class="stack">
-              <span class="top">Download on the</span>
-              <span class="bot">App Store</span>
-            </span>
-          </a>
-          <a id="btn-googleplay" href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" target="_blank" rel="noopener noreferrer" class="store-btn">
-            <svg width="22" height="26" viewBox="0 0 512 512" fill="currentColor">
-              <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
-            </svg>
-            <span class="stack">
-              <span class="top">Get it on</span>
-              <span class="bot">Google Play</span>
-            </span>
-          </a>
-        </div>
-        <div class="small-note">Free to download. No credit card to start.</div>
-<!-- 
-        <div class="email-row">
-          <input type="email" placeholder="Or email me my plan" data-action="email-input">
-          <button data-action="email-plan">Send</button>
-        </div>
-        <div class="email-helper">We'll send the download link + your starter habits. No marketing emails, ever.</div> -->
+        <p>Your plan is saved to your account. Start your free week to unlock every habit, all your kids' plans, daily nudges, and the journal — inside the app.</p>
+        <button class="unlock-btn" data-action="to-paywall">
+          Start my 7-day free trial
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
+        </button>
+        <div class="small-note">7 days free · then $49.99/yr · cancel anytime</div>
       </div>
 
       <div style="text-align:center; padding:32px 0 40px;">
         <button data-action="restart" style="background:transparent; border:none; color:var(--ink-soft); font-size:13.5px; font-weight:500; padding:8px 12px; white-space:nowrap;">
           ↺ Retake the quiz
         </button>
-      </div> 
+      </div>
+    </section>
+
+    <!-- PAYWALL -->
+    <section class="quiz-screen" data-step="paywall">
+      <div class="paywall">
+        <svg class="sprout-sm" viewBox="0 0 100 100" width="60" height="60">
+          <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2"/>
+          <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+          <path d="M50 70 Q48 50 50 30" fill="none" stroke="#3D5A3C" stroke-width="2.4" stroke-linecap="round"/>
+          <ellipse cx="40" cy="58" rx="11" ry="7" transform="rotate(-30 40 58)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="60" cy="48" rx="11" ry="7" transform="rotate(30 60 48)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="50" cy="36" rx="11" ry="7" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="50" cy="24" rx="12" ry="8" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.7"/>
+        </svg>
+        <span class="q-eyebrow">Your 7-day free trial</span>
+        <h2 class="pw-title">Everything your plan<br>needs to <em>take root.</em></h2>
+        <ul class="pw-includes">
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8E7D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>Every habit area, fully unlocked</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8E7D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>A tailored plan for each of your kids</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8E7D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>Daily nudges, streaks &amp; growing sprouts</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8E7D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>The one-sentence memory journal</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8E7D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>Co-parent &amp; caregiver sharing</li>
+        </ul>
+        <div class="pw-plans">
+          <button class="pw-plan selected" data-plan="annual">
+            <span class="pw-badge">Save 58%</span>
+            <span class="pw-plan-name">Annual</span>
+            <span class="pw-plan-price">$49.99<em>/yr</em></span>
+            <span class="pw-plan-sub">Just $4.17/mo, billed yearly</span>
+            <span class="pw-radio"></span>
+          </button>
+          <button class="pw-plan" data-plan="monthly">
+            <span class="pw-plan-name">Monthly</span>
+            <span class="pw-plan-price">$9.99<em>/mo</em></span>
+            <span class="pw-plan-sub">Billed monthly, cancel anytime</span>
+            <span class="pw-radio"></span>
+          </button>
+        </div>
+        <div class="pw-timeline">
+          <div class="pw-tl now"><div class="tl-t">Today — full access, free</div><div class="tl-d">Unlock everything and start your first habit right away.</div></div>
+          <div class="pw-tl"><div class="tl-t">Day 5 — a friendly heads-up</div><div class="tl-d">We'll remind you by email before your trial ends. No surprises.</div></div>
+          <div class="pw-tl"><div class="tl-t">Day 7 — trial ends</div><div class="tl-d">Your plan continues unless you cancel. One tap in Settings.</div></div>
+        </div>
+        <button class="pw-cta" data-action="start-trial">
+          Start my free trial
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
+        </button>
+        <div class="pw-sub" data-pw-sub>7 days free, then $49.99/yr. Cancel anytime in Settings.</div>
+        <button class="pw-skip" data-action="skip-trial">Maybe later — continue with the limited free plan</button>
+      </div>
+    </section>
+
+    <!-- HANDOFF -->
+    <section class="quiz-screen" data-step="handoff">
+      <div class="handoff">
+        <svg class="sprout-sm" viewBox="0 0 100 100" width="84" height="84" style="filter:drop-shadow(0 12px 30px rgba(91,142,125,0.28));">
+          <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2"/>
+          <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+          <path d="M50 70 Q48 50 50 30" fill="none" stroke="#3D5A3C" stroke-width="2.4" stroke-linecap="round"/>
+          <ellipse cx="40" cy="58" rx="11" ry="7" transform="rotate(-30 40 58)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="60" cy="48" rx="11" ry="7" transform="rotate(30 60 48)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="50" cy="36" rx="11" ry="7" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+          <ellipse cx="50" cy="24" rx="12" ry="8" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.7"/>
+          <g transform="translate(50 24)">
+            <circle cx="-5" cy="2" r="1.5" fill="#F7B6A1" opacity="0.85"/>
+            <circle cx="5" cy="2" r="1.5" fill="#F7B6A1" opacity="0.85"/>
+            <path d="M-4 -1 Q-3 -2.2 -2 -1" fill="none" stroke="#2A1F17" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M2 -1 Q3 -2.2 4 -1" fill="none" stroke="#2A1F17" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M-3 1.5 Q0 5 3 1.5" fill="none" stroke="#2A1F17" stroke-width="1.4" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <span class="q-tape" style="background:#5B8E7D;">You're all set</span>
+        <h1>Everything's saved.<br>Now let's <em>plant it.</em></h1>
+        <p class="lede">Your trial is active and your whole plan is synced. Open Skill Sprouts on your phone — you'll land right in your plan, already signed in.</p>
+        <div class="handoff-card">
+          <div class="qr" data-qr></div>
+          <div class="handoff-card-side">
+            <div class="hc-title">Scan to open the app</div>
+            <div class="hc-sub">Point your phone camera here. You'll be signed in automatically as <strong data-signed-email>your account</strong> — nothing to re-enter.</div>
+            <div class="store-btns">
+              <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer" class="store-btn">
+                <svg width="18" height="21" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                <span class="stack"><span class="top">Download on the</span><span class="bot">App Store</span></span>
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" target="_blank" rel="noopener noreferrer" class="store-btn">
+                <svg width="18" height="21" viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+                <span class="stack"><span class="top">Get it on</span><span class="bot">Google Play</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <a class="handoff-deep" href="#">Open Skill Sprouts on this device →</a>
+        <div class="handoff-note"><span data-handoff-plan>Free trial active</span> · Plan &amp; answers synced · Cancel anytime</div>
+      </div>
     </section>
 
   </div>
