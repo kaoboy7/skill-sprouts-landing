@@ -2,11 +2,11 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
-import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/+esm';
+import QrCreator from 'https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.es6.min.js';
 
 const _firebaseApp = initializeApp({
   apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
-  authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+  authDomain: 'auth.skillsprouts.co',
   projectId: 'valued-watch-461301-e1',
   storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
   messagingSenderId: '386194120047',
@@ -554,14 +554,34 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   $('[data-action="skip-trial"]').addEventListener('click', () => { state.plan = 'free'; state.trial = false; saveState(); go('handoff'); });
 
   // ── Handoff ───────────────────────────────────────────────
-  async function renderQR() {
+  function _openInApp(handoffToken) {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid) {
+      const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=com.skillsprouts.myapp');
+      window.location.href = `intent://auth?t=${encodeURIComponent(handoffToken)}#Intent;scheme=skillspouts;package=com.skillsprouts.myapp;S.browser_fallback_url=${fallback};end;`;
+    } else if (isIOS) {
+      const appUrl = `skillspouts://auth?t=${handoffToken}`;
+      window.location.href = appUrl;
+      const storeUrl = 'https://apps.apple.com/us/app/skill-sprouts/id6754038900';
+      const t = setTimeout(() => { window.location.href = storeUrl; }, 1500);
+      window.addEventListener('blur', () => clearTimeout(t), { once: true });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') clearTimeout(t);
+      }, { once: true });
+    }
+  }
+
+  function renderQR() {
     const el = $('[data-qr]'); if (!el) return;
+    // QR code uses https:// so camera-app scans work as Universal Links (outside browser)
     const url = state.handoffToken
       ? `https://skillsprouts.co/auth?t=${state.handoffToken}`
       : 'https://skillsprouts.co/app';
     try {
-      const dataUrl = await QRCode.toDataURL(url, { width: 116, margin: 1, color: { dark: '#2A1F17', light: '#FFFFFF' } });
-      el.innerHTML = `<img src="${dataUrl}" width="116" height="116" alt="QR code to open the app">`;
+      const canvas = document.createElement('canvas');
+      QrCreator.render({ text: url, radius: 0, ecLevel: 'H', fill: '#2A1F17', background: '#fff', size: 116 }, canvas);
+      el.innerHTML = `<img src="${canvas.toDataURL()}" width="116" height="116" alt="QR code to open the app">`;
     } catch (_) {
       el.innerHTML = '';
     }
@@ -570,9 +590,15 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     const se = $('[data-signed-email]'); if (se) se.textContent = state.email || 'your account';
     const pl = $('[data-handoff-plan]');
     if (pl) pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
-    const deepLink = $('[class*="handoff-deep"]');
-    if (deepLink && state.handoffToken) {
-      deepLink.href = `https://skillsprouts.co/auth?t=${state.handoffToken}`;
+    const btn = $('[class*="handoff-deep"]');
+    if (btn && state.handoffToken) {
+      // Use custom scheme — works from within a browser, unlike Universal Links
+      const appUrl = `skillspouts://auth?t=${state.handoffToken}`;
+      btn.href = appUrl;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        _openInApp(state.handoffToken);
+      }, { once: true });
     }
     renderQR();
   }

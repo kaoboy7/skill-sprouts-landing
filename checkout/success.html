@@ -145,21 +145,43 @@
         );
         if (!res.ok) throw new Error(`Status ${res.status}`);
         const { handoffToken } = await res.json();
-        const deepLink = `https://skillsprouts.co/auth?t=${handoffToken}`;
-        showSuccess(deepLink);
+        showSuccess(handoffToken);
       } catch (e) {
         console.error('Checkout success error:', e);
         showError('We had trouble confirming your payment. If you were charged, your trial is active — just open the app and sign in.');
       }
     }
 
-    function showSuccess(deepLink) {
+    function _openInApp(handoffToken) {
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (isAndroid) {
+        const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=com.skillsprouts.myapp');
+        window.location.href = `intent://auth?t=${encodeURIComponent(handoffToken)}#Intent;scheme=skillspouts;package=com.skillsprouts.myapp;S.browser_fallback_url=${fallback};end;`;
+      } else if (isIOS) {
+        const appUrl = `skillspouts://auth?t=${handoffToken}`;
+        window.location.href = appUrl;
+        const storeUrl = 'https://apps.apple.com/us/app/skill-sprouts/id6754038900';
+        const t = setTimeout(() => { window.location.href = storeUrl; }, 1500);
+        window.addEventListener('blur', () => clearTimeout(t), { once: true });
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') clearTimeout(t);
+        }, { once: true });
+      }
+    }
+
+    function showSuccess(handoffToken) {
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
-      $('open-btn').href = deepLink;
-      // Auto-attempt to open the app on mobile after a short delay
+      const btn = $('open-btn');
+      btn.href = `skillspouts://auth?t=${handoffToken}`;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        _openInApp(handoffToken);
+      }, { once: true });
+      // Auto-attempt on mobile
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        setTimeout(() => { window.location.href = deepLink; }, 800);
+        setTimeout(() => _openInApp(handoffToken), 800);
       }
     }
 
