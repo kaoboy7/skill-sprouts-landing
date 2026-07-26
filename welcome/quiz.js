@@ -1,5 +1,22 @@
 // Skill Sprouts — Quiz funnel logic
 
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/+esm';
+
+const _firebaseApp = initializeApp({
+  apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
+  authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+  projectId: 'valued-watch-461301-e1',
+  storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
+  messagingSenderId: '386194120047',
+  appId: '1:386194120047:web:222c5a6ea632ae1abd5c9a',
+});
+const _auth = getAuth(_firebaseApp);
+
+// Production API base URL — update when Cloud Run URL changes
+const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.run.app';
+
 (function() {
   const STORAGE_KEY = 'sprouts_quiz_state';
 
@@ -16,6 +33,7 @@
     focusArea: null,         // single area id — the "start this week" pick
     email: '',
     authMethod: null,        // 'google' | 'email'
+    handoffToken: null,      // short-lived UUID for app sign-in
     plan: null,              // 'annual' | 'monthly' | 'free'
     trial: false,
   };
@@ -422,18 +440,69 @@
   $$('.q-advance').forEach(el => el.addEventListener('click', () => go(el.dataset.next)));
 
   // ── Account gate (save progress → seamless handoff) ───────
-  function submitGate(email, method) {
-    state.email = email; state.authMethod = method; saveState();
-    go('results');
+  async function _fetchHandoffToken(idToken) {
+    const res = await fetch(`${API_BASE}/auth/handoff`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    });
+    if (!res.ok) throw new Error(`Handoff request failed: ${res.status}`);
+    const { handoffToken } = await res.json();
+    return handoffToken;
   }
-  $('[data-action="gate-google"]').addEventListener('click', () => submitGate('parent@gmail.com', 'google'));
-  $('[data-action="gate-continue"]').addEventListener('click', () => {
+
+  const _googleBtn = $('[data-action="gate-google"]');
+  const _googleBtnHtml = _googleBtn.innerHTML;
+
+  _googleBtn.addEventListener('click', async () => {
+    _googleBtn.disabled = true;
+    _googleBtn.textContent = 'Signing in…';
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(_auth, provider);
+      const idToken = await result.user.getIdToken();
+      const handoffToken = await _fetchHandoffToken(idToken);
+      state.email = result.user.email || '';
+      state.authMethod = 'google';
+      state.handoffToken = handoffToken;
+      saveState();
+      go('results');
+    } catch (e) {
+      _googleBtn.disabled = false;
+      _googleBtn.innerHTML = _googleBtnHtml;
+      const errEl = $('[data-gate-error]');
+      if (errEl) { errEl.textContent = 'Sign-in failed. Please try again.'; errEl.style.display = ''; }
+    }
+  });
+
+  $('[data-action="gate-continue"]').addEventListener('click', async () => {
     const input = $('[data-action="gate-email-input"]');
     const val = input.value.trim();
     if (!val || !/.+@.+\..+/.test(val)) { input.classList.add('err'); input.focus(); return; }
     input.classList.remove('err');
-    submitGate(val, 'email');
+    const btn = $('[data-action="gate-continue"]');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await sendSignInLinkToEmail(_auth, val, {
+        url: 'https://skillsprouts.co/auth',
+        handleCodeInApp: true,
+      });
+      localStorage.setItem('sprouts_email_for_signin', val);
+      const gate = $('[data-step="gate"] .gate');
+      gate.innerHTML = `
+        <span class="q-tape" style="background:#5B8E7D;">Check your inbox</span>
+        <h1>Magic link<br>on its way.</h1>
+        <p class="lede">We sent a sign-in link to <strong>${val}</strong>. Tap it on your phone — you'll land in the app already signed in.</p>
+      `;
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Try again';
+      const errEl = $('[data-gate-error]');
+      if (errEl) { errEl.textContent = 'Could not send link. Check the email and try again.'; errEl.style.display = ''; }
+    }
   });
+
   $('[data-action="gate-email-input"]').addEventListener('input', (e) => e.target.classList.remove('err'));
   $('[data-action="gate-email-input"]').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('[data-action="gate-continue"]').click(); });
 
@@ -460,32 +529,51 @@
       updatePwSub();
     });
   });
-  $('[data-action="start-trial"]').addEventListener('click', () => { state.trial = true; if (state.plan === 'free') state.plan = 'annual'; saveState(); go('handoff'); });
+  $('[data-action="start-trial"]').addEventListener('click', async () => {
+    const btn = $('[data-action="start-trial"]');
+    btn.disabled = true;
+    const origText = btn.textContent;
+    btn.textContent = 'Loading…';
+    try {
+      const user = _auth.currentUser;
+      if (!user) { go('gate'); return; }
+      const idToken = await user.getIdToken();
+      const res = await fetch(`${API_BASE}/payments/stripe/create-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken, plan: state.plan || 'annual' }),
+      });
+      if (!res.ok) throw new Error(`Checkout error: ${res.status}`);
+      const { checkoutUrl } = await res.json();
+      window.location.href = checkoutUrl;
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = origText;
+    }
+  });
   $('[data-action="skip-trial"]').addEventListener('click', () => { state.plan = 'free'; state.trial = false; saveState(); go('handoff'); });
 
   // ── Handoff ───────────────────────────────────────────────
-  function renderQR() {
+  async function renderQR() {
     const el = $('[data-qr]'); if (!el) return;
-    const N = 25;
-    let s = 20260718;
-    const rnd = () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-    const finder = (r, c, br, bc) => { const rr = r - br, cc = c - bc; return (rr === 0 || rr === 6 || cc === 0 || cc === 6) || (rr >= 2 && rr <= 4 && cc >= 2 && cc <= 4); };
-    let rects = '';
-    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-      let fill;
-      if (r < 7 && c < 7) fill = finder(r, c, 0, 0);
-      else if (r < 7 && c >= N - 7) fill = finder(r, c, 0, N - 7);
-      else if (r >= N - 7 && c < 7) fill = finder(r, c, N - 7, 0);
-      else if ((r < 8 && c >= N - 8) || (c < 8 && r >= N - 8) || (r < 8 && c < 8)) fill = false;
-      else fill = rnd() > 0.52;
-      if (fill) rects += `<rect x="${c}" y="${r}" width="1" height="1"/>`;
+    const url = state.handoffToken
+      ? `https://skillsprouts.co/auth?t=${state.handoffToken}`
+      : 'https://skillsprouts.co/app';
+    try {
+      const dataUrl = await QRCode.toDataURL(url, { width: 116, margin: 1, color: { dark: '#2A1F17', light: '#FFFFFF' } });
+      el.innerHTML = `<img src="${dataUrl}" width="116" height="116" alt="QR code to open the app">`;
+    } catch (_) {
+      el.innerHTML = '';
     }
-    el.innerHTML = `<svg viewBox="0 0 ${N} ${N}" width="116" height="116" shape-rendering="crispEdges" fill="#2A1F17">${rects}</svg>`;
   }
   function renderHandoff() {
     const se = $('[data-signed-email]'); if (se) se.textContent = state.email || 'your account';
     const pl = $('[data-handoff-plan]');
     if (pl) pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
+    const deepLink = $('[class*="handoff-deep"]');
+    if (deepLink && state.handoffToken) {
+      deepLink.href = `https://skillsprouts.co/auth?t=${state.handoffToken}`;
+    }
     renderQR();
   }
 

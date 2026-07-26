@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening Skill Sprouts…</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: #FDFAF6;
+      color: #2A1F17;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 40px rgba(42,31,23,0.10);
+    }
+    .sprout { font-size: 3.5rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
+    p { color: #5a4a42; font-size: .95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: #5B8E7D;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: .85rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: .75rem;
+    }
+    .open-btn:active { opacity: .85; }
+    .store-row {
+      display: flex;
+      gap: .5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .store-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: #2A1F17;
+      color: #fff;
+      border-radius: 10px;
+      padding: .55rem 1.1rem;
+      font-size: .82rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #e0d8d0;
+      border-top-color: #5B8E7D;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 1.25rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+    #error-msg { color: #c0392b; font-size: .88rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="loading-view">
+      <div class="spinner"></div>
+      <h1>Opening Skill Sprouts…</h1>
+      <p>Just a moment while we sign you in.</p>
+    </div>
+
+    <div id="open-view" class="hidden">
+      <div class="sprout">🌱</div>
+      <h1>You're signed in!</h1>
+      <p id="open-msg">Tap below to open Skill Sprouts on this device.</p>
+      <a id="open-btn" class="open-btn" href="#">Open Skill Sprouts →</a>
+      <p style="font-size:.82rem;color:#8a7a72;">Don't have the app yet?</p>
+      <div class="store-row">
+        <a class="store-link" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="17" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+          App Store
+        </a>
+        <a class="store-link" href="https://play.google.com/store/apps/details?id=com.skillsprouts.myapp" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="17" viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+          Google Play
+        </a>
+      </div>
+    </div>
+
+    <div id="error-view" class="hidden">
+      <div class="sprout">🌿</div>
+      <h1>Link expired</h1>
+      <p id="error-msg">This sign-in link has expired or already been used. Please go back to the quiz and try again.</p>
+      <a class="open-btn" href="https://skillsprouts.co/welcome">Back to quiz</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+    import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+
+    const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.run.app';
+
+    const app = initializeApp({
+      apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
+      authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+      projectId: 'valued-watch-461301-e1',
+      storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
+      messagingSenderId: '386194120047',
+      appId: '1:386194120047:web:222c5a6ea632ae1abd5c9a',
+    });
+    const auth = getAuth(app);
+
+    const $ = id => document.getElementById(id);
+
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const handoffToken = params.get('t');
+
+      // Path 1: direct handoff token from quiz Google sign-in QR code
+      if (handoffToken) {
+        showOpen(`https://skillsprouts.co/auth?t=${handoffToken}`);
+        return;
+      }
+
+      // Path 2: Firebase email link callback
+      const href = window.location.href;
+      if (isSignInWithEmailLink(auth, href)) {
+        let email = localStorage.getItem('sprouts_email_for_signin');
+        if (!email) {
+          email = window.prompt('Please enter the email address you used to sign in:');
+        }
+        if (!email) { showError('Could not determine email address.'); return; }
+
+        try {
+          const result = await signInWithEmailLink(auth, email, href);
+          localStorage.removeItem('sprouts_email_for_signin');
+          const idToken = await result.user.getIdToken();
+          const res = await fetch(`${API_BASE}/auth/handoff`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+          if (!res.ok) throw new Error('backend');
+          const { handoffToken: tok } = await res.json();
+          showOpen(`https://skillsprouts.co/auth?t=${tok}`, email);
+        } catch (e) {
+          showError('Sign-in failed. The link may have expired — please try again from the quiz.');
+        }
+        return;
+      }
+
+      // No recognised params — redirect to quiz
+      window.location.replace('https://skillsprouts.co/welcome');
+    }
+
+    function showOpen(deepLink, email) {
+      $('loading-view').classList.add('hidden');
+      $('open-view').classList.remove('hidden');
+      const btn = $('open-btn');
+      btn.href = deepLink;
+      if (email) $('open-msg').textContent = `Tap below to open Skill Sprouts as ${email}.`;
+      // Auto-attempt to open the app on mobile
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        setTimeout(() => { window.location.href = deepLink; }, 800);
+      }
+    }
+
+    function showError(msg) {
+      $('loading-view').classList.add('hidden');
+      $('error-view').classList.remove('hidden');
+      $('error-msg').textContent = msg;
+    }
+
+    init();
+  </script>
+</body>
+</html>
