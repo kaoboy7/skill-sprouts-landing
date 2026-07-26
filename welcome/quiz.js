@@ -6,7 +6,8 @@ import QrCreator from 'https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-cre
 
 const _firebaseApp = initializeApp({
   apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
-  authDomain: 'auth.skillsprouts.co',
+  // authDomain: 'auth2.skillsprouts.co', // restore after domain is verified
+  authDomain: 'valued-watch-461301-e1.firebaseapp.com',
   projectId: 'valued-watch-461301-e1',
   storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
   messagingSenderId: '386194120047',
