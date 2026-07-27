@@ -94,12 +94,12 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
   // ── Area metadata (mirror of data.js) ─────────────────────
   const AREAS = {
-    tantrums: { name: 'Tantrums & Big Emotions', short: 'Big Emotions', tagline: 'Co-regulate, name the feeling, ride the wave.', color: '#BC4B51', tint: '#FBE6E1', habits: ['Name the feeling out loud', 'Drop to their eye level', 'Take 3 breaths before responding'] },
-    eating: { name: 'Picky Eating', short: 'Picky Eating', tagline: 'Offer, don’t pressure. Curiosity over clean plates.', color: '#F4A259', tint: '#FCEBD3', habits: ['Put one new food on the plate', 'Eat the new food yourself', 'Skip the clean-plate ask'] },
-    potty: { name: 'Potty Training', short: 'Potty', tagline: 'Follow their lead. Celebrate effort, not outcome.', color: '#5B8E7D', tint: '#DCEBE5', habits: ['Offer a sit before transitions', 'Celebrate the try', 'Keep accidents low-drama'] },
-    sleep: { name: 'Sleep & Bedtime', short: 'Sleep', tagline: 'Same order, same rhythm, soft landings.', color: '#7A8AA7', tint: '#E3E8F0', habits: ['Dim the lights 45 min before bed', 'Three-step bedtime ritual', 'One quiet question at tuck-in'] },
-    independence: { name: 'Independence & Chores', short: 'Independence', tagline: 'Let them do it slow. That’s the win.', color: '#8A6BAE', tint: '#E8DEF0', habits: ['Let them dress themselves', 'One chore, age-appropriate', 'Ask "what’s your plan?"'] },
-    school: { name: 'School Readiness', short: 'School', tagline: 'Curiosity, not flashcards.', color: '#C98A6B', tint: '#F1E2D5', habits: ['Read together for 15 min', 'Ask an open question at pickup', 'Wonder out loud'] },
+    tantrums: { name: 'Tantrums & Big Emotions', short: 'Big Emotions', label: 'behavior_and_boundaries', tagline: 'Co-regulate, name the feeling, ride the wave.', color: '#BC4B51', tint: '#FBE6E1', habits: ['Name the feeling out loud', 'Drop to their eye level', 'Take 3 breaths before responding'] },
+    eating: { name: 'Picky Eating', short: 'Picky Eating', label: 'feeding_mealtime_habits', tagline: 'Offer, don’t pressure. Curiosity over clean plates.', color: '#F4A259', tint: '#FCEBD3', habits: ['Put one new food on the plate', 'Eat the new food yourself', 'Skip the clean-plate ask'] },
+    potty: { name: 'Potty Training', short: 'Potty', label: 'potty_training', tagline: 'Follow their lead. Celebrate effort, not outcome.', color: '#5B8E7D', tint: '#DCEBE5', habits: ['Offer a sit before transitions', 'Celebrate the try', 'Keep accidents low-drama'] },
+    sleep: { name: 'Sleep & Bedtime', short: 'Sleep', label: 'sleep_and_bedtime', tagline: 'Same order, same rhythm, soft landings.', color: '#7A8AA7', tint: '#E3E8F0', habits: ['Dim the lights 45 min before bed', 'Three-step bedtime ritual', 'One quiet question at tuck-in'] },
+    independence: { name: 'Independence & Chores', short: 'Independence', label: 'independence_life_skills', tagline: 'Let them do it slow. That’s the win.', color: '#8A6BAE', tint: '#E8DEF0', habits: ['Let them dress themselves', 'One chore, age-appropriate', 'Ask "what’s your plan?"'] },
+    school: { name: 'School Readiness', short: 'School', label: 'early_learning_cognitive', tagline: 'Curiosity, not flashcards.', color: '#C98A6B', tint: '#F1E2D5', habits: ['Read together for 15 min', 'Ask an open question at pickup', 'Wonder out loud'] },
   };
 
   const KID_COLORS = ['#F4A259', '#5B8E7D', '#BC4B51', '#8A6BAE'];
@@ -413,24 +413,42 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       kidsWrap.appendChild(pill);
     });
 
-    // Starter habits
+    // Starter habits — render the marketing copy instantly as a fallback, then
+    // swap in the REAL starter goals the app will seed (same /starter-goals
+    // source the app uses), so what's previewed here is what lands on Home.
     const habitsWrap = $('[data-step="results"] .starter-habits');
-    habitsWrap.innerHTML = '';
-    area.habits.forEach(name => {
-      const row = document.createElement('div');
-      row.className = 'starter-habit';
-      row.innerHTML = `
-        <span class="ring" style="border-color:${area.color}"></span>
-        <div style="flex:1;">
-          <div class="title">${name}</div>
-          <div class="meta">
-            <span class="dot" style="background:${area.color}"></span>
-            ${area.short} · Beginner · ~2 min
+    function renderHabits(titles) {
+      habitsWrap.innerHTML = '';
+      titles.forEach(name => {
+        const row = document.createElement('div');
+        row.className = 'starter-habit';
+        row.innerHTML = `
+          <span class="ring" style="border-color:${area.color}"></span>
+          <div style="flex:1;">
+            <div class="title">${name}</div>
+            <div class="meta">
+              <span class="dot" style="background:${area.color}"></span>
+              ${area.short} · Beginner · ~2 min
+            </div>
           </div>
-        </div>
-      `;
-      habitsWrap.appendChild(row);
-    });
+        `;
+        habitsWrap.appendChild(row);
+      });
+    }
+    renderHabits(area.habits);
+    if (area.label) {
+      fetch(`${API_BASE}/public/checklist/starter-goals?area_label=${encodeURIComponent(area.label)}&limit=2`)
+        .then(r => r.ok ? r.json() : null)
+        .then(goals => {
+          if (Array.isArray(goals) && goals.length) {
+            const titles = goals.map(g => g.title);
+            renderHabits(titles);
+            const countEl = $('[data-step="results"] .summary-card .stat:last-child .v');
+            if (countEl) countEl.innerHTML = `${titles.length}<em> habits</em>`;
+          }
+        })
+        .catch(() => { /* keep fallback copy */ });
+    }
 
     // Memory module — show if interested
     const memWrap = $('[data-step="results"] .memory-block');
@@ -460,7 +478,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     const res = await fetch(`${API_BASE}/auth/handoff`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken }),
+      // Carry the picked focus area so the app seeds the same starter habits.
+      body: JSON.stringify({ idToken, focusArea: state.focusArea || null }),
     });
     if (!res.ok) throw new Error(`Handoff request failed: ${res.status}`);
     const { handoffToken } = await res.json();
@@ -501,7 +520,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     btn.textContent = 'Sending…';
     try {
       await sendSignInLinkToEmail(_auth, val, {
-        url: 'https://skillsprouts.co/auth',
+        // Carry the focus area through the magic link so /auth can forward it to
+        // the app's handoff and the same starter habits get seeded.
+        url: 'https://skillsprouts.co/auth' +
+          (state.focusArea ? ('?focus=' + encodeURIComponent(state.focusArea)) : ''),
         handleCodeInApp: true,
       });
       localStorage.setItem('sprouts_email_for_signin', val);

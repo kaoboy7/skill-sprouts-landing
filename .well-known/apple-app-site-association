@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "65632DB978.com.skillsprouts.myapp",
-        "paths": ["/courseDetails/*", "/courseDetails", "/auth", "/auth/*", "/finishSignIn", "/finishSignIn/*"]
+        "paths": ["/courseDetails/*", "/courseDetails", "/auth", "/auth/*"]
       }
     ]
   }

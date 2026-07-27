@@ -155,10 +155,13 @@
           const result = await signInWithEmailLink(auth, email, href);
           localStorage.removeItem('sprouts_email_for_signin');
           const idToken = await result.user.getIdToken();
+          // The funnel may pass the picked focus area via ?focus= on the magic
+          // link's continue URL — forward it so the app seeds the same habits.
+          const focus = params.get('focus');
           const res = await fetch(`${API_BASE}/auth/handoff`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idToken }),
+            body: JSON.stringify({ idToken, focusArea: focus || null }),
           });
           if (!res.ok) throw new Error('backend');
           const { handoffToken: tok } = await res.json();
@@ -173,13 +176,27 @@
       window.location.replace('https://skillsprouts.co/welcome');
     }
 
+    // iOS deferred deep-link: stash the handoff token on the clipboard so a
+    // freshly-installed app can read it on first launch (iOS has no install
+    // referrer). Requires a user gesture — the "Open" button tap provides one.
+    async function _writeDeferredToken(handoffToken) {
+      try {
+        await navigator.clipboard.writeText(`ss-auth:${handoffToken}`);
+      } catch (e) { /* no gesture/permission — same-device custom scheme still works */ }
+    }
+
     function _openInApp(handoffToken) {
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (isAndroid) {
-        const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=com.skillsprouts.myapp');
+        // If not installed, fall back to the Play Store WITH the token in the
+        // install referrer, so the app reads it on first launch — this survives
+        // the user tapping "Open" from the Play Store (no return to browser).
+        const playUrl = `https://play.google.com/store/apps/details?id=com.skillsprouts.myapp&referrer=${encodeURIComponent('ss_auth=' + handoffToken)}`;
+        const fallback = encodeURIComponent(playUrl);
         window.location.href = `intent://auth?t=${encodeURIComponent(handoffToken)}#Intent;scheme=skillspouts;package=com.skillsprouts.myapp;S.browser_fallback_url=${fallback};end;`;
       } else if (isIOS) {
+        _writeDeferredToken(handoffToken); // gesture-backed (called from button tap)
         const appUrl = `skillspouts://auth?t=${handoffToken}`;
         window.location.href = appUrl;
         const storeUrl = 'https://apps.apple.com/us/app/skill-sprouts/id6754038900';
@@ -202,8 +219,10 @@
         e.preventDefault();
         _openInApp(handoffToken);
       }, { once: true });
-      // Auto-attempt on mobile — custom scheme works even without user gesture
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      // Auto-attempt on Android only (referrer rides in the URL, no gesture
+      // needed). On iOS we wait for the button tap so the clipboard write has a
+      // user gesture before any App Store redirect.
+      if (/Android/i.test(navigator.userAgent)) {
         setTimeout(() => _openInApp(handoffToken), 800);
       }
     }
