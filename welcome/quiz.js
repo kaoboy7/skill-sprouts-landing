@@ -166,7 +166,22 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   }
 
   // ── Welcome ───────────────────────────────────────────────
-  document.querySelector('[data-action="begin"]').addEventListener('click', () => go('ages'));
+  // TEMP (e2e testing): skip the quiz — jump straight to the account gate.
+  // Restore `() => go('ages')` when adding the quiz back in.
+  // document.querySelector('[data-action="begin"]').addEventListener('click', () => go('ages'));
+  document.querySelector('[data-action="begin"]').addEventListener('click', () => {
+    // Seed default answers so results/paywall render cleanly without the quiz.
+    state.ageBrackets = ['toddler'];
+    state.ageFocus = 'toddler';
+    state.areas = ['tantrums'];
+    state.mood = 'curious';
+    state.time = 5;
+    state.coParent = 'partner';
+    state.memory = 'yes';
+    state.focusArea = 'tantrums';
+    saveState();
+    go('gate');
+  });
 
   // ── Ages (stage brackets, multi-select) ───────────────────
   $$('[data-step="ages"] .q-choice').forEach(el => {
