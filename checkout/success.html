@@ -101,8 +101,16 @@
       <div class="sprout">🌱</div>
       <div class="badge">7-day free trial activated</div>
       <h1>You're all set!</h1>
-      <p id="success-msg">Your subscription is active. Tap below to open Skill Sprouts — you'll be signed in automatically.</p>
-      <a id="open-btn" class="open-btn" href="#">Open Skill Sprouts →</a>
+      <p id="success-msg">Your subscription is active.</p>
+
+      <!-- Same-device open (shown on phones/tablets): custom-scheme handoff -->
+      <a id="open-btn" class="open-btn hidden" href="#">Open Skill Sprouts →</a>
+
+      <!-- Magic-link email (primary path on desktop; backup on mobile) -->
+      <div id="email-view" class="hidden" style="background:#EEF6F2;border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.92rem;color:#2A1F17;text-align:left;line-height:1.5;">
+        📧 We emailed a magic sign-in link to <strong id="email-addr"></strong>.
+        <strong>Open it on your phone</strong> to finish setup — you'll land in the app already signed in. Link valid for a limited time.
+      </div>
 
       <!-- shown only when app is not yet installed -->
       <div id="install-hint" class="hidden" style="background:#FFF8E1;border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;font-size:.88rem;color:#5a4a42;text-align:left;">
@@ -121,6 +129,11 @@
           Google Play
         </a>
       </div>
+
+      <p id="resend-row" class="hidden" style="font-size:.82rem;color:#8a7a72;margin-top:1rem;">
+        Didn't get the email? <a href="#" id="resend-link" style="color:#5B8E7D;font-weight:600;">Resend link</a>
+        <span id="resend-status"></span>
+      </p>
     </div>
 
     <div id="error-view" class="hidden">
@@ -132,10 +145,24 @@
 
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+    import { getAuth, sendSignInLinkToEmail } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+
     const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.run.app';
 
+    const app = initializeApp({
+      apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
+      authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+      projectId: 'valued-watch-461301-e1',
+      storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
+      messagingSenderId: '386194120047',
+      appId: '1:386194120047:web:222c5a6ea632ae1abd5c9a',
+    });
+    const auth = getAuth(app);
+
     const $ = id => document.getElementById(id);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     async function init() {
       const params = new URLSearchParams(window.location.search);
@@ -151,8 +178,8 @@
           `${API_BASE}/payments/stripe/checkout-success?session_id=${encodeURIComponent(sessionId)}`
         );
         if (!res.ok) throw new Error(`Status ${res.status}`);
-        const { handoffToken } = await res.json();
-        showSuccess(handoffToken);
+        const { handoffToken, email } = await res.json();
+        showSuccess(handoffToken, email);
       } catch (e) {
         console.error('Checkout success error:', e);
         showError('We had trouble confirming your payment. If you were charged, your trial is active — just open the app and sign in.');
@@ -176,27 +203,60 @@
       }, { once: true });
     }
 
-    function showSuccess(handoffToken) {
+    function showSuccess(handoffToken, email) {
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
 
-      const btn = $('open-btn');
-      btn.href = `skillspouts://auth?t=${handoffToken}`;
+      // Same-device handoff (custom scheme only opens the app on this device),
+      // so only offer it on phones/tablets.
+      if (isMobile && handoffToken) {
+        const btn = $('open-btn');
+        btn.classList.remove('hidden');
+        btn.href = `skillspouts://auth?t=${handoffToken}`;
 
-      function tryOpen() {
-        _openInApp(handoffToken, () => {
-          // App not installed: reveal the install hint, keep button functional
-          $('install-hint').classList.remove('hidden');
-          // Re-attach click handler for retry after install
-          btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
-        });
+        function tryOpen() {
+          _openInApp(handoffToken, () => {
+            // App not installed: reveal the install hint, keep button functional
+            $('install-hint').classList.remove('hidden');
+            btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
+          });
+        }
+
+        btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
+        setTimeout(tryOpen, 800); // auto-attempt after paint
+        $('success-msg').textContent = "Your subscription is active. Tap below to open Skill Sprouts — you'll be signed in automatically.";
+      } else {
+        // Desktop: the app lives on their phone, so guide them there via email.
+        $('success-msg').textContent = 'Your subscription is active. Check your email to finish on your phone.';
       }
 
-      btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
+      // Email a magic sign-in link so the user can continue on their phone
+      // (primary path on desktop; a reliable backup on mobile).
+      if (email) {
+        sendMagicLink(email);
+        $('resend-link').addEventListener('click', (e) => {
+          e.preventDefault();
+          sendMagicLink(email, true);
+        });
+      }
+    }
 
-      // Auto-attempt on mobile after brief delay for page paint
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        setTimeout(tryOpen, 800);
+    async function sendMagicLink(email, isResend) {
+      try {
+        await sendSignInLinkToEmail(auth, email, {
+          url: 'https://skillsprouts.co/auth',
+          handleCodeInApp: true,
+        });
+        // If the link is later opened in this same browser, /auth can read this.
+        localStorage.setItem('sprouts_email_for_signin', email);
+        $('email-addr').textContent = email;
+        $('email-view').classList.remove('hidden');
+        $('resend-row').classList.remove('hidden');
+        if (isResend) $('resend-status').textContent = ' ✓ Sent again';
+      } catch (e) {
+        console.error('Magic link send failed:', e);
+        // Don't block the flow — on mobile the same-device handoff still works.
+        if (isResend) $('resend-status').textContent = ' Could not resend — try again.';
       }
     }
 
