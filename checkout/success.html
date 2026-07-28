@@ -103,21 +103,13 @@
       <h1>You're all set!</h1>
       <p id="success-msg">Your subscription is active.</p>
 
-      <!-- Same-device open (shown on phones/tablets): custom-scheme handoff -->
-      <a id="open-btn" class="open-btn hidden" href="#">Open Skill Sprouts →</a>
-
-      <!-- Magic-link email (primary path on desktop; backup on mobile) -->
+      <!-- Magic-link email is the single sign-in path on every device -->
       <div id="email-view" class="hidden" style="background:#EEF6F2;border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.92rem;color:#2A1F17;text-align:left;line-height:1.5;">
         📧 We emailed a magic sign-in link to <strong id="email-addr"></strong>.
         <strong>Open it on your phone</strong> to finish setup — you'll land in the app already signed in. Link valid for a limited time.
       </div>
 
-      <!-- shown only when app is not yet installed -->
-      <div id="install-hint" class="hidden" style="background:#FFF8E1;border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;font-size:.88rem;color:#5a4a42;text-align:left;">
-        📲 <strong>App not installed yet?</strong> Download it below, then <strong>come back to this page</strong> and tap "Open Skill Sprouts" — your sign-in link stays active for 30 minutes.
-      </div>
-
-      <p style="font-size:.82rem;color:#8a7a72;margin-bottom:.5rem;">Download the app:</p>
+      <p style="font-size:.82rem;color:#8a7a72;margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
       <div class="store-row">
         <!-- target="_blank" keeps this page open so user can tap the button after installing -->
         <a class="store-link" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">
@@ -162,7 +154,6 @@
     const auth = getAuth(app);
 
     const $ = id => document.getElementById(id);
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     async function init() {
       const params = new URLSearchParams(window.location.search);
@@ -186,52 +177,16 @@
       }
     }
 
-    function _openInApp(handoffToken, onNotInstalled) {
-      // Try the custom scheme. If the app isn't installed the page stays visible
-      // (no store redirect) — we keep the button alive so the user can tap it
-      // after installing. Store links open in a new tab so this page stays open.
-      const appUrl = `skillspouts://auth?t=${handoffToken}`;
-      window.location.href = appUrl;
-
-      // Detect whether the app actually opened
-      const fallbackTimer = setTimeout(() => {
-        if (onNotInstalled) onNotInstalled();
-      }, 1500);
-      window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') clearTimeout(fallbackTimer);
-      }, { once: true });
-    }
-
     function showSuccess(handoffToken, email) {
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
 
-      // Same-device handoff (custom scheme only opens the app on this device),
-      // so only offer it on phones/tablets.
-      if (isMobile && handoffToken) {
-        const btn = $('open-btn');
-        btn.classList.remove('hidden');
-        btn.href = `skillspouts://auth?t=${handoffToken}`;
+      // The custom-scheme "Open Skill Sprouts" handoff proved unreliable, so we
+      // rely solely on the magic-link email on every device: the user opens the
+      // link on their phone and lands in the app already signed in.
+      $('success-msg').textContent =
+        'Your subscription is active. Check your email to finish setup and sign in on your phone.';
 
-        function tryOpen() {
-          _openInApp(handoffToken, () => {
-            // App not installed: reveal the install hint, keep button functional
-            $('install-hint').classList.remove('hidden');
-            btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
-          });
-        }
-
-        btn.addEventListener('click', (e) => { e.preventDefault(); tryOpen(); }, { once: true });
-        setTimeout(tryOpen, 800); // auto-attempt after paint
-        $('success-msg').textContent = "Your subscription is active. Tap below to open Skill Sprouts — you'll be signed in automatically.";
-      } else {
-        // Desktop: the app lives on their phone, so guide them there via email.
-        $('success-msg').textContent = 'Your subscription is active. Check your email to finish on your phone.';
-      }
-
-      // Email a magic sign-in link so the user can continue on their phone
-      // (primary path on desktop; a reliable backup on mobile).
       if (email) {
         sendMagicLink(email);
         $('resend-link').addEventListener('click', (e) => {
