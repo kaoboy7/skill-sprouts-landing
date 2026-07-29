@@ -99,7 +99,7 @@
 
     <div id="success-view" class="hidden">
       <div class="sprout">🌱</div>
-      <div class="badge">7-day free trial activated</div>
+      <div class="badge" id="trial-badge">Free trial activated</div>
       <h1>You're all set!</h1>
       <p id="success-msg">Your subscription is active.</p>
 
@@ -169,17 +169,20 @@
           `${API_BASE}/payments/stripe/checkout-success?session_id=${encodeURIComponent(sessionId)}`
         );
         if (!res.ok) throw new Error(`Status ${res.status}`);
-        const { handoffToken, email } = await res.json();
-        showSuccess(handoffToken, email);
+        const { handoffToken, email, trialDays } = await res.json();
+        showSuccess(handoffToken, email, trialDays);
       } catch (e) {
         console.error('Checkout success error:', e);
         showError('We had trouble confirming your payment. If you were charged, your trial is active — just open the app and sign in.');
       }
     }
 
-    function showSuccess(handoffToken, email) {
+    function showSuccess(handoffToken, email, trialDays) {
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
+
+      // Trial length depends on the plan (7 days annual, 3 days monthly).
+      if (trialDays) $('trial-badge').textContent = `${trialDays}-day free trial activated`;
 
       // The custom-scheme "Open Skill Sprouts" handoff proved unreliable, so we
       // rely solely on the magic-link email on every device: the user opens the

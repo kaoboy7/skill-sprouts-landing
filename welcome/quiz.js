@@ -1,8 +1,7 @@
 // Skill Sprouts — Quiz funnel logic
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
-import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
-import QrCreator from 'https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.es6.min.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 
 const _firebaseApp = initializeApp({
   apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
@@ -510,35 +509,31 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
   });
 
-  $('[data-action="gate-continue"]').addEventListener('click', async () => {
+  // Sends the Firebase email sign-in link, carrying the focus area so /auth can
+  // forward it to the app's handoff and the same starter habits get seeded.
+  async function _sendMagicLink(email) {
+    await sendSignInLinkToEmail(_auth, email, {
+      url: 'https://skillsprouts.co/auth' +
+        (state.focusArea ? ('?focus=' + encodeURIComponent(state.focusArea)) : ''),
+      handleCodeInApp: true,
+    });
+    localStorage.setItem('sprouts_email_for_signin', email);
+  }
+
+  // Email is captured here but the magic link is NOT sent yet — the user goes
+  // straight to their plan, same as the Google path. The link is sent later,
+  // either by the checkout success page (paid) or on skip-trial (free).
+  $('[data-action="gate-continue"]').addEventListener('click', () => {
     const input = $('[data-action="gate-email-input"]');
     const val = input.value.trim();
     if (!val || !/.+@.+\..+/.test(val)) { input.classList.add('err'); input.focus(); return; }
     input.classList.remove('err');
-    const btn = $('[data-action="gate-continue"]');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-    try {
-      await sendSignInLinkToEmail(_auth, val, {
-        // Carry the focus area through the magic link so /auth can forward it to
-        // the app's handoff and the same starter habits get seeded.
-        url: 'https://skillsprouts.co/auth' +
-          (state.focusArea ? ('?focus=' + encodeURIComponent(state.focusArea)) : ''),
-        handleCodeInApp: true,
-      });
-      localStorage.setItem('sprouts_email_for_signin', val);
-      const gate = $('[data-step="gate"] .gate');
-      gate.innerHTML = `
-        <span class="q-tape" style="background:#5B8E7D;">Check your inbox</span>
-        <h1>Magic link<br>on its way.</h1>
-        <p class="lede">We sent a sign-in link to <strong>${val}</strong>. Tap it on your phone — you'll land in the app already signed in.</p>
-      `;
-    } catch (e) {
-      btn.disabled = false;
-      btn.textContent = 'Try again';
-      const errEl = $('[data-gate-error]');
-      if (errEl) { errEl.textContent = 'Could not send link. Check the email and try again.'; errEl.style.display = ''; }
-    }
+    const errEl = $('[data-gate-error]');
+    if (errEl) errEl.style.display = 'none';
+    state.email = val;
+    state.authMethod = 'email';
+    saveState();
+    go('results');
   });
 
   $('[data-action="gate-email-input"]').addEventListener('input', (e) => e.target.classList.remove('err'));
@@ -548,23 +543,40 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   $('[data-action="to-paywall"]').addEventListener('click', () => go('paywall'));
 
   // ── Paywall ───────────────────────────────────────────────
-  function updatePwSub() {
-    const sub = $('[data-pw-sub]'); if (!sub) return;
-    sub.textContent = state.plan === 'monthly'
-      ? '7 days free, then $9.99/mo. Cancel anytime in Settings.'
-      : '7 days free, then $49.99/yr. Cancel anytime in Settings.';
+  // Trial length differs by plan — must stay in sync with TRIAL_DAYS in the
+  // backend's stripe_payments.py, which sets Stripe's trial_period_days.
+  const TRIAL_DAYS = { annual: 7, monthly: 3 };
+  // Day the "your trial is ending" reminder email goes out.
+  const TRIAL_WARN_DAY = { annual: 5, monthly: 2 };
+
+  function updatePwCopy() {
+    const plan = state.plan === 'monthly' ? 'monthly' : 'annual';
+    const days = TRIAL_DAYS[plan];
+    const price = plan === 'monthly' ? '$9.99/mo' : '$49.99/yr';
+
+    const sub = $('[data-pw-sub]');
+    if (sub) sub.textContent = `${days} days free, then ${price}. Cancel anytime in Settings.`;
+
+    const eyebrow = $('[data-pw-eyebrow]');
+    if (eyebrow) eyebrow.textContent = `Your ${days}-day free trial`;
+
+    const warn = $('[data-pw-tl-warn]');
+    if (warn) warn.textContent = `Day ${TRIAL_WARN_DAY[plan]} — a friendly heads-up`;
+
+    const end = $('[data-pw-tl-end]');
+    if (end) end.textContent = `Day ${days} — trial ends`;
   }
   function renderPaywall() {
     if (state.plan !== 'monthly') state.plan = 'annual';
     $$('[data-step="paywall"] .pw-plan').forEach(p => p.classList.toggle('selected', p.dataset.plan === state.plan));
-    updatePwSub();
+    updatePwCopy();
   }
   $$('[data-step="paywall"] .pw-plan').forEach(el => {
     el.addEventListener('click', () => {
       state.plan = el.dataset.plan; saveState();
       $$('[data-step="paywall"] .pw-plan').forEach(p => p.classList.remove('selected'));
       el.classList.add('selected');
-      updatePwSub();
+      updatePwCopy();
     });
   });
   $('[data-action="start-trial"]').addEventListener('click', async () => {
@@ -574,12 +586,18 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     btn.textContent = 'Loading…';
     try {
       const user = _auth.currentUser;
-      if (!user) { go('gate'); return; }
-      const idToken = await user.getIdToken();
+      // Email-only users have no Firebase session yet — checkout runs off their
+      // email and the success page emails them the magic link to sign in.
+      if (!user && !state.email) { go('gate'); return; }
+      const idToken = user ? await user.getIdToken() : null;
       const res = await fetch(`${API_BASE}/payments/stripe/create-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken, plan: state.plan || 'annual' }),
+        body: JSON.stringify({
+          idToken,
+          email: idToken ? null : state.email,
+          plan: state.plan || 'annual',
+        }),
       });
       if (!res.ok) throw new Error(`Checkout error: ${res.status}`);
       const { checkoutUrl } = await res.json();
@@ -589,7 +607,23 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       btn.textContent = origText;
     }
   });
-  $('[data-action="skip-trial"]').addEventListener('click', () => { state.plan = 'free'; state.trial = false; saveState(); go('handoff'); });
+  // Free plan: no checkout, so the magic link is what gets them into the app.
+  $('[data-action="skip-trial"]').addEventListener('click', async () => {
+    const btn = $('[data-action="skip-trial"]');
+    state.plan = 'free';
+    state.trial = false;
+    saveState();
+    if (!state.email) { go('gate'); return; }
+    btn.disabled = true;
+    btn.textContent = 'Sending your sign-in link…';
+    try {
+      await _sendMagicLink(state.email);
+      go('handoff');
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Could not send the link — tap to try again';
+    }
+  });
 
   // ── Handoff ───────────────────────────────────────────────
   function _openInApp(handoffToken) {
@@ -610,35 +644,26 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
   }
 
-  function renderQR() {
-    const el = $('[data-qr]'); if (!el) return;
-    // QR code uses https:// so camera-app scans work as Universal Links (outside browser)
-    const url = state.handoffToken
-      ? `https://skillsprouts.co/auth?t=${state.handoffToken}`
-      : 'https://skillsprouts.co/app';
-    try {
-      const canvas = document.createElement('canvas');
-      QrCreator.render({ text: url, radius: 0, ecLevel: 'H', fill: '#2A1F17', background: '#fff', size: 116 }, canvas);
-      el.innerHTML = `<img src="${canvas.toDataURL()}" width="116" height="116" alt="QR code to open the app">`;
-    } catch (_) {
-      el.innerHTML = '';
-    }
-  }
   function renderHandoff() {
-    const se = $('[data-signed-email]'); if (se) se.textContent = state.email || 'your account';
+    $$('[data-signed-email]').forEach(el => { el.textContent = state.email || 'your email'; });
     const pl = $('[data-handoff-plan]');
     if (pl) pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
-    const btn = $('[class*="handoff-deep"]');
-    if (btn && state.handoffToken) {
-      // Use custom scheme — works from within a browser, unlike Universal Links
-      const appUrl = `skillspouts://auth?t=${state.handoffToken}`;
-      btn.href = appUrl;
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        _openInApp(state.handoffToken);
-      }, { once: true });
+    const btn = $('.handoff-deep');
+    if (btn) {
+      // Only Google sign-ins have a handoff token; email users open the app from
+      // the magic link instead, so there's nothing to deep-link with here.
+      if (state.handoffToken) {
+        btn.style.display = '';
+        // Custom scheme — works from within a browser, unlike Universal Links
+        btn.href = `skillspouts://auth?t=${state.handoffToken}`;
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          _openInApp(state.handoffToken);
+        }, { once: true });
+      } else {
+        btn.style.display = 'none';
+      }
     }
-    renderQR();
   }
 
   // ── Back button ───────────────────────────────────────────

@@ -775,6 +775,7 @@ a { color: inherit; }
 .handoff .lede { font-family: 'Newsreader', serif; font-size: 17px; color: var(--ink-soft); line-height: 1.55; margin: 16px auto 0; max-width: 400px; }
 .handoff-card { margin-top: 28px; width: 100%; background: var(--paper); border: 1.5px solid var(--line); border-radius: 22px 24px 22px 26px; padding: 22px; display: flex; gap: 22px; align-items: center; text-align: left; }
 .handoff-card .qr { flex-shrink: 0; background: #fff; border-radius: 14px; padding: 10px; line-height: 0; box-shadow: 0 4px 14px -6px rgba(42,31,23,0.25); }
+.handoff-card .qr.mail-ic { width: 76px; height: 76px; display: flex; align-items: center; justify-content: center; background: #DCEBE5; }
 .hc-title { font-family: 'Newsreader', serif; font-size: 20px; color: var(--ink); }
 .hc-sub { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin-top: 6px; }
 .hc-sub strong { color: var(--ink); }
