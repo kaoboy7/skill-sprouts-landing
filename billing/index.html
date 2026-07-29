@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage your subscription · Skill Sprouts</title>
+  <meta name="description" content="Update your payment method, change plan, or cancel your Skill Sprouts subscription.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FEF6EC; --ink: #2A1F17; --ink-soft: #5A4A3B; --muted: #9C8A78;
+      --line: #EBDDC9; --paper: #FFFDF8; --sage: #5B8E7D; --terracotta: #BC4B51;
+      --amber-tint: #FCEBD3;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream); color: var(--ink);
+      min-height: 100dvh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem 1.25rem;
+    }
+    .card {
+      background: var(--paper); border: 1.5px solid var(--line);
+      border-radius: 24px 26px 24px 28px; padding: 2.25rem 1.75rem;
+      max-width: 440px; width: 100%; text-align: center;
+      box-shadow: 0 18px 50px -28px rgba(42,31,23,0.35);
+    }
+    .sprout { margin: 0 auto 1rem; display: block; }
+    h1 {
+      font-family: 'Newsreader', serif; font-weight: 500;
+      font-size: 1.75rem; line-height: 1.15; margin-bottom: .6rem;
+    }
+    h1 em { font-style: italic; color: var(--sage); }
+    p.lede { color: var(--ink-soft); font-size: .95rem; line-height: 1.55; margin-bottom: 1.5rem; }
+    button, .btn {
+      font-family: inherit; font-size: .97rem; font-weight: 600;
+      border-radius: 14px; padding: .85rem 1.25rem; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      cursor: pointer; border: 1.5px solid var(--ink); text-decoration: none;
+      transition: transform .12s ease;
+    }
+    button:active, .btn:active { transform: translateY(1px); }
+    button:disabled { opacity: .55; cursor: default; }
+    .btn-google { background: var(--paper); color: var(--ink); margin-bottom: .9rem; }
+    .btn-primary { background: var(--sage); border-color: var(--sage); color: #fff; }
+    .or { display: flex; align-items: center; gap: .75rem; color: var(--muted); font-size: .8rem; margin: .25rem 0 .9rem; }
+    .or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+    .email-row { display: flex; gap: .5rem; }
+    .email-row input {
+      flex: 1; min-width: 0; font-family: inherit; font-size: .95rem;
+      padding: .8rem .9rem; border-radius: 14px; border: 1.5px solid var(--line);
+      background: var(--paper); color: var(--ink);
+    }
+    .email-row input:focus { outline: none; border-color: var(--sage); }
+    .email-row input.err { border-color: var(--terracotta); }
+    .email-row button { width: auto; flex-shrink: 0; padding: .8rem 1.1rem; }
+    .fine { font-size: .78rem; color: var(--muted); line-height: 1.5; margin-top: 1.1rem; }
+    .fine a { color: var(--sage); font-weight: 600; }
+    .msg { font-size: .88rem; line-height: 1.5; border-radius: 12px; padding: .8rem .9rem; margin-top: 1rem; text-align: left; }
+    .msg-err { background: #FBE6E1; color: #8E2F34; }
+    .msg-note { background: var(--amber-tint); color: var(--ink); }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid var(--line);
+      border-top-color: var(--sage); border-radius: 50%;
+      animation: spin .7s linear infinite; margin: 0 auto 1.1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+    .back { margin-top: 1.5rem; font-size: .82rem; color: var(--muted); text-decoration: none; }
+    .back:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <svg class="sprout" viewBox="0 0 100 100" width="62" height="62">
+      <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2"/>
+      <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
+      <path d="M50 70 Q48 50 50 30" fill="none" stroke="#3D5A3C" stroke-width="2.4" stroke-linecap="round"/>
+      <ellipse cx="40" cy="58" rx="11" ry="7" transform="rotate(-30 40 58)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+      <ellipse cx="60" cy="48" rx="11" ry="7" transform="rotate(30 60 48)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+      <ellipse cx="50" cy="36" rx="11" ry="7" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
+      <ellipse cx="50" cy="24" rx="12" ry="8" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.7"/>
+    </svg>
+
+    <!-- Signed out: prove who you are before we open anyone's billing -->
+    <div id="signin-view">
+      <h1>Manage your <em>subscription.</em></h1>
+      <p class="lede">Sign in and we'll take you straight to your billing page — update your card, switch plans, or cancel.</p>
+
+      <button class="btn-google" id="google-btn">
+        <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+
+      <div class="or"><span>or</span></div>
+
+      <div class="email-row">
+        <input type="email" id="email-input" placeholder="you@email.com" autocomplete="email">
+        <button class="btn-primary" id="email-btn">Email me a link</button>
+      </div>
+
+      <p class="fine">Use the same email or Google account you subscribed with. We'll only use it to find your subscription.</p>
+      <div id="signin-msg" class="msg hidden"></div>
+    </div>
+
+    <!-- Working: auth done, asking the backend for a portal session -->
+    <div id="loading-view" class="hidden">
+      <div class="spinner"></div>
+      <h1>Opening your <em>billing page…</em></h1>
+      <p class="lede">One moment — we're setting up a secure session with Stripe.</p>
+    </div>
+
+    <!-- Magic link on its way -->
+    <div id="sent-view" class="hidden">
+      <h1>Check your <em>inbox.</em></h1>
+      <p class="lede">We sent a sign-in link to <strong id="sent-email"></strong>. Open it on this device to reach your billing page.</p>
+      <div class="msg msg-note">
+        ⚠️ <strong>Don't see it?</strong> Check your spam or promotions folder — sign-in emails often land there. Give it a minute to arrive.
+      </div>
+    </div>
+
+    <!-- Nothing we can open: no sub, or an IAP sub we don't control -->
+    <div id="result-view" class="hidden">
+      <h1 id="result-title">Nothing to <em>manage.</em></h1>
+      <p class="lede" id="result-msg"></p>
+      <a class="btn btn-primary hidden" id="result-cta" href="#" target="_blank" rel="noopener noreferrer">Open the store</a>
+    </div>
+
+    <a class="back" href="/">← Back to Skill Sprouts</a>
+  </div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+  import {
+    getAuth, signInWithPopup, GoogleAuthProvider,
+    sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+  } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+
+  const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.run.app';
+  // Trailing slash on purpose: without it GitHub Pages 301s to the directory
+  // form, and the magic link's query params must survive that hop.
+  const RETURN_URL = 'https://skillsprouts.co/billing/';
+
+  const app = initializeApp({
+    apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
+    authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+    projectId: 'valued-watch-461301-e1',
+    storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
+    messagingSenderId: '386194120047',
+    appId: '1:386194120047:web:222c5a6ea632ae1abd5c9a',
+  });
+  const auth = getAuth(app);
+
+  const $ = id => document.getElementById(id);
+  const show = id => { for (const v of ['signin-view','loading-view','sent-view','result-view']) $(v).classList.toggle('hidden', v !== id); };
+
+  function signinError(text) {
+    const el = $('signin-msg');
+    el.textContent = text;
+    el.className = 'msg msg-err';
+  }
+
+  // ── Portal handoff ──────────────────────────────────────────
+  async function openPortal(user) {
+    show('loading-view');
+    try {
+      const idToken = await user.getIdToken();
+      let res = await portalRequest(idToken);
+
+      // No row on file may just mean the subscription was never linked to this
+      // account (orphaned checkout). Try a restore, then ask once more.
+      if (res.status === 404) {
+        await fetch(`${API_BASE}/payments/stripe/restore`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${idToken}` },
+        }).catch(() => {});
+        res = await portalRequest(idToken);
+      }
+
+      if (res.ok) {
+        const { url } = await res.json();
+        window.location.href = url;
+        return;
+      }
+
+      const detail = await res.json().then(d => d.detail).catch(() => '');
+      showResult(res.status, detail);
+    } catch (e) {
+      console.error('Portal error:', e);
+      showResult(0, '');
+    }
+  }
+
+  function portalRequest(idToken) {
+    return fetch(`${API_BASE}/payments/stripe/portal`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
+  }
+
+  function showResult(status, detail) {
+    show('result-view');
+    const cta = $('result-cta');
+    cta.classList.add('hidden');
+
+    if (detail === 'managed_by_apple' || detail === 'managed_by_google') {
+      const isApple = detail === 'managed_by_apple';
+      $('result-title').innerHTML = 'Managed by <em>the store.</em>';
+      $('result-msg').textContent = isApple
+        ? 'You subscribed through the App Store, so Apple handles billing. Manage or cancel it in your Apple account settings.'
+        : 'You subscribed through Google Play, so Google handles billing. Manage or cancel it in your Play Store account settings.';
+      cta.href = isApple
+        ? 'https://apps.apple.com/account/subscriptions'
+        : 'https://play.google.com/store/account/subscriptions?package=com.skillsprouts.myapp';
+      cta.textContent = isApple ? 'Open App Store settings' : 'Open Play Store settings';
+      cta.classList.remove('hidden');
+      return;
+    }
+
+    if (status === 404 || detail === 'no_subscription') {
+      $('result-title').innerHTML = 'No subscription <em>found.</em>';
+      $('result-msg').textContent =
+        "We couldn't find a subscription on this account. If you subscribed with a different email or Google account, sign in with that one instead. Still stuck? Email support@skillsprouts.co and we'll sort it out.";
+      return;
+    }
+
+    $('result-title').innerHTML = 'Something went <em>wrong.</em>';
+    $('result-msg').textContent =
+      "We couldn't open your billing page just now. Please try again in a moment, or email support@skillsprouts.co.";
+  }
+
+  // ── Google ──────────────────────────────────────────────────
+  $('google-btn').addEventListener('click', async () => {
+    $('google-btn').disabled = true;
+    try {
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      await openPortal(result.user);
+    } catch (e) {
+      $('google-btn').disabled = false;
+      signinError('Sign-in failed. Please try again.');
+    }
+  });
+
+  // ── Email magic link ────────────────────────────────────────
+  $('email-btn').addEventListener('click', async () => {
+    const input = $('email-input');
+    const val = input.value.trim();
+    if (!val || !/.+@.+\..+/.test(val)) { input.classList.add('err'); input.focus(); return; }
+    input.classList.remove('err');
+    $('email-btn').disabled = true;
+    $('email-btn').textContent = 'Sending…';
+    try {
+      await sendSignInLinkToEmail(auth, val, { url: RETURN_URL, handleCodeInApp: true });
+      localStorage.setItem('sprouts_email_for_signin', val);
+      $('sent-email').textContent = val;
+      show('sent-view');
+    } catch (e) {
+      $('email-btn').disabled = false;
+      $('email-btn').textContent = 'Email me a link';
+      signinError('Could not send the link. Check the email and try again.');
+    }
+  });
+  $('email-input').addEventListener('input', e => e.target.classList.remove('err'));
+  $('email-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('email-btn').click(); });
+
+  // ── Init: already signed in, or arriving on a magic link ────
+  async function init() {
+    const href = window.location.href;
+    if (isSignInWithEmailLink(auth, href)) {
+      show('loading-view');
+      let email = localStorage.getItem('sprouts_email_for_signin');
+      if (!email) email = window.prompt('Please confirm the email you used:');
+      if (!email) { show('signin-view'); signinError('Could not determine your email address.'); return; }
+      try {
+        const result = await signInWithEmailLink(auth, email, href);
+        localStorage.removeItem('sprouts_email_for_signin');
+        await openPortal(result.user);
+      } catch (e) {
+        show('signin-view');
+        signinError('That link has expired or was already used. Please request a new one.');
+      }
+      return;
+    }
+
+    if (auth.currentUser) {
+      await openPortal(auth.currentUser);
+      return;
+    }
+    show('signin-view');
+  }
+
+  init();
+</script>
+</body>
+</html>
