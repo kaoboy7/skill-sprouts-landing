@@ -76,6 +76,20 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
+    .spam-note {
+      display: flex;
+      gap: .5rem;
+      align-items: flex-start;
+      background: #FCEBD3;
+      border: 1px solid rgba(244,162,89,.5);
+      border-radius: 12px;
+      padding: .75rem .9rem;
+      margin-bottom: 1rem;
+      font-size: .84rem;
+      line-height: 1.45;
+      color: #2A1F17;
+      text-align: left;
+    }
     .badge {
       display: inline-block;
       background: #E8F5E9;
@@ -107,6 +121,12 @@
       <div id="email-view" class="hidden" style="background:#EEF6F2;border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.92rem;color:#2A1F17;text-align:left;line-height:1.5;">
         📧 We emailed a magic sign-in link to <strong id="email-addr"></strong>.
         <strong>Open it on your phone</strong> to finish setup — you'll land in the app already signed in. Link valid for a limited time.
+      </div>
+
+      <!-- Sign-in emails land in spam often enough to warrant its own callout —
+           a paid user stuck here has already been charged. -->
+      <div class="spam-note hidden" id="spam-note">
+        ⚠️ <span><strong>Don't see it?</strong> Check your spam or promotions folder — sign-in emails often land there. Give it a minute to arrive.</span>
       </div>
 
       <p style="font-size:.82rem;color:#8a7a72;margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
@@ -181,7 +201,8 @@
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
 
-      // Trial length depends on the plan (7 days annual, 3 days monthly).
+      // Rendered from the subscription's actual trial window, so this stays
+      // right if the trial length ever differs by plan again.
       if (trialDays) $('trial-badge').textContent = `${trialDays}-day free trial activated`;
 
       // The custom-scheme "Open Skill Sprouts" handoff proved unreliable, so we
@@ -209,6 +230,8 @@
         localStorage.setItem('sprouts_email_for_signin', email);
         $('email-addr').textContent = email;
         $('email-view').classList.remove('hidden');
+        // Only surface the spam hint once an email is actually on its way.
+        $('spam-note').classList.remove('hidden');
         $('resend-row').classList.remove('hidden');
         if (isResend) $('resend-status').textContent = ' ✓ Sent again';
       } catch (e) {

@@ -543,11 +543,13 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   $('[data-action="to-paywall"]').addEventListener('click', () => go('paywall'));
 
   // ── Paywall ───────────────────────────────────────────────
-  // Trial length differs by plan — must stay in sync with TRIAL_DAYS in the
-  // backend's stripe_payments.py, which sets Stripe's trial_period_days.
-  const TRIAL_DAYS = { annual: 7, monthly: 3 };
+  // Both plans currently get the same trial; kept per-plan so the timeline copy
+  // and the charge can't drift if that changes. Must stay in sync with
+  // TRIAL_DAYS in the backend's stripe_payments.py, which is what actually sets
+  // Stripe's trial_period_days.
+  const TRIAL_DAYS = { annual: 7, monthly: 7 };
   // Day the "your trial is ending" reminder email goes out.
-  const TRIAL_WARN_DAY = { annual: 5, monthly: 2 };
+  const TRIAL_WARN_DAY = { annual: 5, monthly: 5 };
 
   function updatePwCopy() {
     const plan = state.plan === 'monthly' ? 'monthly' : 'annual';
