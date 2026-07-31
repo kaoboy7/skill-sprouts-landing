@@ -219,12 +219,50 @@
         e.preventDefault();
         _openInApp(handoffToken);
       }, { once: true });
-      // Auto-attempt on Android only (referrer rides in the URL, no gesture
-      // needed). On iOS we wait for the button tap so the clipboard write has a
-      // user gesture before any App Store redirect.
+
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (/Android/i.test(navigator.userAgent)) {
         setTimeout(() => _openInApp(handoffToken), 800);
+      } else if (isIOS) {
+        _autoOpenIOS(handoffToken, appUrl, email);
       }
+    }
+
+    // iOS auto-open. A Universal Link can't do this job: the magic link arrives
+    // via Firebase's action handler on firebaseapp.com, which *redirects* here,
+    // and iOS doesn't honour applinks across a redirect or a JS navigation — so
+    // despite /auth being in our AASA, we land in Safari. The custom scheme is
+    // the only automatic route out.
+    //
+    // Deliberately NOT calling _openInApp here: that path also arms an App Store
+    // redirect, which without a user gesture we can't pair with the clipboard
+    // token write — and a false negative would eject someone who does have the
+    // app installed. The button keeps the full gesture-backed install path.
+    function _autoOpenIOS(handoffToken, appUrl, email) {
+      $('open-msg').textContent = email
+        ? `Opening Skill Sprouts as ${email}…`
+        : 'Opening Skill Sprouts…';
+
+      let left = false;
+      const markLeft = () => { left = true; };
+      window.addEventListener('pagehide', markLeft, { once: true });
+      window.addEventListener('blur', markLeft, { once: true });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') markLeft();
+      }, { once: true });
+
+      // Small delay so the view has painted before iOS raises its
+      // "Open in Skill Sprouts?" confirmation.
+      setTimeout(() => { window.location.href = appUrl; }, 400);
+
+      // Still here? Either the app isn't installed or the prompt was dismissed.
+      // Fall back to the manual button rather than guessing.
+      setTimeout(() => {
+        if (left) return;
+        $('open-msg').textContent = email
+          ? `Tap below to open Skill Sprouts as ${email}.`
+          : 'Tap below to open Skill Sprouts on this device.';
+      }, 2500);
     }
 
     function showError(msg) {
