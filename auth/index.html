@@ -4,40 +4,90 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Opening Skill Sprouts…</title>
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FEF6EC;
+      --cream-deep: #F2E6D5;
+      --ink: #2A1F17;
+      --ink-soft: #5A4A3B;
+      --muted: #9C8A78;
+      --line: #EBDDC9;
+      --line-soft: #C9BBA8;
+      --paper: #FFFDF8;
+      --terracotta: #BC4B51;
+      --sage: #5B8E7D;
+      --amber-tint: #FCEBD3;
+      --cream-deep2: #F2E6D5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Manrope', system-ui, sans-serif;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem 1.5rem;
-      background: #FDFAF6;
-      color: #2A1F17;
+      color: var(--ink);
+      line-height: 1.5;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(244,162,89,0.15), transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(91,142,125,0.12), transparent 55%),
+        var(--cream);
+      background-attachment: fixed;
     }
+    .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 1.75rem; }
+    .brand .mark {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--amber-tint), var(--cream-deep));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .brand .wordmark {
+      font-family: 'Newsreader', serif;
+      font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+    }
+    .brand .wordmark em { font-style: italic; color: var(--terracotta); }
     .card {
-      background: #fff;
-      border-radius: 20px;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 24px 26px 22px 28px;
       padding: 2.5rem 2rem;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 4px 40px rgba(42,31,23,0.10);
+      box-shadow: 0 18px 50px -24px rgba(42,31,23,0.28);
     }
-    .sprout { font-size: 3.5rem; margin-bottom: 1rem; }
-    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
-    p { color: #5a4a42; font-size: .95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+    .sprout { font-size: 3.25rem; margin-bottom: 1rem; filter: drop-shadow(0 10px 24px rgba(244,162,89,0.22)); }
+    h1 {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: clamp(28px, 6vw, 38px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: .75rem;
+    }
+    h1 em { font-style: italic; color: var(--terracotta); }
+    p {
+      color: var(--ink-soft);
+      font-size: .96rem;
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+    }
     .open-btn {
       display: inline-flex;
       align-items: center;
       gap: .5rem;
-      background: #5B8E7D;
-      color: #fff;
+      background: var(--ink);
+      color: var(--cream);
       border: none;
-      border-radius: 12px;
-      padding: .85rem 1.75rem;
+      border-radius: 999px;
+      padding: 1rem 1.75rem;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
@@ -45,54 +95,75 @@
       width: 100%;
       justify-content: center;
       margin-bottom: .75rem;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
-    .open-btn:active { opacity: .85; }
+    .open-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -12px rgba(42,31,23,0.4); }
+    .open-btn:active { transform: translateY(0); opacity: .9; }
+    .store-hint { font-size: .82rem; color: var(--muted); margin-bottom: .6rem; }
     .store-row {
       display: flex;
       gap: .5rem;
       justify-content: center;
       flex-wrap: wrap;
-      margin-top: 1rem;
+      margin-top: .25rem;
     }
     .store-link {
       display: inline-flex;
       align-items: center;
       gap: .4rem;
-      background: #2A1F17;
-      color: #fff;
-      border-radius: 10px;
+      background: var(--paper);
+      color: var(--ink);
+      border: 1.5px solid var(--line-soft);
+      border-radius: 999px;
       padding: .55rem 1.1rem;
       font-size: .82rem;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
+      transition: border-color 0.15s ease, transform 0.15s ease;
     }
+    .store-link:hover { border-color: var(--ink); transform: translateY(-1px); }
     .spinner {
-      width: 40px; height: 40px;
-      border: 3px solid #e0d8d0;
-      border-top-color: #5B8E7D;
+      width: 42px; height: 42px;
+      border: 3px solid var(--line);
+      border-top-color: var(--terracotta);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       margin: 0 auto 1.25rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
-    #error-msg { color: #c0392b; font-size: .88rem; }
+    .back-link {
+      display: inline-block;
+      margin-top: .25rem;
+      color: var(--terracotta);
+      font-weight: 600;
+      font-size: .9rem;
+      text-decoration: none;
+      border-bottom: 1.5px solid rgba(188,75,81,0.3);
+      padding-bottom: 2px;
+    }
+    .back-link:hover { border-color: var(--terracotta); }
+    #error-msg { color: var(--ink-soft); }
   </style>
 </head>
 <body>
+  <div class="brand">
+    <span class="mark">🌱</span>
+    <span class="wordmark">Skill <em>Sprouts</em></span>
+  </div>
   <div class="card">
     <div id="loading-view">
       <div class="spinner"></div>
-      <h1>Opening Skill Sprouts…</h1>
+      <h1>Opening Skill <em>Sprouts…</em></h1>
       <p>Just a moment while we sign you in.</p>
     </div>
 
     <div id="open-view" class="hidden">
       <div class="sprout">🌱</div>
-      <h1>You're signed in!</h1>
+      <h1>You're <em>signed in!</em></h1>
       <p id="open-msg">Tap below to open Skill Sprouts on this device.</p>
       <a id="open-btn" class="open-btn" href="#">Open Skill Sprouts →</a>
-      <p style="font-size:.82rem;color:#8a7a72;">Don't have the app yet?</p>
+      <p class="store-hint">Don't have the app yet?</p>
       <div class="store-row">
         <a class="store-link" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">
           <svg width="14" height="17" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
@@ -107,9 +178,9 @@
 
     <div id="error-view" class="hidden">
       <div class="sprout">🌿</div>
-      <h1>Link expired</h1>
+      <h1>Link <em>expired</em></h1>
       <p id="error-msg">This sign-in link has expired or already been used. Please go back to the quiz and try again.</p>
-      <a class="open-btn" href="https://skillsprouts.co/welcome">Back to quiz</a>
+      <a class="back-link" href="https://skillsprouts.co/welcome">← Back to quiz</a>
     </div>
   </div>
 
