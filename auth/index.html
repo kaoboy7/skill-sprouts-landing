@@ -121,8 +121,7 @@
 
     const app = initializeApp({
       apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
-      // authDomain: 'auth2.skillsprouts.co', // restore after domain is verified
-      authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+      authDomain: 'auth2.skillsprouts.co',
       projectId: 'valued-watch-461301-e1',
       storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
       messagingSenderId: '386194120047',
@@ -145,7 +144,11 @@
       // Path 2: Firebase email link callback
       const href = window.location.href;
       if (isSignInWithEmailLink(auth, href)) {
-        let email = localStorage.getItem('sprouts_email_for_signin');
+        // 0-click: the email is carried in the continue URL by the funnel, so
+        // sign-in completes with no prompt even on a different device/browser.
+        // Fall back to localStorage (same-device), then prompt as last resort.
+        let email = params.get('email')
+          || localStorage.getItem('sprouts_email_for_signin');
         if (!email) {
           email = window.prompt('Please enter the email address you used to sign in:');
         }

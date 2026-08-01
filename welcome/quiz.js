@@ -5,8 +5,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail } f
 
 const _firebaseApp = initializeApp({
   apiKey: 'AIzaSyCFOxde6Gf-YB_ccxc7s4Q5yQ0OqQH1PAw',
-  // authDomain: 'auth2.skillsprouts.co', // restore after domain is verified
-  authDomain: 'valued-watch-461301-e1.firebaseapp.com',
+  authDomain: 'auth2.skillsprouts.co',
   projectId: 'valued-watch-461301-e1',
   storageBucket: 'valued-watch-461301-e1.firebasestorage.app',
   messagingSenderId: '386194120047',
@@ -512,9 +511,13 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   // Sends the Firebase email sign-in link, carrying the focus area so /auth can
   // forward it to the app's handoff and the same starter habits get seeded.
   async function _sendMagicLink(email) {
+    // Carry the email in the continue URL so /auth can complete sign-in with
+    // zero prompt even when the link opens on a different device/browser than
+    // where it was requested (localStorage won't have it there).
+    const params = new URLSearchParams({ email });
+    if (state.focusArea) params.set('focus', state.focusArea);
     await sendSignInLinkToEmail(_auth, email, {
-      url: 'https://skillsprouts.co/auth' +
-        (state.focusArea ? ('?focus=' + encodeURIComponent(state.focusArea)) : ''),
+      url: 'https://skillsprouts.co/auth?' + params.toString(),
       handleCodeInApp: true,
     });
     localStorage.setItem('sprouts_email_for_signin', email);
