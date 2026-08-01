@@ -227,8 +227,13 @@
 
     async function sendMagicLink(email, isResend) {
       try {
+        // Carry the email in the continue URL so /auth completes sign-in with
+        // zero prompt even when the link opens in a different browser/device
+        // than checkout ran in (localStorage won't have it there — e.g. pay in
+        // Chrome, open the email link in Safari).
+        const contParams = new URLSearchParams({ email });
         await sendSignInLinkToEmail(auth, email, {
-          url: 'https://skillsprouts.co/auth',
+          url: 'https://skillsprouts.co/auth?' + contParams.toString(),
           handleCodeInApp: true,
         });
         // If the link is later opened in this same browser, /auth can read this.
