@@ -4,121 +4,193 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to Skill Sprouts!</title>
+  <link rel="icon" type="image/png" href="../favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FEF6EC;
+      --cream-deep: #F2E6D5;
+      --ink: #2A1F17;
+      --ink-soft: #5A4A3B;
+      --muted: #9C8A78;
+      --line: #EBDDC9;
+      --line-soft: #C9BBA8;
+      --paper: #FFFDF8;
+      --terracotta: #BC4B51;
+      --amber: #F4A259;
+      --amber-tint: #FCEBD3;
+      --sage: #5B8E7D;
+      --sage-tint: #DCEBE5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Manrope', system-ui, sans-serif;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem 1.5rem;
-      background: #FDFAF6;
-      color: #2A1F17;
+      color: var(--ink);
+      line-height: 1.5;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(244,162,89,0.15), transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(91,142,125,0.12), transparent 55%),
+        var(--cream);
+      background-attachment: fixed;
     }
+    a { color: inherit; }
+    .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 1.75rem; }
+    .brand .mark {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--amber-tint), var(--cream-deep));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .brand .wordmark {
+      font-family: 'Newsreader', serif;
+      font-size: 17px; font-weight: 500; letter-spacing: -0.01em;
+    }
+    .brand .wordmark em { font-style: italic; color: var(--terracotta); }
     .card {
-      background: #fff;
-      border-radius: 20px;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 24px 22px 26px 22px;
       padding: 2.5rem 2rem;
-      max-width: 420px;
+      max-width: 440px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 4px 40px rgba(42,31,23,0.10);
+      box-shadow: 0 18px 50px -24px rgba(42,31,23,0.28);
     }
-    .sprout { font-size: 3.5rem; margin-bottom: 1rem; }
-    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
-    p { color: #5a4a42; font-size: .95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+    .sprout { font-size: 3.25rem; margin-bottom: 1rem; filter: drop-shadow(0 10px 24px rgba(244,162,89,0.22)); }
+    h1 {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: clamp(30px, 6vw, 42px);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      margin-bottom: .6rem;
+    }
+    h1 em { font-style: italic; color: var(--terracotta); }
+    p { color: var(--ink-soft); font-size: .96rem; line-height: 1.55; margin-bottom: 1.5rem; }
     .open-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: .5rem;
-      background: #5B8E7D;
-      color: #fff;
+      background: var(--ink);
+      color: var(--cream);
       border: none;
-      border-radius: 12px;
-      padding: .9rem 1.75rem;
+      border-radius: 999px;
+      padding: 1rem 1.75rem;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       width: 100%;
-      margin-bottom: .75rem;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
-    .open-btn:active { opacity: .85; }
+    .open-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -12px rgba(42,31,23,0.4); }
+    .open-btn:active { transform: translateY(0); opacity: .9; }
     .store-row {
       display: flex;
       gap: .5rem;
       justify-content: center;
       flex-wrap: wrap;
-      margin-top: 1rem;
+      margin-top: .25rem;
     }
     .store-link {
       display: inline-flex;
       align-items: center;
       gap: .4rem;
-      background: #2A1F17;
-      color: #fff;
-      border-radius: 10px;
-      padding: .55rem 1.1rem;
+      background: var(--paper);
+      color: var(--ink);
+      border: 1.5px solid var(--line-soft);
+      border-radius: 999px;
+      padding: .6rem 1.1rem;
       font-size: .82rem;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
+      transition: border-color 0.15s ease, transform 0.15s ease;
     }
+    .store-link:hover { border-color: var(--ink); transform: translateY(-1px); }
     .spinner {
       width: 44px; height: 44px;
-      border: 3px solid #e0d8d0;
-      border-top-color: #5B8E7D;
+      border: 3px solid var(--line);
+      border-top-color: var(--terracotta);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       margin: 0 auto 1.25rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
+    .email-note {
+      background: var(--sage-tint);
+      border: 1.5px solid rgba(91,142,125,0.4);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: .92rem;
+      color: var(--ink);
+      text-align: left;
+      line-height: 1.55;
+    }
+    .email-note strong { color: var(--ink); }
     .spam-note {
       display: flex;
       gap: .5rem;
       align-items: flex-start;
-      background: #FCEBD3;
-      border: 1px solid rgba(244,162,89,.5);
-      border-radius: 12px;
+      background: var(--amber-tint);
+      border: 1.5px solid rgba(244,162,89,.5);
+      border-radius: 14px;
       padding: .75rem .9rem;
       margin-bottom: 1rem;
       font-size: .84rem;
       line-height: 1.45;
-      color: #2A1F17;
+      color: var(--ink);
       text-align: left;
     }
     .badge {
       display: inline-block;
-      background: #E8F5E9;
-      color: #2E7D32;
-      font-size: .78rem;
-      font-weight: 600;
-      padding: .25rem .65rem;
-      border-radius: 20px;
+      background: var(--sage-tint);
+      color: var(--sage);
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: .3rem .7rem;
+      border-radius: 999px;
       margin-bottom: 1rem;
     }
+    .fine { font-size: .82rem; color: var(--muted); }
+    .link { color: var(--sage); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(91,142,125,0.35); }
+    .link:hover { color: var(--ink); }
   </style>
 </head>
 <body>
+  <div class="brand">
+    <span class="mark">🌱</span>
+    <span class="wordmark">Skill <em>Sprouts</em></span>
+  </div>
   <div class="card">
 
     <div id="loading-view">
       <div class="spinner"></div>
-      <h1>Setting up your trial…</h1>
+      <h1>Setting up your <em>trial…</em></h1>
       <p>Hang tight — we're activating your free trial and getting the app ready for you.</p>
     </div>
 
     <div id="success-view" class="hidden">
       <div class="sprout">🌱</div>
       <div class="badge" id="trial-badge">Free trial activated</div>
-      <h1>You're all set!</h1>
+      <h1>You're <em>all set!</em></h1>
       <p id="success-msg">Your subscription is active.</p>
 
       <!-- Magic-link email is the single sign-in path on every device -->
-      <div id="email-view" class="hidden" style="background:#EEF6F2;border-radius:12px;padding:1rem;margin-bottom:1rem;font-size:.92rem;color:#2A1F17;text-align:left;line-height:1.5;">
+      <div id="email-view" class="email-note hidden">
         📧 We emailed a magic sign-in link to <strong id="email-addr"></strong>.
         <strong>Open it on your phone</strong> to finish setup — you'll land in the app already signed in. Link valid for a limited time.
       </div>
@@ -129,7 +201,7 @@
         ⚠️ <span><strong>Don't see it?</strong> Check your spam or promotions folder — sign-in emails often land there. Give it a minute to arrive.</span>
       </div>
 
-      <p style="font-size:.82rem;color:#8a7a72;margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
+      <p class="fine" style="margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
       <div class="store-row">
         <!-- target="_blank" keeps this page open so user can tap the button after installing -->
         <a class="store-link" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">
@@ -142,22 +214,22 @@
         </a>
       </div>
 
-      <p id="resend-row" class="hidden" style="font-size:.82rem;color:#8a7a72;margin-top:1rem;">
-        Didn't get the email? <a href="#" id="resend-link" style="color:#5B8E7D;font-weight:600;">Resend link</a>
+      <p id="resend-row" class="hidden fine" style="margin-top:1rem;">
+        Didn't get the email? <a href="#" id="resend-link" class="link">Resend link</a>
         <span id="resend-status"></span>
       </p>
 
-      <p style="font-size:.78rem;color:#8a7a72;margin-top:1rem;">
+      <p class="fine" style="margin-top:1rem;">
         Need to change or cancel later?
-        <a href="/billing/" style="color:#5B8E7D;font-weight:600;">Manage your subscription</a>
+        <a href="/billing/" class="link">Manage your subscription</a>
       </p>
     </div>
 
     <div id="error-view" class="hidden">
       <div class="sprout">🌿</div>
-      <h1>Something went wrong</h1>
+      <h1>Something <em>went wrong</em></h1>
       <p id="error-msg">We couldn't confirm your subscription. If you were charged, your trial is still active — just open the app and sign in.</p>
-      <a class="open-btn" href="https://skillsprouts.co/welcome" style="background:#8a7a72;">Back to quiz</a>
+      <a class="open-btn" href="https://skillsprouts.co/welcome">Back to quiz</a>
     </div>
 
   </div>
