@@ -649,10 +649,30 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
   }
 
+  // Apple mobile devices: iPad on iOS 13+ masquerades as Mac, so also treat a
+  // touch-capable "MacIntel" as iPad. Used to steer users to install first.
+  const IS_APPLE_MOBILE = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   function renderHandoff() {
     $$('[data-signed-email]').forEach(el => { el.textContent = state.email || 'your email'; });
     const pl = $('[data-handoff-plan]');
     if (pl) pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
+
+    // On iOS, email users must install the app BEFORE tapping the link, so swap
+    // the default store card for the numbered "download first, then open link"
+    // steps. Google users have a same-device handoff token and don't need this.
+    const isEmailFlow = !state.handoffToken;
+    const showSteps = IS_APPLE_MOBILE && isEmailFlow;
+    const steps = $('[data-handoff-steps]');
+    const card = $('[data-handoff-card]');
+    const lede = $('[data-handoff-lede]');
+    if (steps) steps.style.display = showSteps ? '' : 'none';
+    if (card) card.style.display = showSteps ? 'none' : '';
+    if (lede && showSteps) {
+      lede.innerHTML = 'Two quick steps and you’re in — <strong>install the app first</strong>, then open the sign-in link we emailed you.';
+    }
+
     const btn = $('.handoff-deep');
     if (btn) {
       // Only Google sign-ins have a handoff token; email users open the app from

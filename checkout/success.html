@@ -168,6 +168,38 @@
     .fine { font-size: .82rem; color: var(--muted); }
     .link { color: var(--sage); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(91,142,125,0.35); }
     .link:hover { color: var(--ink); }
+
+    /* iOS: install the app BEFORE opening the email link, shown as two numbered
+       steps so the link opens the app directly (no web clipboard-paste bridge). */
+    .dl-steps {
+      margin-bottom: 1rem; text-align: left;
+      background: var(--paper); border: 1.5px solid var(--line);
+      border-radius: 18px 20px 18px 22px; padding: .25rem 1.1rem;
+    }
+    .dl-step { display: flex; gap: .85rem; padding: 1rem 0; }
+    .dl-step + .dl-step { border-top: 1.5px dashed var(--line); }
+    .dl-num {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+      background: var(--sage); color: #fff;
+      font-family: 'Newsreader', serif; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px -4px rgba(91,142,125,0.5);
+    }
+    .dl-step-body { flex: 1; min-width: 0; }
+    .dl-step-title { font-family: 'Newsreader', serif; font-size: 1.1rem; color: var(--ink); }
+    .dl-step-sub { font-size: .84rem; color: var(--ink-soft); line-height: 1.5; margin-top: .2rem; }
+    .dl-step-sub strong { color: var(--ink); }
+    .dl-appstore {
+      margin-top: .7rem;
+      background: var(--ink); color: var(--cream);
+      border-radius: 12px; padding: .6rem 1rem;
+      display: inline-flex; align-items: center; gap: .6rem;
+      text-decoration: none; transition: transform 0.15s ease;
+    }
+    .dl-appstore:hover { transform: translateY(-1px); }
+    .dl-appstore .stack { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+    .dl-appstore .top { font-size: 9.5px; opacity: 0.75; font-weight: 500; letter-spacing: 0.05em; }
+    .dl-appstore .bot { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
   </style>
 </head>
 <body>
@@ -189,7 +221,29 @@
       <h1>You're <em>all set!</em></h1>
       <p id="success-msg">Your subscription is active.</p>
 
-      <!-- Magic-link email is the single sign-in path on every device -->
+      <!-- iOS: install first, THEN open the email link (shown by showSuccess). -->
+      <div id="dl-steps" class="dl-steps hidden">
+        <div class="dl-step">
+          <span class="dl-num">1</span>
+          <div class="dl-step-body">
+            <div class="dl-step-title">Download the app</div>
+            <div class="dl-step-sub">Install Skill Sprouts from the App Store first — it only takes a moment.</div>
+            <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer" class="dl-appstore">
+              <svg width="16" height="19" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              <span class="stack"><span class="top">Download on the</span><span class="bot">App Store</span></span>
+            </a>
+          </div>
+        </div>
+        <div class="dl-step">
+          <span class="dl-num">2</span>
+          <div class="dl-step-body">
+            <div class="dl-step-title">Open your sign-in link</div>
+            <div class="dl-step-sub">Once installed, open the email we sent to <strong id="email-addr-steps"></strong> and tap the link — you'll land in the app, already signed in and subscribed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Magic-link email — default (Android / desktop) copy -->
       <div id="email-view" class="email-note hidden">
         📧 We emailed a magic sign-in link to <strong id="email-addr"></strong>.
         <strong>Open it on your phone</strong> to finish setup — you'll land in the app already signed in. Link valid for a limited time.
@@ -201,8 +255,8 @@
         ⚠️ <span><strong>Don't see it?</strong> Check your spam or promotions folder — sign-in emails often land there. Give it a minute to arrive.</span>
       </div>
 
-      <p class="fine" style="margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
-      <div class="store-row">
+      <p id="store-hint" class="fine" style="margin-bottom:.5rem;">Don't have the app yet? Download it, then open the email link on your phone:</p>
+      <div class="store-row" id="store-row">
         <!-- target="_blank" keeps this page open so user can tap the button after installing -->
         <a class="store-link" href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">
           <svg width="14" height="17" viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
@@ -252,6 +306,11 @@
 
     const $ = id => document.getElementById(id);
 
+    // Apple mobile: iPad on iOS 13+ reports as Mac, so treat touch-capable
+    // "MacIntel" as iPad too. On these devices we steer users to install first.
+    const IS_APPLE_MOBILE = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
     async function init() {
       const params = new URLSearchParams(window.location.search);
       const sessionId = params.get('session_id');
@@ -285,8 +344,16 @@
       // The custom-scheme "Open Skill Sprouts" handoff proved unreliable, so we
       // rely solely on the magic-link email on every device: the user opens the
       // link on their phone and lands in the app already signed in.
-      $('success-msg').textContent =
-        'Your subscription is active. Check your email to finish setup and sign in on your phone.';
+      $('success-msg').textContent = IS_APPLE_MOBILE
+        ? 'Your subscription is active. Two quick steps and you’re in — install the app first, then open the sign-in link we emailed you.'
+        : 'Your subscription is active. Check your email to finish setup and sign in on your phone.';
+
+      // On iOS the numbered steps carry the App Store button, so the generic
+      // store row below would be redundant — hide it there.
+      if (IS_APPLE_MOBILE) {
+        $('store-hint').classList.add('hidden');
+        $('store-row').classList.add('hidden');
+      }
 
       if (email) {
         sendMagicLink(email);
@@ -310,8 +377,15 @@
         });
         // If the link is later opened in this same browser, /auth can read this.
         localStorage.setItem('sprouts_email_for_signin', email);
-        $('email-addr').textContent = email;
-        $('email-view').classList.remove('hidden');
+        // iOS gets the numbered "install first, then open link" steps; everyone
+        // else gets the single email callout.
+        if (IS_APPLE_MOBILE) {
+          $('email-addr-steps').textContent = email;
+          $('dl-steps').classList.remove('hidden');
+        } else {
+          $('email-addr').textContent = email;
+          $('email-view').classList.remove('hidden');
+        }
         // Only surface the spam hint once an email is actually on its way.
         $('spam-note').classList.remove('hidden');
         $('resend-row').classList.remove('hidden');
