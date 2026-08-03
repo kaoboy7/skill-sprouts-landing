@@ -767,6 +767,13 @@ a { color: inherit; }
 .pw-skip { margin-top: 16px; background: transparent; border: none; color: var(--muted); font-size: 13px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
 .pw-skip:hover { color: var(--ink-soft); }
 
+/* Replaces the plans + CTA when the account already holds a live subscription.
+   Its manage button is an <a>, so it needs the underline reset .pw-cta's
+   <button> never did. */
+.pw-already { display: flex; flex-direction: column; align-items: center; }
+.pw-already-msg { font-family: 'Newsreader', serif; font-size: 17px; color: var(--ink-soft); line-height: 1.55; margin: 16px auto 0; max-width: 400px; }
+.pw-already .pw-cta { text-decoration: none; }
+
 /* ── Handoff ─────────────────────────────────────────────── */
 .handoff { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px 0 0; }
 .handoff h1 { font-family: 'Newsreader', serif; font-weight: 400; font-size: clamp(32px, 5vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 0; }

@@ -639,7 +639,14 @@
         </div>
         <div class="pw-timeline">
           <div class="pw-tl now"><div class="tl-t">Today — full access, free</div><div class="tl-d">Unlock everything and start your first habit right away.</div></div>
-          <div class="pw-tl"><div class="tl-t" data-pw-tl-warn>Day 5 — a friendly heads-up</div><div class="tl-d">We'll remind you by email before your trial ends. No surprises.</div></div>
+          <!-- This step deliberately promises nothing we don't already do. It used
+               to say "we'll remind you by email before your trial ends" — we don't
+               send that email, and a broken promise made at the moment someone
+               hands over a card is the expensive kind. If a reminder ever ships
+               (customer.subscription.trial_will_end is unhandled in the backend's
+               webhooks.py today), note Stripe fires it 3 days out, so the day
+               number here and TRIAL_WARN_DAY in quiz.js would both become 4. -->
+          <div class="pw-tl"><div class="tl-t" data-pw-tl-warn>Day 5 — still entirely your call</div><div class="tl-d" data-pw-tl-warn-d>Cancel any time in Settings before day 7 and you won't be charged. No forms, nothing to chase.</div></div>
           <div class="pw-tl"><div class="tl-t" data-pw-tl-end>Day 7 — trial ends</div><div class="tl-d">Your plan continues unless you cancel. One tap in Settings.</div></div>
         </div>
         <button class="pw-cta" data-action="start-trial">
@@ -649,6 +656,21 @@
         <div class="pw-sub" data-pw-sub>7 days free, then $49.99/yr. Cancel anytime in Settings.</div>
         <div class="pw-manage">Already subscribed? <a href="/billing/">Manage your subscription</a></div>
         <button class="pw-skip" data-action="skip-trial">Maybe later — continue with the limited free plan</button>
+
+        <!-- Shown in place of the plans + CTA above when this account already has
+             a live subscription, so nobody can buy a second one. Message and the
+             manage link are filled in by quiz.js from the 409 create-checkout
+             returns; the link points at the Stripe portal for signed-in users and
+             at /billing (which signs them in first) for everyone else. -->
+        <div class="pw-already" data-pw-already style="display:none;">
+          <h2 class="pw-title">You're already <em>growing.</em></h2>
+          <p class="pw-already-msg" data-pw-already-msg></p>
+          <a class="pw-cta" data-pw-already-manage href="/billing/">
+            Manage my subscription
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
+          </a>
+          <button class="pw-skip" data-action="already-continue">Continue to the app →</button>
+        </div>
       </div>
     </section>
 

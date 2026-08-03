@@ -35,6 +35,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     handoffToken: null,      // short-lived UUID for app sign-in
     plan: null,              // 'annual' | 'monthly' | 'free'
     trial: false,
+    subscribed: false,       // already had a live subscription — checkout was refused
   };
   let state = loadState();
   function loadState() {
@@ -551,7 +552,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   // TRIAL_DAYS in the backend's stripe_payments.py, which is what actually sets
   // Stripe's trial_period_days.
   const TRIAL_DAYS = { annual: 7, monthly: 7 };
-  // Day the "your trial is ending" reminder email goes out.
+  // Midpoint beat in the paywall timeline. Purely a reassurance step — we send
+  // NO trial-ending reminder email, so nothing here may imply one (see the
+  // comment on that step in index.html).
   const TRIAL_WARN_DAY = { annual: 5, monthly: 5 };
 
   function updatePwCopy() {
@@ -566,7 +569,12 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     if (eyebrow) eyebrow.textContent = `Your ${days}-day free trial`;
 
     const warn = $('[data-pw-tl-warn]');
-    if (warn) warn.textContent = `Day ${TRIAL_WARN_DAY[plan]} — a friendly heads-up`;
+    if (warn) warn.textContent = `Day ${TRIAL_WARN_DAY[plan]} — still entirely your call`;
+
+    // Names the trial's last day, so it can't drift if the plans stop sharing
+    // one trial length.
+    const warnD = $('[data-pw-tl-warn-d]');
+    if (warnD) warnD.textContent = `Cancel any time in Settings before day ${days} and you won't be charged. No forms, nothing to chase.`;
 
     const end = $('[data-pw-tl-end]');
     if (end) end.textContent = `Day ${days} — trial ends`;
@@ -584,6 +592,66 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       updatePwCopy();
     });
   });
+  // One subscription per account. The backend is the authoritative guard
+  // (create-checkout answers 409); these are the two places that turn its answer
+  // into something a human can act on instead of a dead button.
+  const ALREADY_MSG = {
+    already_subscribed: 'This account already has an active Skill Sprouts Plus subscription, so there’s nothing to buy twice. You can manage or cancel it any time.',
+    managed_by_apple: 'Your subscription was purchased through the App Store, so it’s managed there — open Settings › Subscriptions on your iPhone to change or cancel it.',
+    managed_by_google: 'Your subscription was purchased through Google Play, so it’s managed there — open Play Store › Subscriptions to change or cancel it.',
+  };
+
+  // Swaps the plans + CTA for the already-subscribed block. portalUrl is only
+  // ever present for a signed-in user (the backend won't hand a billing portal
+  // to an unverified email); everyone else goes to /billing, which signs them
+  // in before showing them anything.
+  function showAlreadySubscribed(code, portalUrl) {
+    state.subscribed = true;
+    saveState();
+
+    // Direct-child selectors on .paywall so the block's own .pw-title and
+    // .pw-skip, which are nested inside it, survive.
+    ['.paywall > [data-pw-eyebrow]', '.paywall > .pw-title', '.paywall > .pw-includes',
+     '.paywall > .pw-plans', '.paywall > .pw-timeline', '.paywall > .pw-cta',
+     '.paywall > .pw-sub', '.paywall > .pw-manage', '.paywall > .pw-skip'].forEach(sel => {
+      const el = $(sel);
+      if (el) el.style.display = 'none';
+    });
+
+    const msg = $('[data-pw-already-msg]');
+    if (msg) msg.textContent = ALREADY_MSG[code] || ALREADY_MSG.already_subscribed;
+
+    const manage = $('[data-pw-already-manage]');
+    if (manage) {
+      if (code === 'already_subscribed') {
+        manage.href = portalUrl || '/billing/';
+      } else {
+        // IAP subscriptions can't be managed from here at all.
+        manage.style.display = 'none';
+      }
+    }
+
+    const block = $('[data-pw-already]');
+    if (block) block.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Same destination as skip-trial: into the app. They already have access, so
+  // all that's left is signing them in on their phone.
+  $('[data-action="already-continue"]').addEventListener('click', async () => {
+    const btn = $('[data-action="already-continue"]');
+    if (state.handoffToken || !state.email) { go('handoff'); return; }
+    btn.disabled = true;
+    btn.textContent = 'Sending your sign-in link…';
+    try {
+      await _sendMagicLink(state.email);
+      go('handoff');
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Could not send the link — tap to try again';
+    }
+  });
+
   $('[data-action="start-trial"]').addEventListener('click', async () => {
     const btn = $('[data-action="start-trial"]');
     btn.disabled = true;
@@ -595,6 +663,15 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       // email and the success page emails them the magic link to sign in.
       if (!user && !state.email) { go('gate'); return; }
       const idToken = user ? await user.getIdToken() : null;
+
+      // Cheap pre-flight for the common case: a returning subscriber replaying
+      // the quiz. Saves a pointless round trip to Stripe. Never fatal — any
+      // failure falls through to create-checkout, which is the real guard.
+      if (idToken && await _hasActiveSubscription(idToken)) {
+        showAlreadySubscribed('already_subscribed', null);
+        return;
+      }
+
       const res = await fetch(`${API_BASE}/payments/stripe/create-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -604,6 +681,14 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
           plan: state.plan || 'annual',
         }),
       });
+      if (res.status === 409) {
+        const detail = await res.json().then(d => d.detail).catch(() => null);
+        // FastAPI passes our dict through as-is; a plain-string detail would be
+        // some other 409 we didn't shape.
+        const code = (detail && detail.code) || detail || 'already_subscribed';
+        showAlreadySubscribed(code, detail && detail.portalUrl);
+        return;
+      }
       if (!res.ok) throw new Error(`Checkout error: ${res.status}`);
       const { checkoutUrl } = await res.json();
       window.location.href = checkoutUrl;
@@ -612,6 +697,19 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       btn.textContent = origText;
     }
   });
+
+  async function _hasActiveSubscription(idToken) {
+    try {
+      const res = await fetch(`${API_BASE}/users/me/subscription`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      if (!res.ok) return false;
+      const { status } = await res.json();
+      return status === 'active';
+    } catch (e) {
+      return false;
+    }
+  }
   // Free plan: no checkout, so the magic link is what gets them into the app.
   $('[data-action="skip-trial"]').addEventListener('click', async () => {
     const btn = $('[data-action="skip-trial"]');
@@ -657,7 +755,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   function renderHandoff() {
     $$('[data-signed-email]').forEach(el => { el.textContent = state.email || 'your email'; });
     const pl = $('[data-handoff-plan]');
-    if (pl) pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
+    if (pl) {
+      if (state.subscribed) pl.textContent = 'Subscription active';
+      else pl.textContent = state.trial ? (state.plan === 'monthly' ? 'Free trial active · Monthly' : 'Free trial active · Annual') : 'Free plan active';
+    }
 
     // On iOS, email users must install the app BEFORE tapping the link, so swap
     // the default store card for the numbered "download first, then open link"
