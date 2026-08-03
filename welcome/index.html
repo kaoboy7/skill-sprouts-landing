@@ -665,11 +665,11 @@
         <div class="pw-already" data-pw-already style="display:none;">
           <h2 class="pw-title">You're already <em>growing.</em></h2>
           <p class="pw-already-msg" data-pw-already-msg></p>
-          <a class="pw-cta" data-pw-already-manage href="/billing/">
-            Manage my subscription
+          <button class="pw-cta" data-action="already-continue">
+            Continue to the app
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
-          </a>
-          <button class="pw-skip" data-action="already-continue">Continue to the app →</button>
+          </button>
+          <div class="pw-manage" data-pw-already-manage-wrap>Need to change your plan? <a href="/billing/" data-pw-already-manage>Manage my subscription</a></div>
         </div>
       </div>
     </section>
@@ -744,6 +744,8 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F4A259" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
           <span><strong>Don't see it?</strong> Check your spam or promotions folder — sign-in emails often land there. Give it a minute to arrive.</span>
         </div>
+        <!-- Hidden by renderHandoff() when there's no email on file to send to. -->
+        <button class="handoff-resend" data-action="resend-link">Resend the sign-in link</button>
         <a class="handoff-deep" href="#" style="display:none;">Open Skill Sprouts on this device →</a>
         <div class="handoff-note"><span data-handoff-plan>Free plan active</span> · Plan &amp; answers synced · Upgrade anytime</div>
       </div>

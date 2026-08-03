@@ -622,13 +622,12 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     if (msg) msg.textContent = ALREADY_MSG[code] || ALREADY_MSG.already_subscribed;
 
     const manage = $('[data-pw-already-manage]');
-    if (manage) {
-      if (code === 'already_subscribed') {
-        manage.href = portalUrl || '/billing/';
-      } else {
-        // IAP subscriptions can't be managed from here at all.
-        manage.style.display = 'none';
-      }
+    if (manage) manage.href = portalUrl || '/billing/';
+    if (code !== 'already_subscribed') {
+      // IAP subscriptions can't be managed from here at all — hide the whole
+      // line, or its "Need to change your plan?" lead-in dangles with no link.
+      const wrap = $('[data-pw-already-manage-wrap]');
+      if (wrap) wrap.style.display = 'none';
     }
 
     const block = $('[data-pw-already]');
@@ -638,14 +637,22 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
   // Same destination as skip-trial: into the app. They already have access, so
   // all that's left is signing them in on their phone.
+  //
+  // The link goes out even when state.handoffToken is set. That token only signs
+  // you in on THIS device, and the handoff screen's whole premise is continuing
+  // on a phone — so a Google user who skipped the send landed on a page reading
+  // "we emailed you a sign-in link" with no email on the way.
   $('[data-action="already-continue"]').addEventListener('click', async () => {
     const btn = $('[data-action="already-continue"]');
-    if (state.handoffToken || !state.email) { go('handoff'); return; }
+    if (!state.email) { go('handoff'); return; }
     btn.disabled = true;
+    const origHtml = btn.innerHTML;
     btn.textContent = 'Sending your sign-in link…';
     try {
       await _sendMagicLink(state.email);
       go('handoff');
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
     } catch (e) {
       btn.disabled = false;
       btn.textContent = 'Could not send the link — tap to try again';
@@ -774,6 +781,16 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       lede.innerHTML = 'Two quick steps and you’re in — <strong>install the app first</strong>, then open the sign-in link we emailed you.';
     }
 
+    // Nothing to resend to if we never captured an email (shouldn't happen on
+    // the paths that reach this screen, but the button would be a dead end).
+    const resend = $('[data-action="resend-link"]');
+    if (resend) {
+      resend.style.display = state.email ? '' : 'none';
+      // Clear a leftover "Sent"/"Could not send" from an earlier visit, but
+      // don't stomp on an in-flight cooldown.
+      if (!resend.disabled) resend.textContent = RESEND_LABEL;
+    }
+
     const btn = $('.handoff-deep');
     if (btn) {
       // Only Google sign-ins have a handoff token; email users open the app from
@@ -791,6 +808,27 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       }
     }
   }
+
+  // Firebase sign-in emails get delayed or spam-filtered often enough that a
+  // dead end here means a paid user who can't reach the app at all.
+  const RESEND_LABEL = 'Resend the sign-in link';
+  $('[data-action="resend-link"]').addEventListener('click', async () => {
+    const btn = $('[data-action="resend-link"]');
+    if (!state.email) return;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      await _sendMagicLink(state.email);
+      btn.textContent = 'Sent — check your inbox again';
+      // Re-arm rather than latching: a link can be lost twice. The delay is
+      // long enough that impatient tapping doesn't hammer Firebase (which
+      // rate-limits, and would start failing for real).
+      setTimeout(() => { btn.disabled = false; btn.textContent = RESEND_LABEL; }, 30000);
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Could not send — tap to try again';
+    }
+  });
 
   // ── Back button ───────────────────────────────────────────
   $('[data-action="back"]').addEventListener('click', back);
