@@ -252,7 +252,14 @@
     $('email-btn').disabled = true;
     $('email-btn').textContent = 'Sending…';
     try {
-      await sendSignInLinkToEmail(auth, val, { url: RETURN_URL, handleCodeInApp: true });
+      // Carry the email back on the continue URL so init() can complete sign-in
+      // with no prompt, even when the link is opened on a different device or
+      // browser than the one that asked for it (where localStorage is empty).
+      const params = new URLSearchParams({ email: val });
+      await sendSignInLinkToEmail(auth, val, {
+        url: `${RETURN_URL}?${params.toString()}`,
+        handleCodeInApp: true,
+      });
       localStorage.setItem('sprouts_email_for_signin', val);
       $('sent-email').textContent = val;
       show('sent-view');
@@ -270,7 +277,10 @@
     const href = window.location.href;
     if (isSignInWithEmailLink(auth, href)) {
       show('loading-view');
-      let email = localStorage.getItem('sprouts_email_for_signin');
+      // Same order as /auth: the continue URL first (works cross-device), then
+      // same-device localStorage, and only then bother the user.
+      const params = new URLSearchParams(window.location.search);
+      let email = params.get('email') || localStorage.getItem('sprouts_email_for_signin');
       if (!email) email = window.prompt('Please confirm the email you used:');
       if (!email) { show('signin-view'); signinError('Could not determine your email address.'); return; }
       try {
