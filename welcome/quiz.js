@@ -470,6 +470,25 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     return handoffToken;
   }
 
+  // Park the area pick server-side, against whatever identity we know here.
+  //
+  // The handoff token already carries focusArea, but that only reaches the app
+  // if the deep link resolves — which it doesn't survive a store install, a
+  // denied clipboard paste, or the user finishing the quiz on a laptop. This is
+  // the durable copy: the app claims it over an authenticated request whenever
+  // it gets there. Fire-and-forget — never block or fail the funnel over it.
+  //
+  // Called here rather than at the focus step because that's the first point
+  // where we know an email, which is what the record is keyed on.
+  function _parkFocusArea(email, idToken) {
+    if (!email || !state.focusArea) return;
+    fetch(`${API_BASE}/public/onboarding/focus-area`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, focusArea: state.focusArea, idToken: idToken || null }),
+    }).catch(() => { /* the token path may still deliver it */ });
+  }
+
   const _googleBtn = $('[data-action="gate-google"]');
   const _googleBtnHtml = _googleBtn.innerHTML;
 
@@ -485,6 +504,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       state.authMethod = 'google';
       state.handoffToken = handoffToken;
       saveState();
+      // idToken lets the backend record the uid too, which claims exactly even
+      // when the app signs in with a different address (Apple private relay).
+      _parkFocusArea(state.email, idToken);
       go('results');
     } catch (e) {
       _googleBtn.disabled = false;
@@ -522,6 +544,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     state.email = val;
     state.authMethod = 'email';
     saveState();
+    // No Firebase session on this path yet, so the record is claimable by email
+    // only until the app signs in and backfills the uid.
+    _parkFocusArea(val, null);
     go('results');
   });
 
