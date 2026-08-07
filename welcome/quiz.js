@@ -26,8 +26,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     ageFocus: null,          // single bracket id — the stage to build around first
     areas: [],               // ['tantrums', 'eating']
     mood: null,              // 'reactive' | 'tired' | 'curious' | 'lost' | 'mix'
+    outcomes: [],            // ['calm', 'connection'] — what would help most
+    tools: [],               // ['goals', 'guides'] — parts of the app they'd use
     time: null,              // 2 | 5 | 10
-    coParent: null,          // 'solo' | 'partner' | 'shared' | 'extended'
     memory: null,            // 'yes' | 'maybe' | 'no'
     focusArea: null,         // single area id — the "start this week" pick
     email: '',
@@ -57,9 +58,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     'insight1',
     'areas',
     'mood',
+    'outcomes',
+    'tools',
     'method',
     'time',
-    'coparent',
     'memory',
     'focus',
     'loading',
@@ -68,25 +70,26 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     'paywall',
     'handoff',
   ];
-  const TOTAL_Q = 7; // count of question screens (ages → focus)
 
-  // Per-step progress meta: bar fill % + label (interstitials hold the fill)
+  // Per-step progress bar fill. Eight question screens (ages → focus) at 12.5%
+  // each; the interstitials hold whatever fill the question before them set.
   const STEP_META = {
     welcome:  { hideBar: true },
-    ages:     { pct: 14,   label: 'Step 1 of 7' },
-    agefocus: { pct: 14,   label: 'One to start' },
-    insight1: { pct: 14,   label: 'A quick note' },
-    areas:    { pct: 29,   label: 'Step 2 of 7' },
-    mood:     { pct: 43,   label: 'Step 3 of 7' },
-    method:   { pct: 43,   label: 'How it works' },
-    time:     { pct: 57,   label: 'Step 4 of 7' },
-    coparent: { pct: 71,   label: 'Step 5 of 7' },
-    memory:   { pct: 86,   label: 'Step 6 of 7' },
-    focus:    { pct: 100,  label: 'Step 7 of 7' },
-    loading:  { pct: 100,  label: 'Building your plan' },
-    gate:     { pct: 100,  label: 'Save your plan' },
-    results:  { pct: 100,  label: 'Your plan' },
-    paywall:  { pct: 100,  label: 'Start free' },
+    ages:     { pct: 12.5 },
+    agefocus: { pct: 12.5 },
+    insight1: { pct: 12.5 },
+    areas:    { pct: 25 },
+    mood:     { pct: 37.5 },
+    outcomes: { pct: 50 },
+    tools:    { pct: 62.5 },
+    method:   { pct: 62.5 },
+    time:     { pct: 75 },
+    memory:   { pct: 87.5 },
+    focus:    { pct: 100 },
+    loading:  { pct: 100 },
+    gate:     { pct: 100 },
+    results:  { pct: 100 },
+    paywall:  { pct: 100 },
     handoff:  { hideBar: true },
   };
   const NO_BACK = ['welcome', 'loading', 'gate', 'results', 'paywall', 'handoff'];
@@ -112,6 +115,58 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     preschool: { name: 'Preschooler', short: 'Preschooler', sub: '5–6 years', emoji: '🎒', color: '#C98A6B' },
   };
   const BRACKET_ORDER = ['onway', 'baby', 'toddler', 'preschool'];
+
+  // ── Outcomes ("what would help you the most") ─────────────
+  // `pill` is the short form used on the results screen; the long form lives in
+  // the markup for the question itself.
+  const OUTCOMES = {
+    understand: { emoji: '🧠', pill: 'Understanding my kid', color: '#8A6BAE' },
+    calm:       { emoji: '🌊', pill: 'Less chaos',           color: '#7A8AA7' },
+    connection: { emoji: '💛', pill: 'A stronger connection', color: '#BC4B51' },
+    overwhelm:  { emoji: '🧺', pill: 'Less overwhelm',       color: '#5B8E7D' },
+    patience:   { emoji: '🌤', pill: 'Keeping my cool',      color: '#F4A259' },
+    confidence: { emoji: '🌱', pill: 'More confidence',      color: '#C98A6B' },
+  };
+  const OUTCOME_ORDER = ['understand', 'calm', 'connection', 'overwhelm', 'patience', 'confidence'];
+
+  // ── Feature cards on the results screen ───────────────────
+  // `tools` names the picks from the tools step this card answers, so anything
+  // they said they'd use floats to the top of the list and gets badged. The
+  // 'goals' pick has no card — it's the starter-habits section right above.
+  const FEATURES = [
+    {
+      id: 'kits', tools: ['steps', 'scripts'],
+      tint: '#DCEBE5', stroke: '#5B8E7D',
+      icon: '<path d="M7 14 c-2 -3 1 -7 4 -6 c0 -3 5 -4 7 -1 c3 -1 6 2 5 5 c2 1 2 5 -1 5 H8 c-2 0 -3 -2 -1 -3"/><path d="M14 22 l-2 5"/><path d="M19 22 l-3 6"/><path d="M23 22 l-1 4"/>',
+      title: 'Situation kits',
+      desc: 'A calm sequence to follow and the exact words to say — for the meltdown, the grocery run, the bedtime standoff. Pull one up right in the moment.',
+      tag: 'For the tough moments',
+    },
+    {
+      id: 'guides', tools: ['guides'],
+      tint: '#E3E8F0', stroke: '#7A8AA7',
+      icon: '<path d="M6 7 c4 -1 8 -1 10 2 c2 -3 6 -3 10 -2 v17 c-4 -1 -8 -1 -10 2 c-2 -3 -6 -3 -10 -2 z"/><path d="M16 9 V26"/>',
+      title: 'Guides',
+      desc: 'Short, plain-English reads on whatever is hard this week — why it happens, what actually helps, and what to skip. Five minutes, not a parenting book.',
+      tag: 'When you want the why',
+    },
+    {
+      id: 'challenges', tools: ['challenges'],
+      tint: '#F1E2D5', stroke: '#C98A6B',
+      icon: '<path d="M16 4 l3.2 6.8 7.3.8 -5.5 5 1.6 7.2 -6.6 -3.9 -6.6 3.9 1.6 -7.2 -5.5 -5 7.3 -.8 z"/>',
+      title: 'Challenges',
+      desc: 'Time-boxed group goals — one tiny action a day, alongside other parents doing the same thing. Finish one and press a bloom into your keepsake garden.',
+      tag: 'Better, together',
+    },
+    {
+      id: 'journal', tools: ['journal'],
+      tint: '#E8DEF0', stroke: '#8A6BAE',
+      icon: '<rect x="7" y="4" width="18" height="24" rx="3"/><path d="M12 4 V28"/><path d="M16 11 h5"/><path d="M16 16 h5"/><path d="M16 21 h3"/>',
+      title: 'Journal',
+      desc: 'One sentence a day, from a prompt — the memory-keeping you never find time for, made small. For the moments you do not want to lose. Toggleable, never pushy.',
+      tag: 'Keep the small stuff',
+    },
+  ];
 
   // ── DOM helpers ───────────────────────────────────────────
   const $ = (sel) => document.querySelector(sel);
@@ -155,7 +210,6 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     if (meta.hideBar) { wrap.style.visibility = 'hidden'; return; }
     wrap.style.visibility = 'visible';
     $('.quiz-progress-bar > div').style.width = meta.pct + '%';
-    $('.quiz-progress-label').textContent = meta.label;
   }
 
   function updateBack() {
@@ -254,26 +308,55 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       $$('[data-step="mood"] .q-choice').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       saveState();
-      setTimeout(() => go('method'), 280);
+      setTimeout(() => go('outcomes'), 280);
     });
   });
+
+  // ── Outcomes multi-select ─────────────────────────────────
+  $$('[data-step="outcomes"] .q-choice').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.outcome;
+      const has = state.outcomes.includes(id);
+      if (has) state.outcomes = state.outcomes.filter(o => o !== id);
+      else state.outcomes = [...state.outcomes, id];
+      el.classList.toggle('selected', !has);
+      saveState();
+      updateOutcomesContinue();
+    });
+  });
+  function updateOutcomesContinue() {
+    const n = state.outcomes.length;
+    $('[data-step="outcomes"] .q-continue').disabled = n === 0;
+    $('[data-step="outcomes"] .q-continue-label').textContent =
+      n === 0 ? 'Pick at least one' : (n === 1 ? 'Continue with 1' : `Continue with ${n}`);
+  }
+  $('[data-step="outcomes"] .q-continue').addEventListener('click', () => go('tools'));
+
+  // ── Tools multi-select ────────────────────────────────────
+  $$('[data-step="tools"] .q-choice').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.tool;
+      const has = state.tools.includes(id);
+      if (has) state.tools = state.tools.filter(t => t !== id);
+      else state.tools = [...state.tools, id];
+      el.classList.toggle('selected', !has);
+      saveState();
+      updateToolsContinue();
+    });
+  });
+  function updateToolsContinue() {
+    const n = state.tools.length;
+    $('[data-step="tools"] .q-continue').disabled = n === 0;
+    $('[data-step="tools"] .q-continue-label').textContent =
+      n === 0 ? 'Pick at least one' : (n === 1 ? 'Continue with 1' : `Continue with ${n}`);
+  }
+  $('[data-step="tools"] .q-continue').addEventListener('click', () => go('method'));
 
   // ── Time ──────────────────────────────────────────────────
   $$('[data-step="time"] .q-choice').forEach(el => {
     el.addEventListener('click', () => {
       state.time = Number(el.dataset.value);
       $$('[data-step="time"] .q-choice').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      saveState();
-      setTimeout(() => go('coparent'), 280);
-    });
-  });
-
-  // ── Co-parent ────────────────────────────────────────────
-  $$('[data-step="coparent"] .q-choice').forEach(el => {
-    el.addEventListener('click', () => {
-      state.coParent = el.dataset.value;
-      $$('[data-step="coparent"] .q-choice').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       saveState();
       setTimeout(() => go('memory'), 280);
@@ -397,6 +480,21 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       kidsWrap.appendChild(pill);
     });
 
+    // What they said would help most — shown back to them so the answer visibly
+    // lands somewhere. Whole block hides if they somehow arrived without picks.
+    const outWrap = $('[data-step="results"] .outcome-pills');
+    const outBlock = $('[data-step="results"] .outcome-block');
+    const outPicks = OUTCOME_ORDER.filter(o => state.outcomes.includes(o));
+    outWrap.innerHTML = '';
+    outBlock.style.display = outPicks.length ? '' : 'none';
+    outPicks.forEach(id => {
+      const o = OUTCOMES[id];
+      const pill = document.createElement('span');
+      pill.className = 'kid-pill';
+      pill.innerHTML = `<span class="av" style="background:${o.color};">${o.emoji}</span>${o.pill}`;
+      outWrap.appendChild(pill);
+    });
+
     // Starter habits — render the marketing copy instantly as a fallback, then
     // swap in the REAL starter goals the app will seed (same /starter-goals
     // source the app uses), so what's previewed here is what lands on Home.
@@ -434,13 +532,35 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
         .catch(() => { /* keep fallback copy */ });
     }
 
-    // Memory module — show if interested
-    const memWrap = $('[data-step="results"] .memory-block');
-    if (state.memory === 'yes' || state.memory === 'maybe') {
-      memWrap.style.display = '';
-    } else {
-      memWrap.style.display = 'none';
-    }
+    // Feature cards — everything ships to everyone, so nothing is hidden here.
+    // The tools answer only reorders: what they said they'd use goes first and
+    // carries a badge, so the list opens on the parts they already want.
+    const featWrap = $('[data-step="results"] .feat-list');
+    // The journal card also answers the memory question, which is asked later
+    // and more directly — a yes there counts the same as picking journaling.
+    const wantsJournal = state.tools.includes('journal')
+      || state.memory === 'yes' || state.memory === 'maybe';
+    const wanted = (f) => f.id === 'journal'
+      ? wantsJournal
+      : f.tools.some(t => state.tools.includes(t));
+    featWrap.innerHTML = '';
+    FEATURES.slice()
+      .sort((a, b) => (wanted(b) ? 1 : 0) - (wanted(a) ? 1 : 0))
+      .forEach(f => {
+        const row = document.createElement('div');
+        row.className = 'feat-row';
+        row.innerHTML = `
+          <span class="feat-ic" style="background:${f.tint};">
+            <svg width="21" height="21" viewBox="0 0 32 32" fill="none" stroke="${f.stroke}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${f.icon}</svg>
+          </span>
+          <div>
+            <div class="feat-t">${f.title}</div>
+            <div class="feat-d">${f.desc}</div>
+            <span class="feat-tag${wanted(f) ? ' picked' : ''}">${wanted(f) ? 'You asked for this' : f.tag}</span>
+          </div>
+        `;
+        featWrap.appendChild(row);
+      });
 
     // Personalized headline above CTA
     const ctaHead = $('[data-step="results"] .cta-card h3');
@@ -840,6 +960,44 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
   });
 
+  // ── Keep the static markup in step with `state` ───────────
+  // Answers survive in localStorage across page loads, but the `.selected`
+  // classes live in the markup and don't — so without this a reload (or the
+  // Retake button, which wipes state) leaves a step looking untouched while the
+  // array behind it still holds the old picks, and the next tap ADDS to them.
+  // That's how someone who picked one area reached the focus step with two.
+  function syncSelections() {
+    const multi = [
+      ['ages',     '.q-choice', 'bracket', () => state.ageBrackets],
+      ['areas',    '.q-area',   'area',    () => state.areas],
+      ['outcomes', '.q-choice', 'outcome', () => state.outcomes],
+      ['tools',    '.q-choice', 'tool',    () => state.tools],
+    ];
+    multi.forEach(([step, sel, key, get]) => {
+      const picked = get();
+      $$(`[data-step="${step}"] ${sel}`).forEach(el => {
+        el.classList.toggle('selected', picked.includes(el.dataset[key]));
+      });
+    });
+
+    const single = [
+      ['mood',   () => state.mood],
+      ['time',   () => (state.time == null ? null : String(state.time))],
+      ['memory', () => state.memory],
+    ];
+    single.forEach(([step, get]) => {
+      const val = get();
+      $$(`[data-step="${step}"] .q-choice`).forEach(el => {
+        el.classList.toggle('selected', el.dataset.value === val);
+      });
+    });
+
+    updateAgesContinue();
+    updateAreasContinue();
+    updateOutcomesContinue();
+    updateToolsContinue();
+  }
+
   // ── Back button ───────────────────────────────────────────
   $('[data-action="back"]').addEventListener('click', back);
 
@@ -848,6 +1006,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     el.addEventListener('click', () => {
       state = { ...defaultState };
       saveState();
+      syncSelections();
       go('welcome');
     });
   });
@@ -858,5 +1017,6 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   // For now: always start at welcome on fresh load
   state.step = 0;
   saveState();
+  syncSelections();
   go('welcome');
 })();

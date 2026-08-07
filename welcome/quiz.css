@@ -76,12 +76,6 @@ a { color: inherit; }
   display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
   max-width: 280px;
 }
-.quiz-progress-label {
-  font-size: 10.5px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
 .quiz-progress-bar {
   width: 100%; height: 5px; border-radius: 5px;
   background: var(--line); overflow: hidden;
@@ -712,6 +706,7 @@ a { color: inherit; }
 .feat-t { font-family: 'Newsreader', serif; font-size: 19px; color: var(--ink); line-height: 1.15; }
 .feat-d { font-size: 13px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
 .feat-tag { display: inline-block; margin-top: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.feat-tag.picked { color: var(--terracotta); }
 
 /* ── Account gate ────────────────────────────────────────── */
 .gate { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 32px 0 0; max-width: 440px; margin: 0 auto; }
