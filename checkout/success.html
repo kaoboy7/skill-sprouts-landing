@@ -8,6 +8,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Facebook Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '295777756288447');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=295777756288447&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Facebook Pixel Code -->
   <style>
     :root {
       --cream: #FEF6EC;
@@ -325,17 +342,63 @@
           `${API_BASE}/payments/stripe/checkout-success?session_id=${encodeURIComponent(sessionId)}`
         );
         if (!res.ok) throw new Error(`Status ${res.status}`);
-        const { handoffToken, email, trialDays } = await res.json();
-        showSuccess(handoffToken, email, trialDays);
+        const data = await res.json();
+        showSuccess(data);
       } catch (e) {
         console.error('Checkout success error:', e);
         showError('We had trouble confirming your payment. If you were charged, your trial is active — just open the app and sign in.');
       }
     }
 
-    function showSuccess(handoffToken, email, trialDays) {
+    // ── Meta conversion reporting ────────────────────────────────
+    // Both plans start with a free trial, so nothing has been charged yet at
+    // this point — hence StartTrial, not Purchase. The real first charge is
+    // reported separately, server-side, when Stripe bills them on day 7.
+    const FB_FIRED_KEY = 'sprouts_fb_trial_fired';
+    // Prices only used if the backend couldn't read them off the Stripe price
+    // (see _plan_pricing in stripe_payments.py). Keep in sync with the paywall
+    // copy in welcome/quiz.js.
+    const FALLBACK_VALUE = { monthly: 9.99, annual: 49.99 };
+
+    function reportTrialStart({ plan, value, currency, subscriptionId }) {
+      if (typeof fbq === 'undefined') return;   // blocked by an extension
+      if (!plan) return;                        // unknown plan — nothing useful to report
+
+      // This page is reachable by refresh and by the back button, and without a
+      // guard each one reports another conversion. Keyed on the subscription id
+      // rather than a flag so a genuine resubscribe after a cancel still counts.
+      const key = subscriptionId || 'unknown';
+      let fired = [];
+      try { fired = JSON.parse(localStorage.getItem(FB_FIRED_KEY)) || []; } catch (e) {}
+      if (fired.includes(key)) return;
+
+      const params = {
+        value: value != null ? value : FALLBACK_VALUE[plan],
+        currency: currency || 'USD',
+        content_name: plan,
+      };
+      // eventID lets the day-7 Conversions API event dedupe against this one if
+      // we ever send both for the same subscription.
+      const custom = plan === 'monthly' ? 'StartTrialMonthly' : 'StartTrialAnnual';
+      fbq('track', 'StartTrial', params, { eventID: `trial_${key}` });
+      fbq('trackCustom', custom, params, { eventID: `trial_${plan}_${key}` });
+
+      // Capped: this only needs to cover a plausible run of reloads, not a history.
+      try {
+        localStorage.setItem(FB_FIRED_KEY, JSON.stringify([...fired, key].slice(-20)));
+      } catch (e) {}
+    }
+
+    function showSuccess({ email, trialDays, plan, value, currency, subscriptionId }) {
       $('loading-view').classList.add('hidden');
       $('success-view').classList.remove('hidden');
+
+      // Ahead of sendMagicLink so a Firebase failure can't swallow the conversion.
+      try {
+        reportTrialStart({ plan, value, currency, subscriptionId });
+      } catch (e) {
+        console.error('Conversion reporting failed:', e);
+      }
 
       // Rendered from the subscription's actual trial window, so this stays
       // right if the trial length ever differs by plan again.

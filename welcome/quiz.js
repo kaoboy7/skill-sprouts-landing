@@ -26,8 +26,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     ageFocus: null,          // single bracket id — the stage to build around first
     areas: [],               // ['tantrums', 'eating']
     mood: null,              // 'reactive' | 'tired' | 'curious' | 'lost' | 'mix'
-    outcomes: [],            // ['calm', 'connection'] — what would help most
-    tools: [],               // ['goals', 'guides'] — parts of the app they'd use
+    outcome: null,           // 'calm' — the one thing that would help most
+    tool: null,              // 'goals' — the one part of the app they'd reach for
     time: null,              // 2 | 5 | 10
     memory: null,            // 'yes' | 'maybe' | 'no'
     focusArea: null,         // single area id — the "start this week" pick
@@ -127,12 +127,11 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     patience:   { emoji: '🌤', pill: 'Keeping my cool',      color: '#F4A259' },
     confidence: { emoji: '🌱', pill: 'More confidence',      color: '#C98A6B' },
   };
-  const OUTCOME_ORDER = ['understand', 'calm', 'connection', 'overwhelm', 'patience', 'confidence'];
 
   // ── Feature cards on the results screen ───────────────────
-  // `tools` names the picks from the tools step this card answers, so anything
-  // they said they'd use floats to the top of the list and gets badged. The
-  // 'goals' pick has no card — it's the starter-habits section right above.
+  // `tools` names the picks from the tools step this card answers, so whatever
+  // they said they'd reach for floats to the top of the list and gets badged.
+  // The 'goals' pick has no card — it's the starter-habits section right above.
   const FEATURES = [
     {
       id: 'kits', tools: ['steps', 'scripts'],
@@ -312,45 +311,27 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     });
   });
 
-  // ── Outcomes multi-select ─────────────────────────────────
+  // ── Outcome (single pick) ─────────────────────────────────
   $$('[data-step="outcomes"] .q-choice').forEach(el => {
     el.addEventListener('click', () => {
-      const id = el.dataset.outcome;
-      const has = state.outcomes.includes(id);
-      if (has) state.outcomes = state.outcomes.filter(o => o !== id);
-      else state.outcomes = [...state.outcomes, id];
-      el.classList.toggle('selected', !has);
+      state.outcome = el.dataset.value;
+      $$('[data-step="outcomes"] .q-choice').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
       saveState();
-      updateOutcomesContinue();
+      setTimeout(() => go('tools'), 280);
     });
   });
-  function updateOutcomesContinue() {
-    const n = state.outcomes.length;
-    $('[data-step="outcomes"] .q-continue').disabled = n === 0;
-    $('[data-step="outcomes"] .q-continue-label').textContent =
-      n === 0 ? 'Pick at least one' : (n === 1 ? 'Continue with 1' : `Continue with ${n}`);
-  }
-  $('[data-step="outcomes"] .q-continue').addEventListener('click', () => go('tools'));
 
-  // ── Tools multi-select ────────────────────────────────────
+  // ── Tool (single pick) ────────────────────────────────────
   $$('[data-step="tools"] .q-choice').forEach(el => {
     el.addEventListener('click', () => {
-      const id = el.dataset.tool;
-      const has = state.tools.includes(id);
-      if (has) state.tools = state.tools.filter(t => t !== id);
-      else state.tools = [...state.tools, id];
-      el.classList.toggle('selected', !has);
+      state.tool = el.dataset.value;
+      $$('[data-step="tools"] .q-choice').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
       saveState();
-      updateToolsContinue();
+      setTimeout(() => go('method'), 280);
     });
   });
-  function updateToolsContinue() {
-    const n = state.tools.length;
-    $('[data-step="tools"] .q-continue').disabled = n === 0;
-    $('[data-step="tools"] .q-continue-label').textContent =
-      n === 0 ? 'Pick at least one' : (n === 1 ? 'Continue with 1' : `Continue with ${n}`);
-  }
-  $('[data-step="tools"] .q-continue').addEventListener('click', () => go('method'));
 
   // ── Time ──────────────────────────────────────────────────
   $$('[data-step="time"] .q-choice').forEach(el => {
@@ -481,19 +462,18 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     });
 
     // What they said would help most — shown back to them so the answer visibly
-    // lands somewhere. Whole block hides if they somehow arrived without picks.
+    // lands somewhere. Whole block hides if they somehow arrived without a pick.
     const outWrap = $('[data-step="results"] .outcome-pills');
     const outBlock = $('[data-step="results"] .outcome-block');
-    const outPicks = OUTCOME_ORDER.filter(o => state.outcomes.includes(o));
+    const outcome = OUTCOMES[state.outcome];
     outWrap.innerHTML = '';
-    outBlock.style.display = outPicks.length ? '' : 'none';
-    outPicks.forEach(id => {
-      const o = OUTCOMES[id];
+    outBlock.style.display = outcome ? '' : 'none';
+    if (outcome) {
       const pill = document.createElement('span');
       pill.className = 'kid-pill';
-      pill.innerHTML = `<span class="av" style="background:${o.color};">${o.emoji}</span>${o.pill}`;
+      pill.innerHTML = `<span class="av" style="background:${outcome.color};">${outcome.emoji}</span>${outcome.pill}`;
       outWrap.appendChild(pill);
-    });
+    }
 
     // Starter habits — render the marketing copy instantly as a fallback, then
     // swap in the REAL starter goals the app will seed (same /starter-goals
@@ -533,16 +513,16 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
 
     // Feature cards — everything ships to everyone, so nothing is hidden here.
-    // The tools answer only reorders: what they said they'd use goes first and
-    // carries a badge, so the list opens on the parts they already want.
+    // The tool answer only reorders: what they said they'd reach for goes first
+    // and carries a badge, so the list opens on the part they already want.
     const featWrap = $('[data-step="results"] .feat-list');
     // The journal card also answers the memory question, which is asked later
     // and more directly — a yes there counts the same as picking journaling.
-    const wantsJournal = state.tools.includes('journal')
+    const wantsJournal = state.tool === 'journal'
       || state.memory === 'yes' || state.memory === 'maybe';
     const wanted = (f) => f.id === 'journal'
       ? wantsJournal
-      : f.tools.some(t => state.tools.includes(t));
+      : f.tools.includes(state.tool);
     featWrap.innerHTML = '';
     FEATURES.slice()
       .sort((a, b) => (wanted(b) ? 1 : 0) - (wanted(a) ? 1 : 0))
@@ -789,6 +769,28 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     }
   });
 
+  // ── Meta click identifiers ────────────────────────────────
+  // Both plans start with a trial, so the first real charge lands a week from
+  // now — reported to Meta server-side from a Stripe webhook, by which time
+  // this browser is long gone. The identifiers Meta needs to attribute that
+  // charge only exist here, so they're captured at checkout and carried through
+  // Stripe subscription metadata. See utils/meta_capi.py in the backend.
+  function _cookie(name) {
+    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : null;
+  }
+  function _metaClickIds() {
+    // _fbp is written by the pixel on first visit. _fbc only exists if the
+    // visitor arrived on a link carrying fbclid — and the pixel may not have
+    // written it yet, so rebuild it from the URL in Meta's documented format.
+    let fbc = _cookie('_fbc');
+    if (!fbc) {
+      const fbclid = new URLSearchParams(location.search).get('fbclid');
+      if (fbclid) fbc = `fb.1.${Date.now()}.${fbclid}`;
+    }
+    return { fbp: _cookie('_fbp'), fbc };
+  }
+
   $('[data-action="start-trial"]').addEventListener('click', async () => {
     const btn = $('[data-action="start-trial"]');
     btn.disabled = true;
@@ -816,6 +818,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
           idToken,
           email: idToken ? null : state.email,
           plan: state.plan || 'annual',
+          ..._metaClickIds(),
         }),
       });
       if (res.status === 409) {
@@ -968,10 +971,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   // That's how someone who picked one area reached the focus step with two.
   function syncSelections() {
     const multi = [
-      ['ages',     '.q-choice', 'bracket', () => state.ageBrackets],
-      ['areas',    '.q-area',   'area',    () => state.areas],
-      ['outcomes', '.q-choice', 'outcome', () => state.outcomes],
-      ['tools',    '.q-choice', 'tool',    () => state.tools],
+      ['ages',  '.q-choice', 'bracket', () => state.ageBrackets],
+      ['areas', '.q-area',   'area',    () => state.areas],
     ];
     multi.forEach(([step, sel, key, get]) => {
       const picked = get();
@@ -981,9 +982,11 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     });
 
     const single = [
-      ['mood',   () => state.mood],
-      ['time',   () => (state.time == null ? null : String(state.time))],
-      ['memory', () => state.memory],
+      ['mood',     () => state.mood],
+      ['outcomes', () => state.outcome],
+      ['tools',    () => state.tool],
+      ['time',     () => (state.time == null ? null : String(state.time))],
+      ['memory',   () => state.memory],
     ];
     single.forEach(([step, get]) => {
       const val = get();
@@ -994,8 +997,6 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
     updateAgesContinue();
     updateAreasContinue();
-    updateOutcomesContinue();
-    updateToolsContinue();
   }
 
   // ── Back button ───────────────────────────────────────────
