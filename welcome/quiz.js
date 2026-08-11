@@ -171,11 +171,46 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
+  // ── Funnel tracking ───────────────────────────────────────
+  // Which quiz screens count as a funnel step, and what they're called in the
+  // backend's FUNNEL_STEPS. Screens absent from this map (the interstitials,
+  // the loading spinner) aren't decision points and would only pad the report.
+  const FUNNEL_STEP = {
+    ages:     'q_ages',
+    areas:    'q_areas',
+    mood:     'q_mood',
+    outcomes: 'q_outcomes',
+    tools:    'q_tools',
+    time:     'q_time',
+    memory:   'q_memory',
+    focus:    'q_focus',
+    gate:     'gate_view',
+    results:  'results_view',
+    paywall:  'paywall_view',
+  };
+
+  // The answers we segment drop-off by. Read at send time so each step carries
+  // whatever was known by then — area is null until they've picked one.
+  function _funnelDims() {
+    return {
+      area: state.focusArea || state.areas[0] || null,
+      plan: state.plan || null,
+      ageBracket: state.ageFocus || state.ageBrackets[0] || null,
+    };
+  }
+  function trackFunnel(step) {
+    if (window.sproutsFunnel && step) sproutsFunnel.track(step, _funnelDims());
+  }
+
   function go(stepName) {
     const idx = STEPS.indexOf(stepName);
     if (idx < 0) return;
     state.step = idx;
     saveState();
+
+    // Reaching a screen is the signal, so this covers every route into it —
+    // forward, Back, and the skips (a single age stage bypasses agefocus).
+    trackFunnel(FUNNEL_STEP[stepName]);
 
     $$('.quiz-screen').forEach(s => s.classList.remove('active'));
     const target = document.querySelector(`[data-step="${stepName}"]`);
@@ -218,7 +253,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   }
 
   // ── Welcome ───────────────────────────────────────────────
-  document.querySelector('[data-action="begin"]').addEventListener('click', () => go('ages'));
+  document.querySelector('[data-action="begin"]').addEventListener('click', () => {
+    trackFunnel('quiz_start');
+    go('ages');
+  });
 
   // ── Ages (stage brackets, multi-select) ───────────────────
   $$('[data-step="ages"] .q-choice').forEach(el => {
@@ -403,6 +441,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       i++;
       if (i >= messages.length) {
         clearInterval(interval);
+        trackFunnel('plan_built');
         setTimeout(() => go('gate'), 500);
         return;
       }
@@ -607,6 +646,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       // idToken lets the backend record the uid too, which claims exactly even
       // when the app signs in with a different address (Apple private relay).
       _parkFocusArea(state.email, idToken);
+      trackFunnel('signup');
       go('results');
     } catch (e) {
       _googleBtn.disabled = false;
@@ -647,6 +687,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     // No Firebase session on this path yet, so the record is claimable by email
     // only until the app signs in and backfills the uid.
     _parkFocusArea(val, null);
+    trackFunnel('signup');
     go('results');
   });
 
@@ -819,6 +860,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
           email: idToken ? null : state.email,
           plan: state.plan || 'annual',
           ..._metaClickIds(),
+          // Parked on the Stripe subscription so the day-7 charge can be
+          // recorded against the same funnel session that started here.
+          funnelSession: window.sproutsFunnel ? sproutsFunnel.sessionId() : null,
         }),
       });
       if (res.status === 409) {
@@ -831,6 +875,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       }
       if (!res.ok) throw new Error(`Checkout error: ${res.status}`);
       const { checkoutUrl } = await res.json();
+      // Sent with sendBeacon, so it survives the navigation that follows.
+      trackFunnel('checkout_start');
       window.location.href = checkoutUrl;
     } catch (e) {
       btn.disabled = false;

@@ -27,6 +27,10 @@
   src="https://www.facebook.com/tr?id=295777756288447&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Facebook Pixel Code -->
+  <!-- First-party funnel tracking. Classic script so it's ready before quiz.js
+       (a module, therefore deferred) runs. -->
+  <script src="../funnel.js"></script>
+  <script>window.sproutsFunnel && sproutsFunnel.track('quiz_view');</script>
 </head>
 <body>
 

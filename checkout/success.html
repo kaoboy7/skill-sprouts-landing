@@ -25,6 +25,9 @@
   src="https://www.facebook.com/tr?id=295777756288447&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Facebook Pixel Code -->
+  <!-- Same origin as /welcome, so the funnel session id set during the quiz is
+       still in localStorage after the round trip through Stripe. -->
+  <script src="../funnel.js"></script>
   <style>
     :root {
       --cream: #FEF6EC;
@@ -399,6 +402,7 @@
       } catch (e) {
         console.error('Conversion reporting failed:', e);
       }
+      if (window.sproutsFunnel) sproutsFunnel.track('trial_start', { plan: plan });
 
       // Rendered from the subscription's actual trial window, so this stays
       // right if the trial length ever differs by plan again.
