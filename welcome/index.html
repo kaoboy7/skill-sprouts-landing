@@ -69,55 +69,23 @@
   <!-- ─── SCREENS ─── -->
   <div class="quiz-screen-wrap">
 
-    <!-- WELCOME -->
-    <section class="quiz-screen active" data-step="welcome">
-      <div class="welcome">
-        <svg class="sprout-big" viewBox="0 0 100 100" width="120" height="120">
-          <path d="M30 70 L34 92 Q50 95 66 92 L70 70 Z" fill="#C98A6B" stroke="#2A1F17" stroke-width="2"/>
-          <ellipse cx="50" cy="70" rx="20" ry="3" fill="#3D2A1E"/>
-          <path d="M50 70 Q48 50 50 30" fill="none" stroke="#3D5A3C" stroke-width="2.4" stroke-linecap="round"/>
-          <ellipse cx="40" cy="58" rx="11" ry="7" transform="rotate(-30 40 58)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
-          <ellipse cx="60" cy="48" rx="11" ry="7" transform="rotate(30 60 48)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
-          <ellipse cx="40" cy="38" rx="11" ry="7" transform="rotate(-30 40 38)" fill="#7BA972" stroke="#3D5A3C" stroke-width="1.7"/>
-          <ellipse cx="50" cy="24" rx="12" ry="8" fill="#92BD86" stroke="#3D5A3C" stroke-width="1.7"/>
-          <g transform="translate(50 24)">
-            <circle cx="-5" cy="2" r="1.5" fill="#F7B6A1" opacity="0.85"/>
-            <circle cx="5" cy="2" r="1.5" fill="#F7B6A1" opacity="0.85"/>
-            <path d="M-4 -1 Q-3 -2.2 -2 -1" fill="none" stroke="#2A1F17" stroke-width="1.3" stroke-linecap="round"/>
-            <path d="M2 -1 Q3 -2.2 4 -1" fill="none" stroke="#2A1F17" stroke-width="1.3" stroke-linecap="round"/>
-            <path d="M-3 1.5 Q0 5 3 1.5" fill="none" stroke="#2A1F17" stroke-width="1.4" stroke-linecap="round"/>
-          </g>
-        </svg>
-
-        <span class="q-tape" style="background:#5B8E7D;">Sprouts setup</span>
-        <h1>Let's find your<br><em>starting point.</em></h1>
-        <p class="lede">
-          8 quick questions. We'll build you a tiny, daily parenting plan based on what's actually hard right now — no judgment, no overwhelm.
-        </p>
-        <div class="meta">
-          <span>~90 seconds</span>
-          <span class="dot"></span>
-          <span>No sign-up needed</span>
-          <span class="dot"></span>
-          <span>Save anywhere</span>
-        </div>
-        <button class="begin" data-action="begin">
-          Begin
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/>
-          </svg>
-        </button>
-        <!-- <div class="have-account">
-          Already have the app? <a href="https://apps.apple.com/us/app/skill-sprouts/id6754038900" target="_blank" rel="noopener noreferrer">Download it here</a>
-        </div> -->
-      </div>
-    </section>
 
     <!-- Q1: AGES (stage brackets, multi-select) -->
-    <section class="quiz-screen" data-step="ages">
+    <!-- First screen. There is deliberately no welcome/"Begin" step before this:
+         ad traffic has already clicked once with intent, and a second button to
+         start cost roughly two thirds of everyone who arrived. The reassurance
+         that used to live on that screen is inline below instead. -->
+    <section class="quiz-screen active" data-step="ages">
       <span class="q-eyebrow">The basics</span>
       <h2 class="q-heading">How <span class="q-squiggle-wrap"><em>old</em><svg class="q-squiggle" viewBox="0 0 200 10" preserveAspectRatio="none"><path d="M3 6 C 30 1, 60 9, 95 5 S 160 1, 197 6" fill="none" stroke="#BC4B51" stroke-width="2.4" stroke-linecap="round"/></svg></span> are your kid(s)?</h2>
       <p class="q-sub">Pick every stage that's in your house right now. We'll match habits to where they are developmentally.</p>
+      <div class="q-meta-inline">
+        <span>5 quick questions</span>
+        <span class="dot"></span>
+        <span>~60 seconds</span>
+        <span class="dot"></span>
+        <span>No judgment</span>
+      </div>
       <div class="q-choices">
         <button class="q-choice" data-bracket="onway">
           <span class="swatch">🤰</span>
@@ -172,30 +140,6 @@
       </div>
     </section>
 
-    <!-- INTERSTITIAL: WHY THIS WORKS -->
-    <section class="quiz-screen" data-step="insight1">
-      <span class="q-eyebrow">Fresh off the launchpad</span>
-      <h2 class="q-heading">Brand new — and<br>built to <em>actually help.</em></h2>
-      <p class="q-sub">You just named the hard part. That's the brave bit. Skill Sprouts is new, but every habit inside is grounded in behavior science — and our first families are loving it.</p>
-      <div class="proof-band">
-        <div class="proof-stat">
-          <span class="pv">5.0<svg width="15" height="15" viewBox="0 0 24 24" fill="#F4A259"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg></span>
-          <span class="pl">From our first 3 reviews</span>
-        </div>
-        <div class="proof-stat"><span class="pv">Just<br>launched</span><span class="pl">get in early</span></div>
-        <div class="proof-stat"><span class="pv">2 min<br>a day</span><span class="pl">all it takes to start</span></div>
-      </div>
-      <blockquote class="proof-quote">
-        <p>“I stopped doom-scrolling parenting advice at midnight. Two minutes a day actually stuck — and bedtime feels calmer already.”</p>
-        <cite>One of our early families · ⭐️⭐️⭐️⭐️⭐️</cite>
-      </blockquote>
-      <div class="q-footer center">
-        <button class="q-continue q-advance" data-next="areas">
-          Keep going
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 H19"/><path d="M13 6 L19 12 L13 18"/></svg>
-        </button>
-      </div>
-    </section>
 
     <!-- Q2: AREAS -->
     <section class="quiz-screen" data-step="areas">
@@ -281,54 +225,6 @@
       </div>
     </section>
 
-    <!-- Q3: MOOD -->
-    <section class="quiz-screen" data-step="mood">
-      <span class="q-eyebrow">A real check-in</span>
-      <h2 class="q-heading">When you think about parenting<br><em>this week</em>, you feel…</h2>
-      <p class="q-sub">No wrong answer. We're not grading you.</p>
-      <div class="q-choices">
-        <button class="q-choice" data-value="curious">
-          <span class="swatch">✨</span>
-          <span>
-            <span class="label">Like I've got this — for now.</span>
-            <span class="label-sub">Things are mostly working. I want to keep growing.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="tired">
-          <span class="swatch">🌙</span>
-          <span>
-            <span class="label">Tired but okay.</span>
-            <span class="label-sub">Coffee, prayer, more coffee. We're getting by.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="reactive">
-          <span class="swatch">🌧</span>
-          <span>
-            <span class="label">Reactive. I want to do better.</span>
-            <span class="label-sub">I'm yelling more than I want to. Help me change the loop.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="lost">
-          <span class="swatch">🌫</span>
-          <span>
-            <span class="label">A little lost.</span>
-            <span class="label-sub">I'm Googling everything at midnight and still not sure.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="mix">
-          <span class="swatch">🎈</span>
-          <span>
-            <span class="label">All of the above, depending on the hour.</span>
-            <span class="label-sub">Welcome to parenting.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-      </div>
-    </section>
 
     <!-- Q4: OUTCOMES — what a win would look like -->
     <section class="quiz-screen" data-step="outcomes">
@@ -387,62 +283,6 @@
       </div>
     </section>
 
-    <!-- Q5: TOOLS — which parts of the app you'd actually use -->
-    <section class="quiz-screen" data-step="tools">
-      <span class="q-eyebrow">How you like to work</span>
-      <h2 class="q-heading">Which of these would<br>you <em>actually use</em>?</h2>
-      <p class="q-sub">Pick the one you'd reach for first. We'll put it front and centre in your plan — the rest are all still there when you want them.</p>
-      <div class="q-choices">
-        <button class="q-choice" data-value="goals">
-          <span class="swatch">✅</span>
-          <span>
-            <span class="label">Daily goal tracking</span>
-            <span class="label-sub">One tiny habit a day, checked off in a tap.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="steps">
-          <span class="swatch">🧭</span>
-          <span>
-            <span class="label">Steps for the moment itself</span>
-            <span class="label-sub">A calm sequence to follow while it's actually happening.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="scripts">
-          <span class="swatch">💬</span>
-          <span>
-            <span class="label">Scripts — the words to say</span>
-            <span class="label-sub">Exact phrasing for when it's going sideways and you're blank.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="guides">
-          <span class="swatch">📖</span>
-          <span>
-            <span class="label">Guides I can read</span>
-            <span class="label-sub">Short, practical reads on whatever's hard this week.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="challenges">
-          <span class="swatch">🏅</span>
-          <span>
-            <span class="label">Challenges</span>
-            <span class="label-sub">Time-boxed goals you take on alongside other parents.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="journal">
-          <span class="swatch">🕰</span>
-          <span>
-            <span class="label">Journaling</span>
-            <span class="label-sub">A one-sentence prompt to hold onto the small stuff.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-      </div>
-    </section>
 
     <!-- INTERSTITIAL: METHOD / SCIENCE -->
     <section class="quiz-screen" data-step="method">
@@ -505,38 +345,6 @@
       </div>
     </section>
 
-    <!-- Q7: MEMORY -->
-    <section class="quiz-screen" data-step="memory">
-      <span class="q-eyebrow">Optional, but lovely</span>
-      <h2 class="q-heading">Want to remember<br><em>the small moments</em> too?</h2>
-      <p class="q-sub">The journal is a daily one-sentence prompt — the memory-keeping you'll never actually find time for, made small.</p>
-      <div class="q-choices">
-        <button class="q-choice" data-value="yes">
-          <span class="swatch">💛</span>
-          <span>
-            <span class="label">Yes — I'm losing these days fast.</span>
-            <span class="label-sub">I want a way to remember without scrapbooking guilt.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="maybe">
-          <span class="swatch">🌿</span>
-          <span>
-            <span class="label">Maybe — show me what it looks like.</span>
-            <span class="label-sub">I'm curious but skeptical.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-        <button class="q-choice" data-value="no">
-          <span class="swatch">📋</span>
-          <span>
-            <span class="label">Not now — just the habits.</span>
-            <span class="label-sub">Maybe later. I want to focus.</span>
-          </span>
-          <span class="check"></span>
-        </button>
-      </div>
-    </section>
 
     <!-- Q8: FOCUS AREA -->
     <section class="quiz-screen" data-step="focus">
@@ -560,9 +368,9 @@
     <!-- ACCOUNT GATE -->
     <section class="quiz-screen" data-step="gate">
       <div class="gate">
-        <span class="q-tape" style="background:#5B8E7D;">Almost there</span>
-        <h1>Save your plan<br>before it <em>blooms.</em></h1>
-        <p class="lede">Create your free account so your answers and plan are waiting the moment you open the app — no starting over. No spam, we promise.</p>
+        <span class="q-tape" style="background:#5B8E7D;">One last thing</span>
+        <h1>Save the plan<br>you just <em>built.</em></h1>
+        <p class="lede">Your plan is ready — we just need somewhere to send it. Create your free account and it'll be waiting the moment you open the app, no starting over. No spam, we promise.</p>
         <button class="gate-google" data-action="gate-google">
           <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
           Continue with Google

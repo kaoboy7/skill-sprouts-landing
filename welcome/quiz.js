@@ -25,11 +25,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     ageBrackets: [],         // ['toddler', 'baby'] — stages in the house
     ageFocus: null,          // single bracket id — the stage to build around first
     areas: [],               // ['tantrums', 'eating']
-    mood: null,              // 'reactive' | 'tired' | 'curious' | 'lost' | 'mix'
     outcome: null,           // 'calm' — the one thing that would help most
-    tool: null,              // 'goals' — the one part of the app they'd reach for
     time: null,              // 2 | 5 | 10
-    memory: null,            // 'yes' | 'maybe' | 'no'
     focusArea: null,         // single area id — the "start this week" pick
     email: '',
     authMethod: null,        // 'google' | 'email'
@@ -51,48 +48,44 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   }
 
   // ── Step order ────────────────────────────────────────────
+  // Funnel v2. Two structural changes from v1, both aimed at the same thing —
+  // getting to the payoff sooner and not asking for anything before delivering it:
+  //   * no welcome screen, and three questions fewer (was 8);
+  //   * the account gate moved AFTER the results, so the plan is shown first.
+  // Keep in sync with FUNNEL_VERSIONS[2] in the backend's api/routes/funnel.py.
   const STEPS = [
-    'welcome',
     'ages',
     'agefocus',
-    'insight1',
     'areas',
-    'mood',
     'outcomes',
-    'tools',
     'method',
     'time',
-    'memory',
     'focus',
     'loading',
-    'gate',
     'results',
+    'gate',
     'paywall',
     'handoff',
   ];
 
-  // Per-step progress bar fill. Eight question screens (ages → focus) at 12.5%
-  // each; the interstitials hold whatever fill the question before them set.
+  // Per-step progress bar fill.
+  // Five question screens (ages, areas, outcomes, time, focus) at 20% each; the
+  // interstitials hold whatever fill the question before them set.
   const STEP_META = {
-    welcome:  { hideBar: true },
-    ages:     { pct: 12.5 },
-    agefocus: { pct: 12.5 },
-    insight1: { pct: 12.5 },
-    areas:    { pct: 25 },
-    mood:     { pct: 37.5 },
-    outcomes: { pct: 50 },
-    tools:    { pct: 62.5 },
-    method:   { pct: 62.5 },
-    time:     { pct: 75 },
-    memory:   { pct: 87.5 },
+    ages:     { pct: 20 },
+    agefocus: { pct: 20 },
+    areas:    { pct: 40 },
+    outcomes: { pct: 60 },
+    method:   { pct: 60 },
+    time:     { pct: 80 },
     focus:    { pct: 100 },
     loading:  { pct: 100 },
-    gate:     { pct: 100 },
     results:  { pct: 100 },
+    gate:     { pct: 100 },
     paywall:  { pct: 100 },
     handoff:  { hideBar: true },
   };
-  const NO_BACK = ['welcome', 'loading', 'gate', 'results', 'paywall', 'handoff'];
+  const NO_BACK = ['loading', 'results', 'gate', 'paywall', 'handoff'];
 
   // ── Area metadata (mirror of data.js) ─────────────────────
   const AREAS = {
@@ -129,12 +122,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   };
 
   // ── Feature cards on the results screen ───────────────────
-  // `tools` names the picks from the tools step this card answers, so whatever
-  // they said they'd reach for floats to the top of the list and gets badged.
-  // The 'goals' pick has no card — it's the starter-habits section right above.
+  // Everything here ships to everyone; the list is fixed and shown in order.
   const FEATURES = [
     {
-      id: 'kits', tools: ['steps', 'scripts'],
+      id: 'kits',
       tint: '#DCEBE5', stroke: '#5B8E7D',
       icon: '<path d="M7 14 c-2 -3 1 -7 4 -6 c0 -3 5 -4 7 -1 c3 -1 6 2 5 5 c2 1 2 5 -1 5 H8 c-2 0 -3 -2 -1 -3"/><path d="M14 22 l-2 5"/><path d="M19 22 l-3 6"/><path d="M23 22 l-1 4"/>',
       title: 'Situation kits',
@@ -142,7 +133,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       tag: 'For the tough moments',
     },
     {
-      id: 'guides', tools: ['guides'],
+      id: 'guides',
       tint: '#E3E8F0', stroke: '#7A8AA7',
       icon: '<path d="M6 7 c4 -1 8 -1 10 2 c2 -3 6 -3 10 -2 v17 c-4 -1 -8 -1 -10 2 c-2 -3 -6 -3 -10 -2 z"/><path d="M16 9 V26"/>',
       title: 'Guides',
@@ -150,7 +141,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       tag: 'When you want the why',
     },
     {
-      id: 'challenges', tools: ['challenges'],
+      id: 'challenges',
       tint: '#F1E2D5', stroke: '#C98A6B',
       icon: '<path d="M16 4 l3.2 6.8 7.3.8 -5.5 5 1.6 7.2 -6.6 -3.9 -6.6 3.9 1.6 -7.2 -5.5 -5 7.3 -.8 z"/>',
       title: 'Challenges',
@@ -158,7 +149,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       tag: 'Better, together',
     },
     {
-      id: 'journal', tools: ['journal'],
+      id: 'journal',
       tint: '#E8DEF0', stroke: '#8A6BAE',
       icon: '<rect x="7" y="4" width="18" height="24" rx="3"/><path d="M12 4 V28"/><path d="M16 11 h5"/><path d="M16 16 h5"/><path d="M16 21 h3"/>',
       title: 'Journal',
@@ -177,12 +168,11 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   // the loading spinner) aren't decision points and would only pad the report.
   const FUNNEL_STEP = {
     ages:     'q_ages',
+    agefocus: 'q_agefocus',
     areas:    'q_areas',
-    mood:     'q_mood',
     outcomes: 'q_outcomes',
-    tools:    'q_tools',
+    method:   'method_view',
     time:     'q_time',
-    memory:   'q_memory',
     focus:    'q_focus',
     gate:     'gate_view',
     results:  'results_view',
@@ -252,13 +242,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     $('.quiz-back-row').style.visibility = showBack ? 'visible' : 'hidden';
   }
 
-  // ── Welcome ───────────────────────────────────────────────
-  document.querySelector('[data-action="begin"]').addEventListener('click', () => {
-    trackFunnel('quiz_start');
-    go('ages');
-  });
-
   // ── Ages (stage brackets, multi-select) ───────────────────
+  // The funnel's first screen. There is no welcome step in front of it — see
+  // the note on STEPS.
   $$('[data-step="ages"] .q-choice').forEach(el => {
     el.addEventListener('click', () => {
       const id = el.dataset.bracket;
@@ -284,7 +270,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     } else {
       state.ageFocus = state.ageBrackets[0] || null;
       saveState();
-      go('insight1');
+      go('areas');
     }
   });
 
@@ -312,7 +298,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
         $$('[data-step="agefocus"] .q-choice').forEach(c => c.classList.remove('selected'));
         btn.classList.add('selected');
         saveState();
-        setTimeout(() => go('insight1'), 300);
+        setTimeout(() => go('areas'), 300);
       });
       wrap.appendChild(btn);
     });
@@ -336,35 +322,13 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     $('[data-step="areas"] .q-continue-label').textContent =
       n === 0 ? 'Pick at least one' : (n === 1 ? 'Continue with 1' : `Continue with ${n}`);
   }
-  $('[data-step="areas"] .q-continue').addEventListener('click', () => go('mood'));
-
-  // ── Mood ──────────────────────────────────────────────────
-  $$('[data-step="mood"] .q-choice').forEach(el => {
-    el.addEventListener('click', () => {
-      state.mood = el.dataset.value;
-      $$('[data-step="mood"] .q-choice').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      saveState();
-      setTimeout(() => go('outcomes'), 280);
-    });
-  });
+  $('[data-step="areas"] .q-continue').addEventListener('click', () => go('outcomes'));
 
   // ── Outcome (single pick) ─────────────────────────────────
   $$('[data-step="outcomes"] .q-choice').forEach(el => {
     el.addEventListener('click', () => {
       state.outcome = el.dataset.value;
       $$('[data-step="outcomes"] .q-choice').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      saveState();
-      setTimeout(() => go('tools'), 280);
-    });
-  });
-
-  // ── Tool (single pick) ────────────────────────────────────
-  $$('[data-step="tools"] .q-choice').forEach(el => {
-    el.addEventListener('click', () => {
-      state.tool = el.dataset.value;
-      $$('[data-step="tools"] .q-choice').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       saveState();
       setTimeout(() => go('method'), 280);
@@ -376,17 +340,6 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     el.addEventListener('click', () => {
       state.time = Number(el.dataset.value);
       $$('[data-step="time"] .q-choice').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      saveState();
-      setTimeout(() => go('memory'), 280);
-    });
-  });
-
-  // ── Memory ───────────────────────────────────────────────
-  $$('[data-step="memory"] .q-choice').forEach(el => {
-    el.addEventListener('click', () => {
-      state.memory = el.dataset.value;
-      $$('[data-step="memory"] .q-choice').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       saveState();
       setTimeout(() => go('focus'), 280);
@@ -442,7 +395,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       if (i >= messages.length) {
         clearInterval(interval);
         trackFunnel('plan_built');
-        setTimeout(() => go('gate'), 500);
+        setTimeout(() => go('results'), 500);
         return;
       }
       ticker.style.opacity = 0;
@@ -551,46 +504,41 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
         .catch(() => { /* keep fallback copy */ });
     }
 
-    // Feature cards — everything ships to everyone, so nothing is hidden here.
-    // The tool answer only reorders: what they said they'd reach for goes first
-    // and carries a badge, so the list opens on the part they already want.
+    // Feature cards — everything ships to everyone, in a fixed order. These used
+    // to be reordered and badged from a "which of these would you use?" question,
+    // but that question only ever changed this list's order, never the plan, so
+    // it was not worth a screen in the funnel.
     const featWrap = $('[data-step="results"] .feat-list');
-    // The journal card also answers the memory question, which is asked later
-    // and more directly — a yes there counts the same as picking journaling.
-    const wantsJournal = state.tool === 'journal'
-      || state.memory === 'yes' || state.memory === 'maybe';
-    const wanted = (f) => f.id === 'journal'
-      ? wantsJournal
-      : f.tools.includes(state.tool);
     featWrap.innerHTML = '';
-    FEATURES.slice()
-      .sort((a, b) => (wanted(b) ? 1 : 0) - (wanted(a) ? 1 : 0))
-      .forEach(f => {
-        const row = document.createElement('div');
-        row.className = 'feat-row';
-        row.innerHTML = `
-          <span class="feat-ic" style="background:${f.tint};">
-            <svg width="21" height="21" viewBox="0 0 32 32" fill="none" stroke="${f.stroke}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${f.icon}</svg>
-          </span>
-          <div>
-            <div class="feat-t">${f.title}</div>
-            <div class="feat-d">${f.desc}</div>
-            <span class="feat-tag${wanted(f) ? ' picked' : ''}">${wanted(f) ? 'You asked for this' : f.tag}</span>
-          </div>
-        `;
-        featWrap.appendChild(row);
-      });
+    FEATURES.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'feat-row';
+      row.innerHTML = `
+        <span class="feat-ic" style="background:${f.tint};">
+          <svg width="21" height="21" viewBox="0 0 32 32" fill="none" stroke="${f.stroke}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${f.icon}</svg>
+        </span>
+        <div>
+          <div class="feat-t">${f.title}</div>
+          <div class="feat-d">${f.desc}</div>
+          <span class="feat-tag">${f.tag}</span>
+        </div>
+      `;
+      featWrap.appendChild(row);
+    });
 
-    // Personalized headline above CTA
+    // Personalized headline above the CTA. Keyed on the outcome they picked —
+    // this used to key on a separate "how do you feel this week?" question, which
+    // asked for the same signal facing backwards.
     const ctaHead = $('[data-step="results"] .cta-card h3');
-    const moodMap = {
-      reactive: 'You’re ready to <em>do better.</em><br>Let’s start small.',
-      tired: 'You showed up here.<br>That’s already <em>the work.</em>',
-      curious: 'You’re curious.<br>Your <em>sprout is too.</em>',
-      lost: 'You’re not <em>lost.</em><br>You’re just deep in it.',
-      mix: 'All of it.<br>That’s <em>parenting.</em>',
+    const outcomeMap = {
+      understand: 'You want to <em>understand.</em><br>That’s where it starts.',
+      calm: 'Less chaos.<br>One <em>small rep</em> at a time.',
+      connection: 'Closer.<br>That’s the <em>whole point.</em>',
+      overwhelm: 'One thing today.<br>That’s <em>all this asks.</em>',
+      patience: 'You’re ready to <em>do better.</em><br>Let’s start small.',
+      confidence: 'You showed up here.<br>That’s already <em>the work.</em>',
     };
-    ctaHead.innerHTML = moodMap[state.mood] || 'Plant your<br><em>first sprout.</em>';
+    ctaHead.innerHTML = outcomeMap[state.outcome] || 'Plant your<br><em>first sprout.</em>';
   }
 
   // ── Interstitial advance buttons ──────────────────────────
@@ -647,7 +595,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       // when the app signs in with a different address (Apple private relay).
       _parkFocusArea(state.email, idToken);
       trackFunnel('signup');
-      go('results');
+      go('paywall');
     } catch (e) {
       _googleBtn.disabled = false;
       _googleBtn.innerHTML = _googleBtnHtml;
@@ -688,14 +636,19 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     // only until the app signs in and backfills the uid.
     _parkFocusArea(val, null);
     trackFunnel('signup');
-    go('results');
+    go('paywall');
   });
 
   $('[data-action="gate-email-input"]').addEventListener('input', (e) => e.target.classList.remove('err'));
   $('[data-action="gate-email-input"]').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('[data-action="gate-continue"]').click(); });
 
   // ── Results → paywall ─────────────────────────────────────
-  $('[data-action="to-paywall"]').addEventListener('click', () => go('paywall'));
+  // The gate now sits between the plan and the pricing: they see what they built
+  // first, and are asked to save it second. Anyone who already has an account
+  // from a previous run skips straight past it.
+  $('[data-action="to-paywall"]').addEventListener('click', () => {
+    go(state.email ? 'paywall' : 'gate');
+  });
 
   // ── Paywall ───────────────────────────────────────────────
   // Both plans currently get the same trial; kept per-plan so the timeline copy
@@ -863,6 +816,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
           // Parked on the Stripe subscription so the day-7 charge can be
           // recorded against the same funnel session that started here.
           funnelSession: window.sproutsFunnel ? sproutsFunnel.sessionId() : null,
+          funnelVersion: window.sproutsFunnel ? sproutsFunnel.version : null,
         }),
       });
       if (res.status === 409) {
@@ -1028,11 +982,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     });
 
     const single = [
-      ['mood',     () => state.mood],
       ['outcomes', () => state.outcome],
-      ['tools',    () => state.tool],
       ['time',     () => (state.time == null ? null : String(state.time))],
-      ['memory',   () => state.memory],
     ];
     single.forEach(([step, get]) => {
       const val = get();
@@ -1054,7 +1005,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       state = { ...defaultState };
       saveState();
       syncSelections();
-      go('welcome');
+      go('ages');
     });
   });
 
@@ -1065,5 +1016,5 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   state.step = 0;
   saveState();
   syncSelections();
-  go('welcome');
+  go('ages');
 })();

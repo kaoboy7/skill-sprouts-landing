@@ -27,6 +27,17 @@
   var SID_KEY = 'sprouts_funnel_sid';
   var SEEN_KEY = 'sprouts_funnel_seen';
   var TOUCH_KEY = 'sprouts_funnel_touch';
+  var OPTOUT_KEY = 'sprouts_funnel_optout';
+
+  // Which shape of funnel this page implements. Sent with every batch so the
+  // backend files these steps under the funnel the visitor actually walked —
+  // during a deploy some browsers are still running the previous version from
+  // cache, and folding their steps into the new one would corrupt exactly the
+  // before/after comparison the version exists to enable.
+  //
+  // Bump when steps are added, removed, or reordered — NOT for copy or styling.
+  // Must match a key of FUNNEL_VERSIONS in the backend's api/routes/funnel.py.
+  var FUNNEL_VERSION = 2;
 
   // A funnel session is one attempt at the funnel, not one person forever. Come
   // back tomorrow and you're a new session — otherwise a returning visitor is
@@ -60,6 +71,18 @@
     for (var i = 0; i < 22; i++) out += alphabet[bytes[i] % 64];
     return out;
   }
+
+  // Keep our own visits out of the numbers. `?notrack=1` silences this device
+  // permanently; `?track=1` re-enables it. Worth doing on every device you test
+  // from — at a few hundred sessions a week, a handful of your own runs is a
+  // visible distortion.
+  (function () {
+    if (location.search.indexOf('notrack=1') !== -1) store(OPTOUT_KEY, '1');
+    else if (location.search.indexOf('track=1') !== -1) {
+      try { localStorage.removeItem(OPTOUT_KEY); } catch (e) {}
+    }
+  })();
+  function optedOut() { return read(OPTOUT_KEY) === '1'; }
 
   var _sid = null;
   var _seen = null;
@@ -96,7 +119,11 @@
     if (timer) { clearTimeout(timer); timer = null; }
     if (!queue.length) return;
     var batch = queue.splice(0, MAX_BATCH);
-    var payload = JSON.stringify({ sessionId: sessionId(), hits: batch });
+    var payload = JSON.stringify({
+      sessionId: sessionId(),
+      version: FUNNEL_VERSION,
+      hits: batch,
+    });
     var url = API_BASE + '/public/funnel';
 
     // On the way out of the page a normal fetch gets cancelled; sendBeacon is
@@ -124,7 +151,7 @@
    * @param {object} [dims] optional { area, plan, ageBracket }
    */
   function track(step, dims) {
-    if (!step) return;
+    if (!step || optedOut()) return;
     var already = seen();
     if (already.indexOf(step) !== -1) return;
     already.push(step);
@@ -155,5 +182,20 @@
     if (document.visibilityState === 'hidden') flush(true);
   });
 
-  window.sproutsFunnel = { track: track, sessionId: sessionId };
+  // Establish the session up front, before anything can be tracked.
+  //
+  // sessionId() clears the seen-list when it mints a new session, and it used to
+  // run lazily — the first call came from inside flush(), by which time track()
+  // had already recorded several steps into that list. Minting then wiped them,
+  // so those steps could be sent a second time: pressing Back and re-answering a
+  // question produced a duplicate row. Resolving the session first makes the
+  // reset happen once, before there is anything to lose.
+  sessionId();
+
+  window.sproutsFunnel = {
+    track: track,
+    sessionId: sessionId,
+    version: FUNNEL_VERSION,
+    optedOut: optedOut,
+  };
 })();

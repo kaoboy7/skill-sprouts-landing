@@ -438,6 +438,16 @@ a { color: inherit; }
   display: inline-flex; align-items: center; gap: 12px;
 }
 .welcome .meta .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--line-soft); }
+
+/* Same reassurance row, inline on the first question — the welcome screen that
+   used to carry it is gone, but the promise it made still needs making. */
+.q-meta-inline {
+  margin: 16px 0 0;
+  font-size: 11.5px; color: var(--muted); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.q-meta-inline .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--line-soft); }
 .welcome .begin {
   background: var(--ink); color: var(--cream);
   border: none; border-radius: 999px;
