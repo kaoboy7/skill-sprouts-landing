@@ -366,6 +366,14 @@
     function reportTrialStart({ plan, value, currency, subscriptionId }) {
       if (typeof fbq === 'undefined') return;   // blocked by an extension
       if (!plan) return;                        // unknown plan — nothing useful to report
+      // A test run must not report a purchase to Meta either. A fake conversion
+      // is worse here than a fake funnel row: it trains ad delivery on it.
+      // sessionStorage survives the round trip out to Stripe and back, so a quiz
+      // started with ?test=true is still silent by the time it lands here.
+      if (window.sproutsFunnel && sproutsFunnel.testMode()) {
+        console.warn('[sprouts] test mode — skipping Meta StartTrial for', plan);
+        return;
+      }
 
       // This page is reachable by refresh and by the back button, and without a
       // guard each one reports another conversion. Keyed on the subscription id

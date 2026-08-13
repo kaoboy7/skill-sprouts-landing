@@ -23,7 +23,7 @@
 (function () {
   'use strict';
 
-  var API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.run.app';
+  var API_BASE = 'http://localhost:8893';
   var SID_KEY = 'sprouts_funnel_sid';
   var SEEN_KEY = 'sprouts_funnel_seen';
   var TOUCH_KEY = 'sprouts_funnel_touch';
@@ -114,42 +114,27 @@
   function optedOut() { return read(OPTOUT_KEY) === '1' || testMode(); }
 
   // Silence you can't see is a trap: you run a test, forget the flag is on, then
-  // wonder for a week why the funnel is empty. So when nothing is being
-  // recorded, say so across the top of the page — not in a corner, and not only
-  // in the console where nobody is looking.
-  function showSuppressedBanner() {
-    if (!optedOut() || document.getElementById('sprouts-notrack-banner')) return;
-    var test = testMode();
-    var title = test ? 'TEST MODE' : 'NOT TRACKED';
-    var detail = test
-      ? 'Nothing is being recorded — funnel steps and the Meta pixel are both off for this tab. Close the tab to exit.'
-      : 'This device is opted out of funnel tracking. Add ?track=1 to any page to start counting it again.';
-    console.warn('[sprouts-funnel] ' + title + ' — ' + detail);
-
-    var bar = document.createElement('div');
-    bar.id = 'sprouts-notrack-banner';
-    bar.setAttribute('role', 'status');
-    bar.innerHTML =
-      '<span style="font-weight:800;letter-spacing:.09em;">' + (test ? '🧪 ' : '🚫 ') + title + '</span>'
-      + '<span style="opacity:.92;font-weight:500;">' + detail + '</span>';
-    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;'
-      + 'background:#BC4B51;color:#fff;'
-      + 'font:600 12.5px/1.45 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;'
-      + 'padding:9px 16px;text-align:center;'
-      + 'display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;'
-      + 'box-shadow:0 2px 10px -2px rgba(0,0,0,.35);pointer-events:none;';
-    document.body.appendChild(bar);
-
-    // Push the page down by the banner's real height, so it never sits on top of
-    // the nav or the progress bar — measured after insertion because it wraps to
-    // two lines on a phone.
-    var current = parseFloat(window.getComputedStyle(document.body).paddingTop) || 0;
-    document.body.style.paddingTop = (current + bar.offsetHeight) + 'px';
+  // wonder for a week why the funnel is empty. Say so, loudly, in the page and
+  // in the console.
+  function showSuppressedBadge() {
+    if (!optedOut() || document.getElementById('sprouts-notrack-badge')) return;
+    var why = testMode()
+      ? 'TEST MODE — nothing recorded (this tab only)'
+      : 'NOT TRACKED — this device is opted out (?track=1 to undo)';
+    console.warn('[sprouts-funnel] ' + why);
+    var el = document.createElement('div');
+    el.id = 'sprouts-notrack-badge';
+    el.textContent = why;
+    el.style.cssText = 'position:fixed;left:10px;bottom:10px;z-index:2147483647;'
+      + 'background:#BC4B51;color:#fff;font:600 11px/1.4 system-ui,sans-serif;'
+      + 'letter-spacing:.04em;padding:6px 10px;border-radius:999px;'
+      + 'box-shadow:0 4px 14px -4px rgba(0,0,0,.4);pointer-events:none;';
+    document.body.appendChild(el);
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showSuppressedBanner);
+    document.addEventListener('DOMContentLoaded', showSuppressedBadge);
   } else {
-    showSuppressedBanner();
+    showSuppressedBadge();
   }
 
   var _sid = null;
