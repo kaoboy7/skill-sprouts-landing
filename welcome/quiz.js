@@ -37,6 +37,16 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   };
   let state = loadState();
   function loadState() {
+    // A run started with ?test=true begins from scratch. Without this a test on
+    // a browser that has been through the funnel before silently skips the
+    // account gate — state.email is still in localStorage, so the results CTA
+    // treats you as a returning visitor and jumps to the paywall. A test flag
+    // that shows you a different funnel than a real visitor sees is worse than
+    // no test flag.
+    if (/[?&]test=(true|1)(&|$)/.test(location.search)) {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      return { ...defaultState };
+    }
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) return { ...defaultState, ...JSON.parse(saved) };
@@ -644,10 +654,18 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
   // ── Results → paywall ─────────────────────────────────────
   // The gate now sits between the plan and the pricing: they see what they built
-  // first, and are asked to save it second. Anyone who already has an account
-  // from a previous run skips straight past it.
+  // first, and are asked to save it second.
   $('[data-action="to-paywall"]').addEventListener('click', () => {
-    go(state.email ? 'paywall' : 'gate');
+    if (!state.email) { go('gate'); return; }
+    // Returning visitor — we already know where to send their plan, so asking
+    // again is pure friction. Record the account steps anyway: this session did
+    // clear them, just on an earlier visit. Without this the funnel reports
+    // results_view → paywall_view with nothing in between, which can leave
+    // paywall_view larger than gate_view and read as a broken funnel rather
+    // than as a skipped step.
+    trackFunnel('gate_view');
+    trackFunnel('signup');
+    go('paywall');
   });
 
   // ── Paywall ───────────────────────────────────────────────
