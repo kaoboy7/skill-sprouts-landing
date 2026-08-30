@@ -14,7 +14,7 @@
  *     <script src="/funnel.js"></script>
  * then from anywhere:
  *     sproutsFunnel.track('quiz_start');
- *     sproutsFunnel.track('q_areas', { area: 'eating' });
+ *     sproutsFunnel.track('q_areas', { area: 'tantrums' });
  *
  * Every call is safe to repeat. Steps already sent this session are dropped
  * client-side, and the server ignores duplicates too — so a visitor pressing
@@ -38,7 +38,13 @@
   //
   // Bump when steps are added, removed, or reordered — NOT for copy or styling.
   // Must match a key of FUNNEL_VERSIONS in the backend's api/routes/funnel.py.
-  var FUNNEL_VERSION = 2;
+  //
+  // v3 is the pivot funnel. The step sequence is identical to v2, but `q_areas`
+  // now names a PLAN the child will learn rather than a goal area to build
+  // habits in, and `results_view` shows that plan's ladder. A v2 answer set is
+  // therefore not comparable to a v3 one, which is exactly what the version is
+  // for — do not fold them together in a report.
+  var FUNNEL_VERSION = 3;
 
   // A funnel session is one attempt at the funnel, not one person forever. Come
   // back tomorrow and you're a new session — otherwise a returning visitor is

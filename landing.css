@@ -279,7 +279,7 @@ section { padding: 96px 0; }
   height: 100%; background: var(--amber); border-radius: 6px;
 }
 
-/* Phone — habit card */
+/* Phone — plan step card */
 .habit-card {
   background: var(--paper);
   border: 1.5px solid var(--line);
@@ -424,7 +424,7 @@ section { padding: 96px 0; }
 }
 
 .card-tantrums   { background: var(--terracotta-tint); border-color: rgba(188,75,81,0.2);   color: var(--terracotta); }
-.card-eating     { background: var(--amber-tint);      border-color: rgba(244,162,89,0.25); color: var(--amber); }
+.card-transitions{ background: var(--amber-tint);      border-color: rgba(244,162,89,0.25); color: var(--amber); }
 .card-potty      { background: var(--sage-tint);       border-color: rgba(91,142,125,0.25); color: var(--sage); }
 .card-sleep      { background: var(--dusk-tint);       border-color: rgba(122,138,167,0.25);color: var(--dusk); }
 .card-independence{background: var(--plum-tint);       border-color: rgba(138,107,174,0.25);color: var(--plum); }

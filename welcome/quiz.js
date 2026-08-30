@@ -53,6 +53,8 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     } catch (e) {}
     return { ...defaultState };
   }
+
+
   function saveState() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
@@ -98,19 +100,78 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   const NO_BACK = ['loading', 'results', 'gate', 'paywall', 'handoff'];
 
   // ── Area metadata (mirror of data.js) ─────────────────────
+  // Each area names a PLAN the app can actually teach — one skill the child will
+  // be able to do — not a category of habits to build. `plan` is the join key
+  // into /public/plans, and `steps` is the marketing fallback shown instantly
+  // before the real ladder loads. Keep in lockstep with kOnboardingAreas in the
+  // app (flutter_app/lib/screens/onboarding_shared.dart) and VALID_FOCUS_AREAS
+  // in the backend's web_onboarding_focus.py — the app silently ignores a
+  // parked area id it does not recognise.
   const AREAS = {
-    tantrums: { name: 'Tantrums & Big Emotions', short: 'Big Emotions', label: 'behavior_and_boundaries', tagline: 'Co-regulate, name the feeling, ride the wave.', color: '#BC4B51', tint: '#FBE6E1', habits: ['Name the feeling out loud', 'Drop to their eye level', 'Take 3 breaths before responding'] },
-    eating: { name: 'Picky Eating', short: 'Picky Eating', label: 'feeding_mealtime_habits', tagline: 'Offer, don’t pressure. Curiosity over clean plates.', color: '#F4A259', tint: '#FCEBD3', habits: ['Put one new food on the plate', 'Eat the new food yourself', 'Skip the clean-plate ask'] },
-    potty: { name: 'Potty Training', short: 'Potty', label: 'potty_training', tagline: 'Follow their lead. Celebrate effort, not outcome.', color: '#5B8E7D', tint: '#DCEBE5', habits: ['Offer a sit before transitions', 'Celebrate the try', 'Keep accidents low-drama'] },
-    sleep: { name: 'Sleep & Bedtime', short: 'Sleep', label: 'sleep_and_bedtime', tagline: 'Same order, same rhythm, soft landings.', color: '#7A8AA7', tint: '#E3E8F0', habits: ['Dim the lights 45 min before bed', 'Three-step bedtime ritual', 'One quiet question at tuck-in'] },
-    independence: { name: 'Independence & Chores', short: 'Independence', label: 'independence_life_skills', tagline: 'Let them do it slow. That’s the win.', color: '#8A6BAE', tint: '#E8DEF0', habits: ['Let them dress themselves', 'One chore, age-appropriate', 'Ask "what’s your plan?"'] },
-    school: { name: 'School Readiness', short: 'School', label: 'early_learning_cognitive', tagline: 'Curiosity, not flashcards.', color: '#C98A6B', tint: '#F1E2D5', habits: ['Read together for 15 min', 'Ask an open question at pickup', 'Wonder out loud'] },
+    tantrums: {
+      name: 'Tantrums & Big Emotions', short: 'Big Emotions',
+      plan: 'jrn_handle_frustration',
+      promise: 'Handle frustration without melting down',
+      tagline: 'Teach the skill underneath the meltdown.',
+      color: '#BC4B51', tint: '#FBE6E1',
+      steps: ['Spot frustration in a story or a picture', 'Put a word on their own feeling afterwards', 'Choose their own calm-down move'],
+    },
+    transitions: {
+      name: 'Leaving & Transitions', short: 'Transitions',
+      plan: 'jrn_leave_without_a_fight',
+      promise: 'Leave the park without a fight',
+      tagline: 'The hand-off moments, rehearsed in advance.',
+      color: '#F4A259', tint: '#FCEBD3',
+      steps: ['Hear a five-minute warning without panicking', 'Know what happens after leaving', 'Choose their last thing to do'],
+    },
+    potty: {
+      name: 'Potty Training', short: 'Potty',
+      plan: 'jrn_use_the_potty',
+      promise: 'Use the potty independently',
+      tagline: 'The steps, in order, without the pressure.',
+      color: '#5B8E7D', tint: '#DCEBE5',
+      steps: ['Tell you afterwards that they\u2019ve done a wee', 'Tell you while it\u2019s happening', 'Sit on the potty with clothes on'],
+    },
+    sleep: {
+      name: 'Sleep & Bedtime', short: 'Sleep',
+      plan: 'jrn_fall_asleep_alone',
+      promise: 'Fall asleep on their own',
+      tagline: 'The bedtime you want is a skill they can learn.',
+      color: '#7A8AA7', tint: '#E3E8F0',
+      steps: ['Follow the same bedtime order every night', 'Go into bed awake', 'Fall asleep with you sitting beside the bed'],
+    },
+    independence: {
+      name: 'Independence & Self-Care', short: 'Independence',
+      plan: 'jrn_get_dressed',
+      promise: 'Get dressed on their own',
+      tagline: 'Capable is built one specific job at a time.',
+      color: '#8A6BAE', tint: '#E8DEF0',
+      steps: ['Take their own socks off', 'Take a t-shirt off', 'Pull trousers up from their knees'],
+    },
+    school: {
+      name: 'School Readiness', short: 'School',
+      plan: 'jrn_write_their_name',
+      promise: 'Write their own name',
+      tagline: 'What school actually asks of them, taught first.',
+      color: '#C98A6B', tint: '#F1E2D5',
+      steps: ['Use their hands for strong, big movements', 'Hold a chalk or crayon in a pinch grip', 'Copy a straight line'],
+    },
   };
 
-  const KID_COLORS = ['#F4A259', '#5B8E7D', '#BC4B51', '#8A6BAE'];
-  const KID_NAMES = ['Maya', 'Theo', 'Iris', 'River'];
+  // A visitor part-way through the funnel before the pivot can have a retired
+  // area id saved ('eating' had no plan behind it, so it went). Rendering the
+  // results for one would throw on AREAS[focus] being undefined and leave them
+  // staring at a half-built page, so drop anything we no longer recognise and
+  // let them re-pick. Runs here rather than inside loadState() because AREAS is
+  // still in the temporal dead zone up there — and loadState's catch would have
+  // swallowed the ReferenceError and silently wiped a real visitor's answers.
+  (function pruneRetiredAreas() {
+    var before = (state.areas || []).length;
+    if (Array.isArray(state.areas)) state.areas = state.areas.filter(id => AREAS[id]);
+    if (state.focusArea && !AREAS[state.focusArea]) state.focusArea = null;
+    if (before !== state.areas.length) saveState();
+  })();
 
-  // ── Age-stage brackets ────────────────────────────────────
   const AGE_BRACKETS = {
     onway:     { name: 'Baby on the way', short: 'Baby on the way', sub: 'Expecting', emoji: '🤰', color: '#8A6BAE' },
     baby:      { name: 'Baby', short: 'Baby', sub: '0–1 years', emoji: '🍼', color: '#F4A259' },
@@ -133,14 +194,17 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
   // ── Feature cards on the results screen ───────────────────
   // Everything here ships to everyone; the list is fixed and shown in order.
+  // Three things, and nothing else — situation kits and challenges were removed
+  // from the app, so selling them here would be selling something that is not
+  // there when the parent opens it.
   const FEATURES = [
     {
-      id: 'kits',
+      id: 'plans',
       tint: '#DCEBE5', stroke: '#5B8E7D',
-      icon: '<path d="M7 14 c-2 -3 1 -7 4 -6 c0 -3 5 -4 7 -1 c3 -1 6 2 5 5 c2 1 2 5 -1 5 H8 c-2 0 -3 -2 -1 -3"/><path d="M14 22 l-2 5"/><path d="M19 22 l-3 6"/><path d="M23 22 l-1 4"/>',
-      title: 'Situation kits',
-      desc: 'A calm sequence to follow and the exact words to say — for the meltdown, the grocery run, the bedtime standoff. Pull one up right in the moment.',
-      tag: 'For the tough moments',
+      icon: '<path d="M5 26 h7 v-7 h7 v-7 h7"/><path d="M26 12 V6"/>',
+      title: 'Plans',
+      desc: 'One skill, broken into steps your child climbs one at a time. Three to five minutes a day, with the words to say — and it changes tomorrow based on how today went.',
+      tag: 'The part that teaches',
     },
     {
       id: 'guides',
@@ -151,12 +215,12 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       tag: 'When you want the why',
     },
     {
-      id: 'challenges',
+      id: 'books',
       tint: '#F1E2D5', stroke: '#C98A6B',
-      icon: '<path d="M16 4 l3.2 6.8 7.3.8 -5.5 5 1.6 7.2 -6.6 -3.9 -6.6 3.9 1.6 -7.2 -5.5 -5 7.3 -.8 z"/>',
-      title: 'Challenges',
-      desc: 'Time-boxed group goals — one tiny action a day, alongside other parents doing the same thing. Finish one and press a bloom into your keepsake garden.',
-      tag: 'Better, together',
+      icon: '<rect x="8" y="5" width="16" height="22" rx="2"/><path d="M12 5 V27"/><path d="M16 11 h5"/><path d="M16 16 h5"/>',
+      title: 'Book summaries',
+      desc: 'The parenting canon in about twelve minutes each — Good Inside, The Whole-Brain Child, No-Drama Discipline. The ideas, in our own words, ending in something to actually do.',
+      tag: 'The shelf you never got to',
     },
     {
       id: 'journal',
@@ -393,10 +457,10 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     const ticker = $('[data-step="loading"] .ticker');
     const messages = [
       'Reading what you told us…',
-      'Choosing habits for ' + (state.focusArea ? AREAS[state.focusArea].short.toLowerCase() : 'your area') + '…',
+      'Matching a plan to ' + (state.focusArea ? AREAS[state.focusArea].short.toLowerCase() : 'your area') + '…',
       'Calibrating for ' + (state.time === 2 ? 'just two minutes' : state.time === 5 ? 'five-minute windows' : 'ten-minute reps') + '…',
       'Pairing with your ' + (state.ageFocus ? AGE_BRACKETS[state.ageFocus].short.toLowerCase() : 'little one') + '…',
-      'Tying it all to a sprout…',
+      'Laying out the steps…',
     ];
     let i = 0;
     ticker.textContent = messages[0];
@@ -431,9 +495,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     const minutesText = state.time + ' min';
     $('[data-step="results"] .summary-card').innerHTML = `
       <div class="stat">
-        <div class="k">Starting with</div>
-        <div class="v"><em>${area.short}</em></div>
-        <div class="vs">${state.areas.length > 1 ? `+ ${state.areas.length - 1} more area${state.areas.length === 2 ? '' : 's'} unlocked` : 'Master one, add more later'}</div>
+        <div class="k">They will learn to</div>
+        <div class="v"><em>${area.promise}</em></div>
+        <div class="vs">${state.areas.length > 1 ? `+ ${state.areas.length - 1} more area${state.areas.length === 2 ? '' : 's'} unlocked` : 'One skill at a time, on purpose'}</div>
       </div>
       <div class="stat">
         <div class="k">Daily commitment</div>
@@ -441,9 +505,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
         <div class="vs">${state.time === 2 ? 'About as long as a breath' : state.time === 5 ? 'A coffee’s worth' : 'Real time, real change'}</div>
       </div>
       <div class="stat">
-        <div class="k">Starter habits</div>
-        <div class="v">3<em> habits</em></div>
-        <div class="vs">Beginner level, ${area.short.toLowerCase()}</div>
+        <div class="k">The ladder</div>
+        <div class="v"><em>Step 1</em></div>
+        <div class="vs">We find where they already are first</div>
       </div>
     `;
 
@@ -477,38 +541,44 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       outWrap.appendChild(pill);
     }
 
-    // Starter habits — render the marketing copy instantly as a fallback, then
-    // swap in the REAL starter goals the app will seed (same /starter-goals
-    // source the app uses), so what's previewed here is what lands on Home.
-    const habitsWrap = $('[data-step="results"] .starter-habits');
-    function renderHabits(titles) {
-      habitsWrap.innerHTML = '';
-      titles.forEach(name => {
+    // The first rungs of the ladder. Marketing copy renders instantly as a
+    // fallback, then the REAL step names swap in from the same /public/plans
+    // catalog the app reads — so what is previewed here is what the child
+    // actually climbs. A failed fetch keeps the fallback rather than blanking.
+    const stepsWrap = $('[data-step="results"] .starter-steps');
+    function renderSteps(names) {
+      stepsWrap.innerHTML = '';
+      names.slice(0, 3).forEach((name, i) => {
         const row = document.createElement('div');
-        row.className = 'starter-habit';
+        row.className = 'starter-step';
         row.innerHTML = `
-          <span class="ring" style="border-color:${area.color}"></span>
+          <span class="ring" style="border-color:${area.color}">${i + 1}</span>
           <div style="flex:1;">
             <div class="title">${name}</div>
             <div class="meta">
               <span class="dot" style="background:${area.color}"></span>
-              ${area.short} · Beginner · ~2 min
+              ${area.short} · one activity · ~3 min
             </div>
           </div>
         `;
-        habitsWrap.appendChild(row);
+        stepsWrap.appendChild(row);
       });
     }
-    renderHabits(area.habits);
-    if (area.label) {
-      fetch(`${API_BASE}/public/checklist/starter-goals?area_label=${encodeURIComponent(area.label)}&limit=2`)
+    renderSteps(area.steps);
+    if (area.plan) {
+      fetch(`${API_BASE}/public/plans/${encodeURIComponent(area.plan)}`)
         .then(r => r.ok ? r.json() : null)
-        .then(goals => {
-          if (Array.isArray(goals) && goals.length) {
-            const titles = goals.map(g => g.title);
-            renderHabits(titles);
-            const countEl = $('[data-step="results"] .summary-card .stat:last-child .v');
-            if (countEl) countEl.innerHTML = `${titles.length}<em> habits</em>`;
+        .then(plan => {
+          if (!plan) return;
+          const names = Array.isArray(plan.step_names) && plan.step_names.length
+            ? plan.step_names
+            : (plan.chapters || []).flatMap(c => (c.steps || []).map(st => st.name));
+          if (!names.length) return;
+          renderSteps(names);
+          // Name the real length rather than the placeholder.
+          const ladderEl = $('[data-step="results"] .summary-card .stat:last-child .vs');
+          if (ladderEl) {
+            ladderEl.textContent = `${names.length} steps${plan.weeks ? ` · ${plan.weeks}` : ''}`;
           }
         })
         .catch(() => { /* keep fallback copy */ });
@@ -559,7 +629,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
     const res = await fetch(`${API_BASE}/auth/handoff`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Carry the picked focus area so the app seeds the same starter habits.
+      // Carry the picked focus area so the app starts the same plan.
       body: JSON.stringify({ idToken, focusArea: state.focusArea || null }),
     });
     if (!res.ok) throw new Error(`Handoff request failed: ${res.status}`);
@@ -615,7 +685,7 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
   });
 
   // Sends the Firebase email sign-in link, carrying the focus area so /auth can
-  // forward it to the app's handoff and the same starter habits get seeded.
+  // forward it to the app’s handoff and the same plan gets started.
   async function _sendMagicLink(email) {
     // Carry the email in the continue URL so /auth can complete sign-in with
     // zero prompt even when the link opens on a different device/browser than

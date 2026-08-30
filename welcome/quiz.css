@@ -559,23 +559,28 @@ a { color: inherit; }
 .summary-card .stat .v em { color: var(--amber); font-style: italic; }
 .summary-card .stat .vs { font-size: 13px; color: rgba(254,246,236,0.65); margin-top: 4px; }
 
-.starter-habit {
+.starter-step {
   background: var(--paper); border: 1.5px solid var(--line);
   border-radius: 18px 20px 18px 22px;
   padding: 14px 16px;
   display: flex; align-items: center; gap: 12px;
 }
-.starter-habit + .starter-habit { margin-top: 10px; }
-.starter-habit .ring {
+.starter-step + .starter-step { margin-top: 10px; }
+/* The ring used to be an empty habit checkbox. It now carries the rung number,
+   because a plan is an ordered climb and the order is the point. */
+.starter-step .ring {
   width: 26px; height: 26px; border-radius: 50%;
   border: 2px solid; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Manrope', sans-serif; font-weight: 700;
+  font-size: 12px; color: inherit;
 }
-.starter-habit .meta {
+.starter-step .meta {
   font-size: 12px; color: var(--ink-soft); margin-top: 3px;
   display: flex; align-items: center; gap: 6px;
 }
-.starter-habit .meta .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-.starter-habit .title {
+.starter-step .meta .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.starter-step .title {
   font-family: 'Manrope', sans-serif; font-weight: 600;
   font-size: 14.5px; color: var(--ink); line-height: 1.3;
 }
