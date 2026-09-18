@@ -194,9 +194,9 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
 
   // ── Feature cards on the results screen ───────────────────
   // Everything here ships to everyone; the list is fixed and shown in order.
-  // Three things, and nothing else — situation kits and challenges were removed
-  // from the app, so selling them here would be selling something that is not
-  // there when the parent opens it.
+  // Three things, and nothing else. Situation kits, challenges and the notes /
+  // photo journal were all removed from the app — selling any of them here would
+  // be selling something that is not there when the parent opens it.
   const FEATURES = [
     {
       id: 'plans',
@@ -221,14 +221,6 @@ const API_BASE = 'https://fastapi-hello-world-service-386194120047.us-central1.r
       title: 'Book summaries',
       desc: 'The parenting canon in about twelve minutes each — Good Inside, The Whole-Brain Child, No-Drama Discipline. The ideas, in our own words, ending in something to actually do.',
       tag: 'The shelf you never got to',
-    },
-    {
-      id: 'journal',
-      tint: '#E8DEF0', stroke: '#8A6BAE',
-      icon: '<rect x="7" y="4" width="18" height="24" rx="3"/><path d="M12 4 V28"/><path d="M16 11 h5"/><path d="M16 16 h5"/><path d="M16 21 h3"/>',
-      title: 'Journal',
-      desc: 'One sentence a day, from a prompt — the memory-keeping you never find time for, made small. For the moments you do not want to lose. Toggleable, never pushy.',
-      tag: 'Keep the small stuff',
     },
   ];
 

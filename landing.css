@@ -418,7 +418,10 @@ section { padding: 96px 0; }
   font-family: 'Newsreader', serif; font-style: italic;
   font-size: 14px; line-height: 1.4;
 }
-.area-card .footer {
+/* Was `.area-card .footer`, which collided with the page-footer rule below and
+   inherited its cream background and 80px padding — an empty slab in every
+   card. Renamed rather than over-specified so the collision can't come back. */
+.area-card .area-meta {
   font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; margin-top: auto;
 }
@@ -1017,4 +1020,127 @@ section { padding: 96px 0; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .empathy { padding: 80px 0; }
   .prose-article { padding: 24px 20px; border-radius: 16px; }
+}
+
+
+/* ── What's inside: the three content types ─────────────────────────────── */
+.inside { background: var(--paper); }
+.inside-head { text-align: center; max-width: 660px; margin: 0 auto 56px; }
+.inside-head h2 {
+  font-family: 'Newsreader', serif; font-weight: 400;
+  font-size: clamp(32px, 4.4vw, 50px); line-height: 1.08;
+  letter-spacing: -0.02em; margin: 14px 0 0;
+}
+.inside-head h2 em { color: var(--terracotta); font-style: italic; }
+.inside-head p {
+  font-family: 'Newsreader', serif; font-size: 17px;
+  color: var(--ink-soft); line-height: 1.6; margin: 18px auto 0; max-width: 560px;
+}
+.inside-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.inside-card {
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  border-radius: 24px 22px 26px 22px;
+  padding: 26px 24px 24px;
+  display: flex; flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.inside-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(42,31,23,0.3); }
+.ic-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ic-glyph {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card-tint); color: var(--card-ink);
+}
+.ic-count {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--card-ink);
+}
+.inside-card h3 {
+  font-family: 'Newsreader', serif; font-weight: 400;
+  font-size: 27px; line-height: 1.1; letter-spacing: -0.01em; color: var(--ink);
+  margin: 0;
+}
+.ic-body { font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; }
+/* The real titles from the catalogue — concrete beats adjectives. */
+.ic-proof {
+  font-family: 'Newsreader', serif; font-style: italic;
+  font-size: 14px; color: var(--card-ink); line-height: 1.5;
+  margin-top: 14px; padding-top: 14px; border-top: 1.5px dashed var(--line);
+}
+.ic-meta {
+  margin-top: auto; padding-top: 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--muted);
+}
+.ic-plans  { --card-tint: var(--terracotta-tint); --card-ink: var(--terracotta); }
+.ic-guides { --card-tint: var(--dusk-tint);       --card-ink: var(--dusk); }
+.ic-books  { --card-tint: var(--clay-tint);       --card-ink: #9A5A18; }
+.inside-join {
+  font-family: 'Newsreader', serif; font-size: 18px; line-height: 1.6;
+  color: var(--ink-soft); text-align: center;
+  max-width: 640px; margin: 44px auto 0;
+}
+.inside-join em { font-style: italic; color: var(--terracotta); }
+
+/* ── Programs: the five methods ─────────────────────────────────────────── */
+.programs { background: var(--cream-deep); }
+.programs-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  align-items: end; margin-bottom: 48px;
+}
+.programs-head h2 {
+  font-family: 'Newsreader', serif; font-weight: 400;
+  font-size: clamp(32px, 4.2vw, 48px); line-height: 1.08;
+  letter-spacing: -0.02em; margin: 14px 0 0;
+}
+.programs-head h2 em { color: var(--terracotta); font-style: italic; }
+.programs-head p { font-size: 15px; color: var(--ink-soft); line-height: 1.65; }
+.programs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.program-card {
+  background: var(--pc-tint, var(--paper));
+  border: 1.5px solid color-mix(in srgb, var(--pc, var(--line-soft)) 22%, transparent);
+  border-radius: 22px 20px 24px 20px;
+  padding: 24px 22px;
+  display: flex; flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.program-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px rgba(42,31,23,0.35); }
+.pc-age {
+  align-self: flex-start;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--pc-deep); background: rgba(255,255,255,0.6);
+  border-radius: 999px; padding: 4px 10px; margin-bottom: 14px;
+}
+.program-card h3 {
+  font-family: 'Newsreader', serif; font-weight: 400;
+  font-size: 25px; line-height: 1.1; letter-spacing: -0.01em; color: var(--pc-deep);
+}
+/* The attribution is the point of this card — a named method, not our opinion. */
+.pc-method {
+  font-size: 12px; font-weight: 600; color: var(--pc);
+  line-height: 1.45; margin-top: 7px;
+}
+.program-card p { font-size: 14px; color: var(--ink-soft); line-height: 1.55; margin-top: 12px; }
+.pc-plans {
+  margin-top: auto; padding-top: 16px;
+  font-size: 12px; color: var(--pc-deep); opacity: 0.85; line-height: 1.5;
+}
+.program-card-cta {
+  background: var(--ink); border-color: var(--ink);
+  text-decoration: none; justify-content: center;
+}
+.program-card-cta h3 { color: var(--cream); }
+.program-card-cta p { color: rgba(254,246,236,0.78); }
+.pc-cta-link {
+  margin-top: 18px; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; color: var(--amber);
+}
+
+@media (max-width: 960px) {
+  .inside-grid, .programs-grid { grid-template-columns: repeat(2, 1fr); }
+  .programs-head { grid-template-columns: 1fr; gap: 18px; align-items: start; }
+}
+@media (max-width: 640px) {
+  .inside-grid, .programs-grid { grid-template-columns: 1fr; }
 }

@@ -12,15 +12,15 @@ Three things, and nothing else:
 - **Guides** — short reads on a hard parenting problem.
 - **Book summaries** — the parenting canon in about twelve minutes.
 
-Plus a journal.
+**Programs** are the shelf those plans sit on — a whole named method (Montessori practical life, Gottman's emotion coaching) split into the plans it produces. Nothing is taught or tracked at the program level; a parent browsing the catalog is asking the larger question first.
 
-**Gone, and must not appear in copy:** daily habits / goal tracking, situation kits, challenges, Build with AI, micro-courses, and **streaks**. The app has no streak, no daily completion percentage and nothing that counts down. Copy that promises a streak promises something the parent won't find.
+**Gone, and must not appear in copy:** daily habits / goal tracking, situation kits, challenges, Build with AI, micro-courses, **streaks**, and the **journal** (notes and photos). The app has no streak, no daily completion percentage and nothing that counts down. Copy that promises a streak promises something the parent won't find.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `index.html` | The marketing page. Hero, empathy note, six plan cards, how-it-works, journal, testimonials, pricing, FAQ. |
+| `index.html` | The marketing page. Hero, proof strip, empathy note, what's-inside (the three content types), six plan cards, five programs, how-it-works, testimonials, pricing (commented out), FAQ. |
 | `landing.css` | Styles for `index.html`. |
 | `welcome/index.html` | The quiz shell — every screen's markup, including the paywall. |
 | `welcome/quiz.js` | The quiz logic, data (`AREAS`, `AGE_BRACKETS`, `OUTCOMES`, `FEATURES`) and the results screen. |
