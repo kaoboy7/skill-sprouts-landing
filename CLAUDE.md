@@ -27,6 +27,7 @@ Three things, and nothing else:
 | `welcome/quiz.css` | Quiz styles. |
 | `funnel.js` | First-party funnel tracking. Posts to the app's API, not an analytics vendor. |
 | `thank_you.html`, `checkout/success.html`, `billing/`, `auth/`, `app/` | Post-purchase and handoff pages. |
+| `gift/gift.js`, `gift/gift.css` | Gift pages: `/guides/{token}` and `/book-summaries/{token}`. No file exists at those paths, so GitHub Pages serves `404.html`, which loads `gift.js` in `<head>`; it renders the read from `GET /public/gifts/{token}` and is a no-op on every other path. `deeplink-fallback.js` stands aside on the same regex (keep the two `GIFT_PATH`s in step). Links last 3 days; see "Gift links" in the app repo's `CLAUDE.md`. `404.html` uses absolute asset paths because it is served at nested URLs. |
 
 ## Three things that must stay in lockstep
 

@@ -155,6 +155,11 @@
     document.close();
   }
 
+  // Gift links are rendered by gift/gift.js on this same 404 page. Keep in
+  // step with GIFT_PATH there.
+  var GIFT_PATH = /^\/(guides|book-summaries)\/([A-Za-z0-9_-]+)\/?$/;
+  if (GIFT_PATH.test(window.location.pathname || '')) return;
+
   if (isCourseDetailsPath()) {
     renderCoursePage();
   } else {
